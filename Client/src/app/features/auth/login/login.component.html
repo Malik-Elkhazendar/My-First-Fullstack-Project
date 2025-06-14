@@ -1,0 +1,136 @@
+<div class="auth-container">
+  <div class="auth-card-wrapper">
+    <!-- Logo and branding -->
+    <div class="auth-logo">
+      <div class="logo-icon">
+        <mat-icon>shopping_bag</mat-icon>
+      </div>
+      <h1 class="logo-text">TechShop</h1>
+    </div>
+
+    <!-- Login Card -->
+    <mat-card class="auth-card">
+      <mat-card-header>
+        <mat-card-title>Sign In</mat-card-title>
+        <mat-card-subtitle>Welcome back! Please login to your account</mat-card-subtitle>
+      </mat-card-header>
+
+      <!-- Loading Progress Bar -->
+      <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+      <mat-card-content>
+        <!-- Login Error Alert -->
+        <div *ngIf="loginError" class="auth-error">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ loginError }}</span>
+        </div>
+
+        <!-- Login Form -->
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+          <!-- Email Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <input 
+              matInput 
+              formControlName="email" 
+              placeholder="email@example.com" 
+              required 
+              type="email" 
+              autocomplete="email">
+            <mat-icon matPrefix>email</mat-icon>
+            <mat-error *ngIf="submitted && f['email'].errors">
+              <span *ngIf="f['email'].errors['required']">Email is required</span>
+              <span *ngIf="f['email'].errors['email']">Please enter a valid email address</span>
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Password Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input 
+              matInput 
+              formControlName="password" 
+              [type]="hidePassword ? 'password' : 'text'" 
+              required 
+              autocomplete="current-password">
+            <mat-icon matPrefix>lock</mat-icon>
+            <button 
+              type="button" 
+              mat-icon-button 
+              matSuffix 
+              (click)="hidePassword = !hidePassword" 
+              [attr.aria-label]="'Toggle password visibility'" 
+              [attr.aria-pressed]="hidePassword">
+              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <mat-error *ngIf="submitted && f['password'].errors">
+              <span *ngIf="f['password'].errors['required']">Password is required</span>
+              <span *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</span>
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Remember Me and Forgot Password -->
+          <div class="form-row">
+            <mat-checkbox formControlName="rememberMe" color="primary">Remember me</mat-checkbox>
+            <a routerLink="/auth/forgot-password" class="forgot-password">Forgot password?</a>
+          </div>
+
+          <!-- Submit Button -->
+          <button 
+            mat-raised-button 
+            color="primary" 
+            type="submit" 
+            class="full-width submit-button" 
+            [disabled]="loading">
+            <mat-icon>login</mat-icon>
+            <span>Sign In</span>
+          </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="divider-container">
+          <mat-divider></mat-divider>
+          <span class="divider-text">or</span>
+          <mat-divider></mat-divider>
+        </div>
+
+        <!-- Demo Login Buttons -->
+        <div class="demo-buttons">
+          <button 
+            mat-stroked-button 
+            type="button" 
+            class="full-width" 
+            (click)="loginAsDemo()" 
+            [disabled]="loading">
+            <mat-icon>person</mat-icon>
+            <span>Demo User Account</span>
+          </button>
+          <button 
+            mat-stroked-button 
+            type="button" 
+            class="full-width" 
+            (click)="loginAsAdmin()" 
+            [disabled]="loading">
+            <mat-icon>admin_panel_settings</mat-icon>
+            <span>Demo Admin Account</span>
+          </button>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions class="auth-card-actions">
+        <span>Don't have an account?</span>
+        <a routerLink="/auth/register" mat-button color="accent">Sign Up</a>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Extra Information -->
+    <div class="auth-footer">
+      <p>&copy; {{ 2023 | date:'yyyy' }} TechShop. All rights reserved.</p>
+      <div class="auth-links">
+        <a routerLink="/terms">Terms of Service</a>
+        <span class="separator">•</span>
+        <a routerLink="/privacy">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+</div> 

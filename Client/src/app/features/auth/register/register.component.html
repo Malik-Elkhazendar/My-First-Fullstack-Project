@@ -1,0 +1,123 @@
+<div class="auth-container">
+  <div class="auth-card-wrapper">
+    <!-- Logo and branding -->
+    <div class="auth-logo">
+      <div class="logo-icon">
+        <mat-icon>shopping_bag</mat-icon>
+      </div>
+      <h1 class="logo-text">TechShop</h1>
+    </div>
+
+    <!-- Register Card -->
+    <mat-card class="auth-card">
+      <mat-card-header>
+        <mat-card-title>Create an Account</mat-card-title>
+        <mat-card-subtitle>Sign up to start shopping with us</mat-card-subtitle>
+      </mat-card-header>
+
+      <!-- Loading Progress Bar -->
+      <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+      <mat-card-content>
+        <!-- Register Error Alert -->
+        <div *ngIf="registerError" class="auth-error">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ registerError }}</span>
+        </div>
+
+        <!-- Register Form -->
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+          <!-- Name Fields -->
+          <div class="form-row-2col">
+            <mat-form-field appearance="outline">
+              <mat-label>First Name</mat-label>
+              <input matInput formControlName="firstName" placeholder="John" required>
+              <mat-icon matPrefix>person</mat-icon>
+              <mat-error *ngIf="hasError('firstName', 'required')">First name is required</mat-error>
+              <mat-error *ngIf="hasError('firstName', 'minlength')">First name must be at least 2 characters</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Last Name</mat-label>
+              <input matInput formControlName="lastName" placeholder="Doe" required>
+              <mat-error *ngIf="hasError('lastName', 'required')">Last name is required</mat-error>
+              <mat-error *ngIf="hasError('lastName', 'minlength')">Last name must be at least 2 characters</mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Email Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" placeholder="email@example.com" required type="email" autocomplete="email">
+            <mat-icon matPrefix>email</mat-icon>
+            <mat-error *ngIf="hasError('email', 'required')">Email is required</mat-error>
+            <mat-error *ngIf="hasError('email', 'email')">Please enter a valid email address</mat-error>
+          </mat-form-field>
+
+          <!-- Password Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" required autocomplete="new-password">
+            <mat-icon matPrefix>lock</mat-icon>
+            <button type="button" mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Toggle password visibility'" [attr.aria-pressed]="hidePassword">
+              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <mat-error *ngIf="hasError('password', 'required')">Password is required</mat-error>
+            <mat-error *ngIf="hasError('password', 'minlength')">Password must be at least 6 characters</mat-error>
+            <mat-error *ngIf="hasError('password', 'passwordStrength')">
+              Password must contain uppercase, lowercase letters and numbers
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Confirm Password Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Confirm Password</mat-label>
+            <input matInput formControlName="confirmPassword" [type]="hideConfirmPassword ? 'password' : 'text'" required autocomplete="new-password">
+            <mat-icon matPrefix>lock_outline</mat-icon>
+            <button type="button" mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" [attr.aria-label]="'Toggle password visibility'" [attr.aria-pressed]="hideConfirmPassword">
+              <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <mat-error *ngIf="hasError('confirmPassword', 'required')">Confirm password is required</mat-error>
+          </mat-form-field>
+
+          <!-- Password Match Error -->
+          <div *ngIf="hasPasswordMismatch()" class="password-match-error">
+            <mat-icon>error_outline</mat-icon>
+            <span>Passwords do not match</span>
+          </div>
+
+          <!-- Terms and Conditions -->
+          <div class="terms-checkbox">
+            <mat-checkbox formControlName="agreeTerms" color="primary">
+              I agree to the <a routerLink="/terms" target="_blank">Terms of Service</a> and <a routerLink="/privacy" target="_blank">Privacy Policy</a>
+            </mat-checkbox>
+            <mat-error *ngIf="submitted && f['agreeTerms'].errors">
+              You must agree to the terms to continue
+            </mat-error>
+          </div>
+
+          <!-- Submit Button -->
+          <button mat-raised-button color="primary" type="submit" class="full-width submit-button" [disabled]="loading">
+            <mat-icon>person_add</mat-icon>
+            <span>Create Account</span>
+          </button>
+        </form>
+      </mat-card-content>
+
+      <mat-card-actions class="auth-card-actions">
+        <span>Already have an account?</span>
+        <a routerLink="/auth/login" mat-button color="accent">Sign In</a>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Extra Information -->
+    <div class="auth-footer">
+      <p>&copy; {{ 2023 | date:'yyyy' }} TechShop. All rights reserved.</p>
+      <div class="auth-links">
+        <a routerLink="/terms">Terms of Service</a>
+        <span class="separator">•</span>
+        <a routerLink="/privacy">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+</div> 

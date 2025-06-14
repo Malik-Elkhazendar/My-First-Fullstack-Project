@@ -1,0 +1,20 @@
+<div class="unauthorized-container">
+  <mat-card class="unauthorized-card">
+    <mat-card-content class="unauthorized-content">
+      <mat-icon class="unauthorized-icon">lock</mat-icon>
+      <h1>Unauthorized Access</h1>
+      <p>Sorry, you don't have permission to access this page.</p>
+      <p>Please log in with an account that has the required permissions.</p>
+      <div class="action-buttons">
+        <button mat-raised-button color="primary" routerLink="/auth/login">
+          <mat-icon>login</mat-icon>
+          Sign In
+        </button>
+        <button mat-stroked-button routerLink="/">
+          <mat-icon>home</mat-icon>
+          Back to Home
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div> 

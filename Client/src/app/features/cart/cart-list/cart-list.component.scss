@@ -1,0 +1,74 @@
+// Cart component styles - using Tailwind CSS for main styling
+:host {
+  display: block;
+  background-color: #fcf8f8;
+  min-height: 100vh;
+}
+
+// Animation for cart items
+.cart-item-enter {
+  animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Custom scrollbar for quantity input
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+// Ensure Material icons work with Tailwind sizing
+mat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  }
+
+// Disabled button styles
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  background-color: inherit !important;
+}
+
+// Responsive table on mobile
+@media (max-width: 768px) {
+  table {
+    font-size: 12px;
+  }
+  
+  .w-12.h-12 {
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  .px-4 {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
+// Sticky positioning support
+.sticky {
+  position: -webkit-sticky;
+  position: sticky;
+} 

@@ -1,0 +1,435 @@
+<!-- Checkout Page -->
+<div class="checkout-page">
+  <!-- Header -->
+  <header class="checkout-header">
+  <div class="header-content">
+      <div class="brand-section">
+        <div class="brand-icon">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M12.0799 24L4 19.2479L9.95537 8.75216L18.04 13.4961L18.0446 4H29.9554L29.96 13.4961L38.0446 8.75216L44 19.2479L35.92 24L44 28.7521L38.0446 39.2479L29.96 34.5039L29.9554 44H18.0446L18.04 34.5039L9.95537 39.2479L4 28.7521L12.0799 24Z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
+        <h2 class="brand-name">Fashion Forward</h2>
+      </div>
+      
+      <div class="header-actions">
+        <div class="nav-links">
+          <a routerLink="/products/new-arrivals">New Arrivals</a>
+          <a routerLink="/products/clothing">Clothing</a>
+          <a routerLink="/products/shoes">Shoes</a>
+          <a routerLink="/products/accessories">Accessories</a>
+          <a routerLink="/products/sale">Sale</a>
+    </div>
+    
+        <div class="action-buttons">
+          <button class="icon-button" (click)="continueShopping()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+              <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z" />
+            </svg>
+          </button>
+          
+          <button class="icon-button" *ngIf="!isLoggedIn" (click)="goToLogin()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+              <path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z" />
+            </svg>
+          </button>
+          
+          <button class="icon-button" (click)="goToCart()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+              <path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z" />
+            </svg>
+          </button>
+      </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="checkout-container">
+    <div class="checkout-content">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a routerLink="/cart" class="breadcrumb-link">Cart</a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="breadcrumb-current">Checkout</span>
+</div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+        <div class="loading-spinner"></div>
+        <p>Loading checkout...</p>
+  </div>
+
+      <!-- Empty Cart State -->
+      <div *ngIf="!loading && cartItems.length === 0" class="empty-cart-state">
+        <h2>Your cart is empty</h2>
+        <p>Add some items to your cart to proceed with checkout.</p>
+        <button class="primary-button" (click)="continueShopping()">
+          Continue Shopping
+        </button>
+            </div>
+
+      <!-- Checkout Form -->
+      <div *ngIf="!loading && cartItems.length > 0" class="checkout-form">
+        <h1 class="page-title">Checkout</h1>
+
+        <form [formGroup]="checkoutForm" (ngSubmit)="processOrder()">
+          <!-- 1. Shipping Section -->
+          <section class="checkout-section">
+            <h3 class="section-title">1. Shipping</h3>
+            
+            <!-- Saved Addresses (for logged in users) -->
+            <div *ngIf="isLoggedIn && savedAddresses.length > 0" class="address-selection">
+              <div class="selection-toggle">
+                <label class="toggle-option">
+                  <input 
+                    type="radio" 
+                    name="addressOption" 
+                    [value]="true"
+                    (change)="onAddressSelectionChange(true)"
+                    class="toggle-radio"
+                  />
+                  <span class="toggle-text">Use saved address</span>
+                </label>
+                    
+                <label class="toggle-option">
+                  <input 
+                    type="radio" 
+                    name="addressOption" 
+                    [value]="false"
+                    (change)="onAddressSelectionChange(false)"
+                    class="toggle-radio"
+                    checked
+                  />
+                  <span class="toggle-text">Enter new address</span>
+                </label>
+                </div>
+
+              <!-- Saved Address Dropdown -->
+              <div *ngIf="checkoutForm.get('useExistingAddress')?.value" class="saved-addresses">
+                <div class="form-group">
+                  <label>
+                    <p class="form-label">Select Address</p>
+                    <select 
+                      class="form-input" 
+                      formControlName="selectedAddressId"
+                    >
+                      <option value="">Choose an address...</option>
+                      <option 
+                        *ngFor="let address of savedAddresses" 
+                        [value]="address.id"
+                      >
+                        {{ getAddressDisplayText(address) }}
+                      </option>
+                    </select>
+                  </label>
+            </div>
+          </div>
+            </div>
+
+            <!-- Address Form (shown when not using saved address) -->
+            <div *ngIf="!checkoutForm.get('useExistingAddress')?.value" class="address-form">
+              <div class="form-group">
+                <label>
+                  <p class="form-label">Email</p>
+                  <input 
+                    type="email" 
+                    class="form-input" 
+                    formControlName="email"
+                    placeholder=""
+                  />
+                </label>
+                <div *ngIf="checkoutForm.get('email')?.invalid && checkoutForm.get('email')?.touched" class="error-message">
+                  Please enter a valid email address
+                        </div>
+                      </div>
+
+            <div class="form-group">
+              <label>
+                <p class="form-label">First Name</p>
+                <input 
+                  type="text" 
+                  class="form-input" 
+                  formControlName="firstName"
+                  placeholder=""
+                />
+              </label>
+              <div *ngIf="checkoutForm.get('firstName')?.invalid && checkoutForm.get('firstName')?.touched" class="error-message">
+                First name is required
+                      </div>
+                    </div>
+
+            <div class="form-group">
+              <label>
+                <p class="form-label">Last Name</p>
+                <input 
+                  type="text" 
+                  class="form-input" 
+                  formControlName="lastName"
+                  placeholder=""
+                />
+              </label>
+              <div *ngIf="checkoutForm.get('lastName')?.invalid && checkoutForm.get('lastName')?.touched" class="error-message">
+                Last name is required
+                        </div>
+                      </div>
+
+            <div class="form-group">
+              <label>
+                <p class="form-label">Address</p>
+                <input 
+                  type="text" 
+                  class="form-input" 
+                  formControlName="address"
+                  placeholder=""
+                />
+              </label>
+              <div *ngIf="checkoutForm.get('address')?.invalid && checkoutForm.get('address')?.touched" class="error-message">
+                Address is required
+                        </div>
+                      </div>
+
+            <div class="form-group">
+              <label>
+                <p class="form-label">City</p>
+                <input 
+                  type="text" 
+                  class="form-input" 
+                  formControlName="city"
+                  placeholder=""
+                />
+              </label>
+              <div *ngIf="checkoutForm.get('city')?.invalid && checkoutForm.get('city')?.touched" class="error-message">
+                              City is required
+                        </div>
+                      </div>
+
+                      <div class="form-row">
+              <label>
+                <p class="form-label">State</p>
+                <input 
+                  type="text" 
+                  class="form-input" 
+                  formControlName="state"
+                  placeholder=""
+                />
+                <div *ngIf="checkoutForm.get('state')?.invalid && checkoutForm.get('state')?.touched" class="error-message">
+                  State is required
+                        </div>
+              </label>
+              
+              <label>
+                <p class="form-label">Zip Code</p>
+                <input 
+                  type="text" 
+                  class="form-input" 
+                  formControlName="zipCode"
+                  placeholder=""
+                />
+                <div *ngIf="checkoutForm.get('zipCode')?.invalid && checkoutForm.get('zipCode')?.touched" class="error-message">
+                  Zip code is required
+                        </div>
+              </label>
+            </div>
+            </div>
+          </section>
+
+          <!-- 2. Payment Section -->
+          <section class="checkout-section">
+            <h3 class="section-title">2. Payment</h3>
+
+            <!-- Saved Payment Methods (for logged in users) -->
+            <div *ngIf="isLoggedIn && savedPaymentMethods.length > 0" class="payment-selection">
+              <div class="selection-toggle">
+                <label class="toggle-option">
+                  <input 
+                    type="radio" 
+                    name="paymentOption" 
+                    [value]="true"
+                    (change)="onPaymentSelectionChange(true)"
+                    class="toggle-radio"
+                  />
+                  <span class="toggle-text">Use saved payment method</span>
+                </label>
+
+                <label class="toggle-option">
+                  <input 
+                    type="radio" 
+                    name="paymentOption" 
+                    [value]="false"
+                    (change)="onPaymentSelectionChange(false)"
+                    class="toggle-radio"
+                    checked
+                  />
+                  <span class="toggle-text">Enter new payment method</span>
+                </label>
+                        </div>
+
+              <!-- Saved Payment Methods -->
+              <div *ngIf="checkoutForm.get('useExistingPayment')?.value" class="saved-payments">
+                <div class="form-group">
+                  <label>
+                    <p class="form-label">Select Payment Method</p>
+                    <select 
+                      class="form-input" 
+                      formControlName="selectedPaymentId"
+                    >
+                      <option value="">Choose a payment method...</option>
+                      <option 
+                        *ngFor="let payment of savedPaymentMethods" 
+                        [value]="payment.id"
+                      >
+                        {{ getPaymentDisplayText(payment) }}
+                      </option>
+                    </select>
+                  </label>
+                        </div>
+                      </div>
+                    </div>
+
+            <!-- Payment Method Selection (shown when not using saved payment) -->
+            <div *ngIf="!checkoutForm.get('useExistingPayment')?.value" class="payment-form">
+              <div class="payment-methods">
+                <label class="payment-method-option">
+                  <input 
+                    type="radio" 
+                    name="paymentMethod" 
+                    value="creditCard"
+                    formControlName="paymentMethod"
+                    class="payment-radio"
+                    checked
+                  />
+                  <div class="payment-method-content">
+                    <p>Credit Card</p>
+                  </div>
+                </label>
+
+                <label class="payment-method-option">
+                  <input 
+                    type="radio" 
+                    name="paymentMethod" 
+                    value="paypal"
+                    formControlName="paymentMethod"
+                    class="payment-radio"
+                  />
+                  <div class="payment-method-content">
+                    <p>PayPal</p>
+                      </div>
+                </label>
+                    </div>
+
+              <!-- Credit Card Details -->
+              <div *ngIf="checkoutForm.get('paymentMethod')?.value === 'creditCard'" class="card-details">
+              <div class="form-group">
+                <label>
+                  <p class="form-label">Card Number</p>
+                  <input 
+                    type="text" 
+                    class="form-input" 
+                    formControlName="cardNumber"
+                    placeholder="Enter card number"
+                    maxlength="19"
+                  />
+                </label>
+                <div *ngIf="checkoutForm.get('cardNumber')?.invalid && checkoutForm.get('cardNumber')?.touched" class="error-message">
+                  Please enter a valid card number
+                      </div>
+                    </div>
+
+                    <div class="form-row">
+                <label>
+                  <p class="form-label">Expiration Date</p>
+                  <input 
+                    type="text" 
+                    class="form-input" 
+                    formControlName="expiryDate"
+                    placeholder="MM/YY"
+                    maxlength="5"
+                  />
+                  <div *ngIf="checkoutForm.get('expiryDate')?.invalid && checkoutForm.get('expiryDate')?.touched" class="error-message">
+                    Please enter expiry date
+                      </div>
+                </label>
+
+                <label>
+                  <p class="form-label">CVV</p>
+                  <input 
+                    type="text" 
+                    class="form-input" 
+                    formControlName="cvv"
+                    placeholder="123"
+                    maxlength="4"
+                  />
+                  <div *ngIf="checkoutForm.get('cvv')?.invalid && checkoutForm.get('cvv')?.touched" class="error-message">
+                    Please enter CVV
+                  </div>
+                </label>
+            </div>
+          </div>
+    </div>
+          </section>
+
+          <!-- 3. Review Section -->
+          <section class="checkout-section">
+            <h3 class="section-title">3. Review</h3>
+            
+            <div class="order-items">
+              <div *ngFor="let item of cartItems" class="order-item">
+                <div class="item-image">
+                  <img 
+                    [src]="getImageUrl(item.product.imageUrl)" 
+                    [alt]="item.product.name"
+                    (error)="handleImageError($event)"
+                  />
+              </div>
+                                 <div class="item-details">
+                   <p class="item-name">{{ item.product.name }}</p>
+                   <p class="item-variant">{{ item.product.category }}</p>
+                   <p class="item-quantity">Qty: {{ item.quantity }}</p>
+              </div>
+              <div class="item-price">
+                ${{ formatPrice(item.product.price * item.quantity) }}
+              </div>
+            </div>
+          </div>
+
+            <!-- Order Summary -->
+            <div class="order-summary">
+              <div class="summary-row">
+                <span class="summary-label">Subtotal</span>
+                <span class="summary-value">${{ formatPrice(subtotal) }}</span>
+              </div>
+              
+              <div class="summary-row">
+                <span class="summary-label">Shipping</span>
+                <span class="summary-value">${{ formatPrice(shipping) }}</span>
+            </div>
+              
+              <div class="summary-row total-row">
+                <span class="summary-label">Total</span>
+                <span class="summary-value">${{ formatPrice(total) }}</span>
+            </div>
+          </div>
+
+            <!-- Place Order Button -->
+            <div class="order-actions">
+              <button 
+                type="submit" 
+                class="place-order-button"
+                [disabled]="processingOrder || checkoutForm.invalid"
+              >
+                            <span *ngIf="!processingOrder">Review Order</span>
+            <span *ngIf="processingOrder">Processing...</span>
+              </button>
+            </div>
+          </section>
+        </form>
+          </div>
+    </div>
+  </div>
+</div> 

@@ -1,0 +1,505 @@
+// Breakpoints
+$mobile: 768px;
+$tablet: 1024px;
+$desktop: 1200px;
+
+// Footer styling with responsive design like major e-commerce sites
+.app-footer {
+  background: linear-gradient(135deg, var(--color-primary-800) 0%, var(--color-primary-900) 100%);
+  color: #ffffff;
+  margin-top: auto;
+  
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+    
+    @media (min-width: $tablet) {
+      padding: 0 24px;
+    }
+    
+    @media (min-width: $desktop) {
+      padding: 0 32px;
+    }
+  }
+  
+  // Main footer content
+  .footer-main {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 32px 0;
+    
+    @media (min-width: 480px) {
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    
+    @media (min-width: $mobile) {
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 32px;
+      padding: 48px 0;
+    }
+    
+    @media (min-width: $tablet) {
+      grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
+      gap: 40px;
+    }
+    
+    @media (min-width: $desktop) {
+      gap: 48px;
+    }
+  }
+  
+  // Footer sections
+  .footer-section {
+    display: flex;
+    flex-direction: column;
+    
+    &.brand-section {
+      grid-column: 1 / -1;
+      
+      @media (min-width: $mobile) {
+        grid-column: 1 / 2;
+      }
+      
+      .footer-brand {
+        display: flex;
+        align-items: center;
+        margin-bottom: 16px;
+        
+        mat-icon {
+          font-size: 28px;
+          width: 28px;
+          height: 28px;
+          margin-right: 8px;
+          color: var(--color-accent-400);
+          
+          @media (min-width: $tablet) {
+            font-size: 32px;
+            width: 32px;
+            height: 32px;
+          }
+        }
+        
+        .brand-name {
+          font-size: 20px;
+          font-weight: 700;
+          letter-spacing: 0.5px;
+          
+          @media (min-width: $tablet) {
+            font-size: 24px;
+          }
+        }
+      }
+      
+      .brand-description {
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.6;
+        margin-bottom: 24px;
+        font-size: 14px;
+        
+        @media (min-width: $tablet) {
+          font-size: 15px;
+          margin-bottom: 32px;
+        }
+      }
+      
+      .social-links {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        
+        @media (min-width: $mobile) {
+          justify-content: flex-start;
+        }
+        
+        @media (min-width: $tablet) {
+          gap: 12px;
+        }
+        
+        button {
+          width: 40px;
+          height: 40px;
+          border-radius: 8px;
+          background-color: rgba(255, 255, 255, 0.1);
+          color: rgba(255, 255, 255, 0.8);
+          transition: all 0.3s ease;
+          
+          @media (min-width: $tablet) {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+          }
+          
+          &:hover {
+            background-color: var(--color-accent-500);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+          }
+          
+          mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+            
+            @media (min-width: $tablet) {
+              font-size: 22px;
+              width: 22px;
+              height: 22px;
+            }
+          }
+        }
+      }
+    }
+    
+    // Hide non-brand sections on mobile, show on larger screens
+    &:not(.brand-section):not(.newsletter-section) {
+      display: none;
+      
+      @media (min-width: $mobile) {
+        display: flex;
+      }
+    }
+    
+    // Newsletter section visible on mobile
+    &.newsletter-section {
+      grid-column: 1 / -1;
+      
+      @media (min-width: $tablet) {
+        grid-column: 5 / 6;
+      }
+    }
+  }
+  
+  // Footer titles
+  .footer-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    
+    @media (min-width: $tablet) {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+  }
+  
+  // Footer links
+  .footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    
+    li {
+      margin-bottom: 10px;
+      
+      @media (min-width: $tablet) {
+        margin-bottom: 12px;
+      }
+      
+      a {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 400;
+        transition: all 0.2s ease;
+        display: inline-block;
+        
+        @media (min-width: $tablet) {
+          font-size: 15px;
+        }
+        
+        &:hover {
+          color: var(--color-accent-400);
+          transform: translateX(4px);
+        }
+      }
+    }
+  }
+  
+  // Newsletter section
+  .newsletter-section {
+    .newsletter-description {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      text-align: center;
+      
+      @media (min-width: $mobile) {
+        text-align: left;
+      }
+      
+      @media (min-width: $tablet) {
+        font-size: 15px;
+      }
+    }
+    
+    .newsletter-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      
+      @media (min-width: 480px) {
+        flex-direction: row;
+        gap: 8px;
+      }
+      
+      @media (min-width: $mobile) {
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      @media (min-width: 900px) {
+        flex-direction: row;
+        gap: 8px;
+      }
+      
+      .newsletter-input {
+        flex: 1;
+        
+        ::ng-deep {
+          .mat-mdc-text-field-wrapper {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+          }
+          
+          .mat-mdc-form-field-outline {
+            color: rgba(255, 255, 255, 0.3);
+          }
+          
+          .mat-mdc-form-field-label {
+            color: rgba(255, 255, 255, 0.7);
+          }
+          
+          input {
+            color: white;
+            font-size: 14px;
+            
+            &::placeholder {
+              color: rgba(255, 255, 255, 0.5);
+            }
+          }
+          
+          .mat-mdc-form-field-icon-suffix {
+            color: rgba(255, 255, 255, 0.7);
+          }
+        }
+      }
+      
+      .newsletter-button {
+        padding: 12px 20px;
+        font-weight: 600;
+        border-radius: 8px;
+        background-color: var(--color-accent-500);
+        white-space: nowrap;
+        font-size: 14px;
+        
+        @media (min-width: $tablet) {
+          padding: 12px 24px;
+          font-size: 15px;
+        }
+        
+        &:hover {
+          background-color: var(--color-accent-600);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+      }
+    }
+  }
+  
+  // Footer bottom
+  .footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px 0;
+    
+    @media (min-width: $tablet) {
+      padding: 24px 0;
+    }
+    
+    .footer-bottom-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 16px;
+      
+      @media (min-width: $mobile) {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
+        gap: 20px;
+      }
+      
+      @media (min-width: $tablet) {
+        gap: 24px;
+      }
+    }
+    
+    .copyright {
+      order: 2;
+      
+      @media (min-width: $mobile) {
+        order: 1;
+      }
+      
+      p {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 13px;
+        margin: 0;
+        
+        @media (min-width: $tablet) {
+          font-size: 14px;
+        }
+      }
+    }
+    
+    .footer-bottom-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      order: 1;
+      
+      @media (min-width: $mobile) {
+        order: 2;
+        gap: 8px;
+      }
+      
+      a {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        font-size: 13px;
+        transition: color 0.2s ease;
+        
+        @media (min-width: $tablet) {
+          font-size: 14px;
+        }
+        
+        &:hover {
+          color: var(--color-accent-400);
+        }
+      }
+      
+      .separator {
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 12px;
+      }
+    }
+    
+    .payment-methods {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      order: 3;
+      
+      @media (min-width: $mobile) {
+        justify-content: flex-end;
+      }
+      
+      .payment-label {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 13px;
+        margin-right: 4px;
+        
+        @media (min-width: $tablet) {
+          font-size: 14px;
+        }
+      }
+      
+      .payment-icons {
+        display: flex;
+        gap: 4px;
+        
+        @media (min-width: $tablet) {
+          gap: 6px;
+        }
+        
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+          color: rgba(255, 255, 255, 0.7);
+          
+          @media (min-width: $tablet) {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Mobile-specific improvements
+@media (max-width: 479px) {
+  .app-footer {
+    .footer-main {
+      padding: 24px 0;
+      gap: 20px;
+    }
+    
+    .footer-section {
+      &.brand-section {
+        text-align: center;
+        
+        .brand-description {
+          margin-bottom: 20px;
+        }
+      }
+      
+      &.newsletter-section {
+        .newsletter-description {
+          font-size: 13px;
+        }
+        
+        .newsletter-form {
+          .newsletter-input {
+            ::ng-deep input {
+              font-size: 16px; // Prevent zoom on iOS
+            }
+          }
+        }
+      }
+    }
+    
+    .footer-bottom {
+      padding: 16px 0;
+      
+      .footer-bottom-content {
+        gap: 12px;
+      }
+      
+      .footer-bottom-links {
+        gap: 4px;
+        
+        a {
+          font-size: 12px;
+        }
+        
+        .separator {
+          font-size: 10px;
+        }
+      }
+      
+      .payment-methods {
+        .payment-label {
+          font-size: 12px;
+        }
+        
+        .payment-icons mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+      }
+    }
+  }
+}

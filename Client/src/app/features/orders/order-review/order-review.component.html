@@ -1,0 +1,234 @@
+<!-- Order Review Page -->
+<div class="order-review-page">
+  <!-- Header -->
+  <header class="review-header">
+    <div class="header-content">
+      <div class="brand-section">
+        <div class="brand-icon">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M12.0799 24L4 19.2479L9.95537 8.75216L18.04 13.4961L18.0446 4H29.9554L29.96 13.4961L38.0446 8.75216L44 19.2479L35.92 24L44 28.7521L38.0446 39.2479L29.96 34.5039L29.9554 44H18.0446L18.04 34.5039L9.95537 39.2479L4 28.7521L12.0799 24Z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
+        <h2 class="brand-name">Fashion Forward</h2>
+      </div>
+      
+      <div class="header-actions">
+        <div class="nav-links">
+          <a routerLink="/products/new-arrivals">New Arrivals</a>
+          <a routerLink="/products/clothing">Clothing</a>
+          <a routerLink="/products/shoes">Shoes</a>
+          <a routerLink="/products/accessories">Accessories</a>
+          <a routerLink="/products/sale">Sale</a>
+        </div>
+        
+        <div class="action-buttons">
+          <button class="icon-button" (click)="continueShopping()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+              <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z" />
+            </svg>
+          </button>
+          
+          <button class="icon-button" *ngIf="!isLoggedIn" (click)="goToCart()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+              <path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z" />
+            </svg>
+          </button>
+          
+          <button class="icon-button" (click)="goToCart()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+              <path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="review-container">
+    <div class="review-content">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a routerLink="/cart" class="breadcrumb-link">Shopping Bag</a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="breadcrumb-current">Review Order</span>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="loading-state">
+        <div class="loading-spinner"></div>
+        <p>Loading order review...</p>
+      </div>
+
+      <!-- Order Review Content -->
+      <div *ngIf="!loading && reviewData" class="review-form">
+        <h1 class="page-title">Review Order</h1>
+
+        <!-- Shipping Address Section -->
+        <section class="review-section">
+          <h2 class="section-title">Shipping Address</h2>
+          <div class="address-card">
+            <div class="address-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                <path d="M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z" />
+              </svg>
+            </div>
+            <div class="address-details">
+              <p class="address-name">{{ formatAddress(reviewData.shippingAddress) }}</p>
+              <p class="address-phone" *ngIf="reviewData.shippingAddress.phoneNumber">
+                Phone: {{ reviewData.shippingAddress.phoneNumber }}
+              </p>
+            </div>
+            <button class="edit-button" (click)="goBackToCheckout()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="currentColor" viewBox="0 0 256 256">
+                <path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z" />
+              </svg>
+              Edit
+            </button>
+          </div>
+        </section>
+
+        <!-- Payment Method Section -->
+        <section class="review-section">
+          <h2 class="section-title">Payment Method</h2>
+          <div class="payment-card">
+            <div class="payment-icon">
+              <!-- Visa Brand Icon -->
+              <div class="card-brand" *ngIf="reviewData.paymentMethod.brand === 'Visa'">
+                <svg width="40" height="24" viewBox="0 0 40 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="40" height="24" rx="4" fill="#1A1F71"/>
+                  <path d="M16.1 18.5L18.2 5.5H21.4L19.3 18.5H16.1ZM13.1 5.5L10.2 14.8L9.8 12.9L8.7 7.4C8.5 6.5 7.8 5.5 6.8 5.5H1.1L1 5.8C2.4 6.1 3.7 6.6 4.8 7.3L7.4 18.5H10.8L15.6 5.5H13.1ZM32.9 18.5H36L33.7 5.5H30.9C30.1 5.5 29.4 6 29.1 6.7L24.5 18.5H27.9L28.6 16.7H32.7L32.9 18.5ZM29.4 14.1L31.1 9.8L32.1 14.1H29.4Z" fill="white"/>
+                </svg>
+              </div>
+              
+              <!-- Mastercard Brand Icon -->
+              <div class="card-brand" *ngIf="reviewData.paymentMethod.brand === 'Mastercard'">
+                <svg width="40" height="24" viewBox="0 0 40 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="40" height="24" rx="4" fill="#EB001B"/>
+                  <circle cx="15" cy="12" r="7" fill="#EB001B"/>
+                  <circle cx="25" cy="12" r="7" fill="#F79E1B"/>
+                  <path d="M20 7.5C21.5 8.8 22.5 10.3 22.5 12C22.5 13.7 21.5 15.2 20 16.5C18.5 15.2 17.5 13.7 17.5 12C17.5 10.3 18.5 8.8 20 7.5Z" fill="#FF5F00"/>
+                </svg>
+              </div>
+              
+              <!-- American Express Brand Icon -->
+              <div class="card-brand" *ngIf="reviewData.paymentMethod.brand === 'American Express' || reviewData.paymentMethod.brand === 'Amex'">
+                <svg width="40" height="24" viewBox="0 0 40 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="40" height="24" rx="4" fill="#006FCF"/>
+                  <path d="M8.5 8.5H11.5L12.5 10.5L13.5 8.5H16.5L14.5 12L16.5 15.5H13.5L12.5 13.5L11.5 15.5H8.5L10.5 12L8.5 8.5ZM18 8.5H24V10H20V11H23.5V12.5H20V14H24V15.5H18V8.5Z" fill="white"/>
+                </svg>
+              </div>
+              
+              <!-- PayPal Icon -->
+              <div class="card-brand" *ngIf="reviewData.paymentMethod.type === PaymentMethod.PayPal">
+                <svg width="40" height="24" viewBox="0 0 40 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="40" height="24" rx="4" fill="#003087"/>
+                  <path d="M12.5 6C15.5 6 17 7.5 17 10C17 12.5 15.5 14 12.5 14H10.5L9.5 18H7L9 6H12.5ZM11.5 8L10.8 12H12.5C13.8 12 14.5 11.3 14.5 10C14.5 8.7 13.8 8 12.5 8H11.5ZM19.5 6C22.5 6 24 7.5 24 10C24 12.5 22.5 14 19.5 14H17.5L16.5 18H14L16 6H19.5ZM18.5 8L17.8 12H19.5C20.8 12 21.5 11.3 21.5 10C21.5 8.7 20.8 8 19.5 8H18.5Z" fill="#0070BA"/>
+                  <path d="M26 6C29 6 30.5 7.5 30.5 10C30.5 12.5 29 14 26 14H24L23 18H20.5L22.5 6H26ZM25 8L24.3 12H26C27.3 12 28 11.3 28 10C28 8.7 27.3 8 26 8H25Z" fill="#009CDE"/>
+                </svg>
+              </div>
+              
+              <!-- Generic Credit Card Icon -->
+              <svg *ngIf="!reviewData.paymentMethod.brand || (reviewData.paymentMethod.brand !== 'Visa' && reviewData.paymentMethod.brand !== 'Mastercard' && reviewData.paymentMethod.brand !== 'American Express' && reviewData.paymentMethod.brand !== 'Amex' && reviewData.paymentMethod.type !== PaymentMethod.PayPal)" 
+                   xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                <path d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm0,16V88H32V64Zm0,128H32V104H224v88Zm-16-24a8,8,0,0,1-8,8H176a8,8,0,0,1,0-16h24A8,8,0,0,1,208,168Zm-64,0a8,8,0,0,1-8,8H120a8,8,0,0,1,0-16h16A8,8,0,0,1,144,168Z" />
+              </svg>
+            </div>
+            <div class="payment-details">
+              <p class="payment-method">{{ reviewData.paymentMethod.displayText }}</p>
+              <p class="payment-expiry" *ngIf="reviewData.paymentMethod.expiryDate">
+                Expires {{ reviewData.paymentMethod.expiryDate }}
+              </p>
+            </div>
+            <button class="edit-button" (click)="goBackToCheckout()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="currentColor" viewBox="0 0 256 256">
+                <path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z" />
+              </svg>
+              Edit
+            </button>
+          </div>
+        </section>
+
+        <!-- Items Section -->
+        <section class="review-section">
+          <h2 class="section-title">Items</h2>
+          <div class="items-list">
+            <div *ngFor="let item of reviewData.cartItems; trackBy: trackByItemId" class="item-card">
+              <div class="item-image">
+                <img 
+                  [src]="getImageUrl(item.product.imageUrl)" 
+                  [alt]="item.product.name"
+                  (error)="handleImageError($event)"
+                />
+              </div>
+              <div class="item-details">
+                <p class="item-name">{{ item.product.name }}</p>
+                <p class="item-quantity">Quantity: {{ item.quantity }}</p>
+                <p class="item-category">{{ item.product.category }}</p>
+              </div>
+              <div class="item-price">
+                <p class="price">${{ formatPrice(item.product.price * item.quantity) }}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Order Summary Section -->
+        <section class="review-section">
+          <h2 class="section-title">Order Summary</h2>
+          <div class="summary-card">
+            <div class="summary-row">
+              <span class="summary-label">Subtotal</span>
+              <span class="summary-value">${{ formatPrice(reviewData.orderSummary.subtotal) }}</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Shipping</span>
+              <span class="summary-value">
+                <span *ngIf="reviewData.orderSummary.shipping === 0">Free</span>
+                <span *ngIf="reviewData.orderSummary.shipping > 0">${{ formatPrice(reviewData.orderSummary.shipping) }}</span>
+              </span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Taxes</span>
+              <span class="summary-value">${{ formatPrice(reviewData.orderSummary.tax) }}</span>
+            </div>
+            <div class="summary-row total-row">
+              <span class="summary-label">Total</span>
+              <span class="summary-value">${{ formatPrice(reviewData.orderSummary.total) }}</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons-section">
+          <button 
+            class="confirm-order-button" 
+            (click)="confirmOrder()"
+            [disabled]="processingOrder"
+          >
+            <span *ngIf="!processingOrder">Confirm Order</span>
+            <span *ngIf="processingOrder">Processing...</span>
+          </button>
+          
+          <button class="back-button" (click)="goBackToCheckout()">
+            Back to Checkout
+          </button>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="!loading && !reviewData" class="error-state">
+        <h2>Unable to load order review</h2>
+        <p>Please go back to checkout and try again.</p>
+        <button class="primary-button" (click)="goBackToCheckout()">
+          Back to Checkout
+        </button>
+      </div>
+    </div>
+  </div>
+</div> 

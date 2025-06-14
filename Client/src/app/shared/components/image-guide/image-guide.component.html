@@ -1,0 +1,65 @@
+<div class="image-guide-container">
+  <h2>Product Image Gallery</h2>
+  <p class="guide-description">
+    Browse our high-quality product images from our e-commerce catalog.
+  </p>
+
+  <div class="examples-grid">
+    <!-- Product items -->
+    <div class="example-item" *ngFor="let example of examples">
+      <h3>{{ example.title }}</h3>
+      <div class="image-container">
+        <img 
+          [src]="example.path" 
+          [alt]="example.title"
+          loading="lazy"
+          (error)="handleImageError($event)">
+      </div>
+      <p class="description">{{ example.description }}</p>
+      <div class="price-tag">
+        <span *ngIf="example.title === 'Smartphone X'">$799.99</span>
+        <span *ngIf="example.title === 'Laptop Pro'">$1,299.99</span>
+        <span *ngIf="example.title === 'Wireless Headphones'">$199.99</span>
+        <span *ngIf="example.title === 'Smartwatch'">$249.99</span>
+      </div>
+      <button class="add-to-cart-button">Add to Cart</button>
+    </div>
+  </div>
+
+  <h2 class="section-title">Image Handling Examples</h2>
+  <p class="guide-description">
+    This section demonstrates how our system handles various image scenarios.
+  </p>
+
+  <div class="examples-grid small">
+    <!-- Additional examples for demonstration -->
+    <div class="example-item" *ngFor="let example of additionalExamples">
+      <h3>{{ example.title }}</h3>
+      <div class="image-container">
+        <img 
+          *ngIf="example.title !== 'Generated Placeholder'"
+          [src]="getImageUrl(example.path)" 
+          [alt]="example.title"
+          loading="lazy"
+          (error)="handleImageError($event)">
+        
+        <img 
+          *ngIf="example.title === 'Generated Placeholder'"
+          [src]="getGeneratedPlaceholder('electronics')" 
+          [alt]="example.title">
+      </div>
+      <p class="description">{{ example.description }}</p>
+    </div>
+  </div>
+
+  <div class="guide-section">
+    <h3>Image Best Practices</h3>
+    <ul>
+      <li>All product images are high-quality and optimized for web</li>
+      <li>Images use consistent dimensions (aspect ratio)</li>
+      <li>Alt text is provided for accessibility</li>
+      <li>Lazy loading is enabled for better performance</li>
+      <li>Automatic fallback system for missing images</li>
+    </ul>
+  </div>
+</div> 

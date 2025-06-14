@@ -1,0 +1,112 @@
+<!-- Main Content -->
+<div class="px-40 flex flex-1 justify-center py-5" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
+  <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+    <!-- Page Title -->
+    <div class="flex flex-wrap justify-between gap-3 p-4">
+      <p class="text-[#171512] tracking-light text-[32px] font-bold leading-tight min-w-72">Orders</p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading$ | async" class="flex justify-center items-center py-20">
+      <div class="text-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#171512] mx-auto mb-4"></div>
+        <p class="text-[#837b67] text-lg">Loading your orders...</p>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!(loading$ | async) && filteredOrders.length === 0" class="text-center py-20">
+      <div class="mb-6">
+        <svg class="mx-auto h-24 w-24 text-[#837b67]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+        </svg>
+      </div>
+      <h3 class="text-[#171512] text-xl font-semibold mb-2">No orders found</h3>
+      <p class="text-[#837b67] text-base mb-6">You haven't placed any orders yet, or no orders match your current search.</p>
+      <button
+        class="bg-[#171512] text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-[#2a2520] transition-colors"
+        (click)="goToProducts()"
+      >
+        Start Shopping
+      </button>
+    </div>
+
+    <!-- Orders List -->
+    <div *ngIf="!(loading$ | async) && paginatedOrders.length > 0">
+      <div 
+        *ngFor="let order of paginatedOrders; trackBy: trackByOrderId" 
+        class="p-4 @container"
+      >
+        <div class="flex flex-col items-stretch justify-start rounded-xl @xl:flex-row @xl:items-start">
+          <!-- Product Image -->
+          <div class="w-full bg-center bg-no-repeat aspect-[4/5] bg-cover rounded-xl @xl:w-[200px] @xl:h-[250px] @xl:aspect-auto flex-shrink-0"
+               [style.background-image]="'url(' + getOrderProductImageUrl(order) + ')'"
+               [attr.aria-label]="getOrderProductImageAlt(order)">
+          </div>
+          
+          <!-- Order Details -->
+          <div class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-1 py-4 @xl:px-4">
+            <!-- Status -->
+            <p class="text-[#837b67] text-sm font-normal leading-normal">
+              {{ getStatusDisplay(order.status) }}
+            </p>
+            
+            <!-- Order Title -->
+            <p class="text-[#171512] text-lg font-bold leading-tight tracking-[-0.015em]">
+              {{ getOrderProductName(order) }}
+            </p>
+            
+            <!-- Order Details and Action -->
+            <div class="flex items-end gap-3 justify-between">
+              <div class="flex flex-col gap-1">
+                <!-- Product Details -->
+                <p class="text-[#837b67] text-base font-normal leading-normal">
+                  Order #{{ formatOrderNumber(order.orderNumber) }}
+                </p>
+                <p class="text-[#837b67] text-base font-normal leading-normal">
+                  {{ formatDate(order.createdAt) }} • {{ formatCurrency(order.totalAmount) }}
+                </p>
+                <p class="text-[#837b67] text-base font-normal leading-normal" *ngIf="getOrderItemsCount(order) > 1">
+                  {{ getOrderItemsCount(order) }} items
+                </p>
+              </div>
+              
+              <!-- Action Button -->
+              <button
+                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-8 px-4 bg-[#f3e8cd] text-[#171512] text-sm font-medium leading-normal hover:bg-[#f0e5c6] transition-colors"
+                (click)="onViewOrderDetails(order)"
+              >
+                <span class="truncate">View or Manage</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="totalCount > pageSize" class="flex justify-center mt-8 mb-4">
+        <div class="flex items-center gap-2">
+          <button
+            class="px-3 py-2 text-sm font-medium text-[#837b67] hover:text-[#171512] disabled:opacity-50 disabled:cursor-not-allowed"
+            [disabled]="currentPage === 0"
+            (click)="onPageChange({pageIndex: currentPage - 1, pageSize: pageSize, length: totalCount})"
+          >
+            Previous
+          </button>
+          
+          <span class="px-4 py-2 text-sm text-[#171512]">
+            Page {{ currentPage + 1 }} of {{ Math.ceil(totalCount / pageSize) }}
+          </span>
+          
+          <button
+            class="px-3 py-2 text-sm font-medium text-[#837b67] hover:text-[#171512] disabled:opacity-50 disabled:cursor-not-allowed"
+            [disabled]="(currentPage + 1) * pageSize >= totalCount"
+            (click)="onPageChange({pageIndex: currentPage + 1, pageSize: pageSize, length: totalCount})"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

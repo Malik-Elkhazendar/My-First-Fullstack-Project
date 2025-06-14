@@ -1,0 +1,191 @@
+<h2 mat-dialog-title>Checkout</h2>
+
+<div mat-dialog-content>
+  <!-- Progress Indicator -->
+  <div class="progress-container">
+    <div class="progress-steps">
+      <div class="step" [class.active]="currentStep >= 1">1</div>
+      <div class="step-connector"></div>
+      <div class="step" [class.active]="currentStep >= 2">2</div>
+      <div class="step-connector"></div>
+      <div class="step" [class.active]="currentStep >= 3">3</div>
+    </div>
+    <div class="step-labels">
+      <div class="step-label">Order Summary</div>
+      <div class="step-label">Shipping</div>
+      <div class="step-label">Payment</div>
+    </div>
+  </div>
+
+  <!-- Step 1: Order Summary -->
+  <div *ngIf="currentStep === 1" class="step-content">
+    <h3>Order Summary</h3>
+    
+    <div class="order-items">
+      <div class="order-item" *ngFor="let item of data.cartItems">
+        <div class="item-image">
+          <img 
+            [src]="getImageUrl(item.product.imageUrl)" 
+            [alt]="item.product.name"
+            loading="lazy"
+            (error)="handleImageError($event)">
+        </div>
+        <div class="item-details">
+          <h4>{{ item.product.name }}</h4>
+          <p>Quantity: {{ item.quantity }}</p>
+          <p *ngIf="item.product.inStock" class="in-stock">In Stock</p>
+          <p *ngIf="!item.product.inStock" class="out-of-stock">Out of Stock</p>
+        </div>
+        <div class="item-price">${{ formatPrice(item.product.price * item.quantity) }}</div>
+      </div>
+    </div>
+    
+    <mat-divider></mat-divider>
+    
+    <div class="order-total">
+      <span>Total:</span>
+      <span class="total-value">${{ formatPrice(data.cartTotal) }}</span>
+    </div>
+  </div>
+
+  <!-- Step 2: Shipping Information -->
+  <div *ngIf="currentStep === 2" class="step-content">
+    <h3>Shipping Information</h3>
+    
+    <!-- Address Selection for Logged Users -->
+    <div *ngIf="isLoggedIn" class="address-selection-section">
+      <div *ngIf="addressLoading" class="loading-container">
+        <mat-spinner diameter="30"></mat-spinner>
+        <p>Loading your saved addresses...</p>
+      </div>
+      
+      <div *ngIf="!addressLoading && getShippingAddresses().length > 0" class="saved-addresses">
+        <h4>Choose from your saved addresses:</h4>
+        
+        <mat-radio-group [(ngModel)]="useNewAddress" (change)="onAddressSelectionChange()" class="address-radio-group">
+          <!-- Saved Addresses -->
+          <div *ngFor="let address of getShippingAddresses()" class="address-option">
+            <mat-radio-button [value]="false" (click)="selectedAddressId = address.id; onAddressSelectionChange()">
+              <mat-card class="address-card" [class.selected]="!useNewAddress && selectedAddressId === address.id">
+                <mat-card-content>
+                  <div class="address-header">
+                    <h5>{{ address.label }}</h5>
+                    <span *ngIf="address.isDefault" class="default-badge">Default</span>
+                  </div>
+                  <p class="address-text">{{ formatAddressOneLine(address) }}</p>
+                </mat-card-content>
+              </mat-card>
+            </mat-radio-button>
+          </div>
+          
+          <!-- New Address Option -->
+          <div class="address-option">
+            <mat-radio-button [value]="true">
+              <mat-card class="address-card new-address-card" [class.selected]="useNewAddress">
+                <mat-card-content>
+                  <div class="new-address-content">
+                    <mat-icon>add_location</mat-icon>
+                    <h5>Use a new address</h5>
+                    <p>Enter a new shipping address</p>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </mat-radio-button>
+          </div>
+        </mat-radio-group>
+        
+        <mat-divider class="address-divider"></mat-divider>
+      </div>
+      
+      <div *ngIf="!addressLoading && getShippingAddresses().length === 0" class="no-addresses">
+        <mat-icon>location_off</mat-icon>
+        <h4>No saved addresses</h4>
+        <p>Enter your shipping address below</p>
+      </div>
+    </div>
+    
+    <!-- Guest User Message -->
+    <div *ngIf="!isLoggedIn" class="guest-message">
+      <mat-icon>info</mat-icon>
+      <p>Sign in to use saved addresses or continue as guest</p>
+    </div>
+    
+    <!-- Address Form -->
+    <div class="form-container" [class.disabled]="isLoggedIn && !useNewAddress && !!selectedAddressId">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Full Name</mat-label>
+        <input matInput [(ngModel)]="shippingInfo.fullName" required [readonly]="isLoggedIn && !useNewAddress && !!selectedAddressId">
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Address</mat-label>
+        <input matInput [(ngModel)]="shippingInfo.address" required [readonly]="isLoggedIn && !useNewAddress && !!selectedAddressId">
+      </mat-form-field>
+      
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>City</mat-label>
+          <input matInput [(ngModel)]="shippingInfo.city" required [readonly]="isLoggedIn && !useNewAddress && !!selectedAddressId">
+        </mat-form-field>
+        
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Zip Code</mat-label>
+          <input matInput [(ngModel)]="shippingInfo.zipCode" required [readonly]="isLoggedIn && !useNewAddress && !!selectedAddressId">
+        </mat-form-field>
+      </div>
+      
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Country</mat-label>
+        <input matInput [(ngModel)]="shippingInfo.country" required [readonly]="isLoggedIn && !useNewAddress && !!selectedAddressId">
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Step 3: Payment Information -->
+  <div *ngIf="currentStep === 3" class="step-content">
+    <h3>Payment Information</h3>
+    
+    <div class="form-container">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Card Number</mat-label>
+        <input matInput [(ngModel)]="paymentInfo.cardNumber" placeholder="**** **** **** ****" required>
+        <mat-icon matSuffix>credit_card</mat-icon>
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Cardholder Name</mat-label>
+        <input matInput [(ngModel)]="paymentInfo.cardHolder" required>
+      </mat-form-field>
+      
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Expiry Date</mat-label>
+          <input matInput [(ngModel)]="paymentInfo.expiryDate" placeholder="MM/YY" required>
+        </mat-form-field>
+        
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>CVV</mat-label>
+          <input matInput [(ngModel)]="paymentInfo.cvv" type="password" maxlength="3" required>
+        </mat-form-field>
+      </div>
+    </div>
+    
+    <div class="secure-payment-info">
+      <mat-icon>lock</mat-icon>
+      <span>Your payment information is secure and encrypted</span>
+    </div>
+  </div>
+
+  <!-- Processing Indicator -->
+  <div *ngIf="isProcessing" class="processing-container">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <p>Processing your order...</p>
+  </div>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button (click)="cancel()" [disabled]="isProcessing">Cancel</button>
+  <button mat-button (click)="previousStep()" *ngIf="currentStep > 1 && !isProcessing">Back</button>
+  <button mat-button color="primary" (click)="nextStep()" *ngIf="currentStep < totalSteps && !isProcessing">Next</button>
+  <button mat-raised-button color="primary" (click)="submitOrder()" *ngIf="currentStep === totalSteps && !isProcessing">Place Order</button>
+</div> 

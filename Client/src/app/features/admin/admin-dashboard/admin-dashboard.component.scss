@@ -1,0 +1,89 @@
+@use "sass:color";
+
+// Variables
+$purple-accent: #9c27b0;
+$background-dark: #121212;
+$card-bg: #1e1e1e;
+$text-primary: #ffffff;
+$text-secondary: rgba(255, 255, 255, 0.7);
+
+:host {
+  display: block;
+  background-color: $background-dark;
+  min-height: 100vh;
+  color: $text-primary;
+}
+
+.admin-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: $text-primary;
+  border-bottom: 2px solid $purple-accent;
+  padding-bottom: 0.5rem;
+}
+
+p {
+  color: $text-secondary;
+  margin-bottom: 2rem;
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.dashboard-card {
+  background-color: $card-bg;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: $text-primary;
+  }
+  
+  p {
+    color: $text-secondary;
+    margin-bottom: 1.5rem;
+  }
+  
+  button {
+    background-color: $purple-accent;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    
+    &:hover {
+      background-color: color.adjust($purple-accent, $lightness: -10%);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-container {
+    padding: 1rem;
+  }
+  
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+  }
+} 

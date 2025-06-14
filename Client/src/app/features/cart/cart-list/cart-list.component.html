@@ -1,0 +1,213 @@
+<!-- Breadcrumb Navigation -->
+<div class="flex flex-wrap gap-2 p-4">
+  <a class="text-[#837b67] text-base font-medium leading-normal" routerLink="/">Home</a>
+  <span class="text-[#837b67] text-base font-medium leading-normal">/</span>
+  <span class="text-[#171512] text-base font-medium leading-normal">Shopping Cart</span>
+</div>
+
+<!-- Page Header -->
+<div class="flex flex-wrap justify-between gap-3 p-4">
+  <p class="text-[#171512] tracking-light text-[32px] font-bold leading-tight min-w-72">Shopping Cart</p>
+    <div class="cart-summary-header" *ngIf="!loading && cartItems.length > 0">
+    <div class="flex items-center gap-2 px-3 py-1 bg-[#f4f3f1] rounded-full text-[#171512] text-sm font-medium">
+      <mat-icon class="text-[18px] w-[18px] h-[18px]">inventory_2</mat-icon>
+        <span>{{ cartItems.length }} {{ cartItems.length === 1 ? 'item' : 'items' }}</span>
+    </div>
+  </div>
+</div>
+
+<div class="cart-container px-4 pb-8">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex flex-col items-center justify-center py-20 text-center bg-white rounded-xl border border-[#e4e2dd]">
+    <mat-spinner diameter="50" class="mb-6"></mat-spinner>
+    <h2 class="text-[#171512] text-xl font-semibold mb-3">Loading your cart...</h2>
+    <p class="text-[#837b67] text-base">Please wait while we fetch your items</p>
+  </div>
+
+  <!-- Processing Checkout State -->
+  <div *ngIf="processingCheckout" class="flex flex-col items-center justify-center py-20 text-center bg-white rounded-xl border border-[#e4e2dd]">
+    <mat-spinner diameter="50" class="mb-6"></mat-spinner>
+    <h2 class="text-[#171512] text-xl font-semibold mb-3">Processing Your Order</h2>
+    <p class="text-[#837b67] text-base max-w-md">Please wait while we process your payment and prepare your order for shipment</p>
+  </div>
+
+  <!-- Empty Cart State -->
+  <div *ngIf="!loading && !processingCheckout && cartItems.length === 0" class="flex flex-col items-center justify-center py-20 text-center bg-white rounded-xl border border-[#e4e2dd]">
+    <mat-icon class="text-[80px] w-[80px] h-[80px] mb-6 text-[#837b67]">shopping_cart</mat-icon>
+    <h2 class="text-[#171512] text-xl font-semibold mb-3">Your cart is empty</h2>
+    <p class="text-[#837b67] text-base mb-8 max-w-md">Looks like you haven't added any products to your cart yet. Start shopping to fill it up!</p>
+    <button 
+      class="flex items-center gap-2 px-6 py-3 bg-[#f3e8cc] text-[#171512] text-sm font-bold rounded-xl hover:bg-[#f0e4c4] transition-colors"
+      routerLink="/products">
+      <mat-icon class="text-[18px] w-[18px] h-[18px]">shopping_bag</mat-icon>
+          Continue Shopping
+        </button>
+      </div>
+
+  <!-- Cart Items and Summary -->
+  <div *ngIf="!loading && !processingCheckout && cartItems.length > 0" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Cart Items Table -->
+    <div class="lg:col-span-2">
+      <div class="overflow-hidden rounded-xl border border-[#e4e2dd] bg-white">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-white border-b border-[#e4e2dd]">
+              <th class="px-4 py-3 text-left text-[#171512] text-sm font-medium leading-normal">Product</th>
+              <th class="px-4 py-3 text-left text-[#171512] text-sm font-medium leading-normal">Price</th>
+              <th class="px-4 py-3 text-left text-[#171512] text-sm font-medium leading-normal">Quantity</th>
+              <th class="px-4 py-3 text-left text-[#171512] text-sm font-medium leading-normal">Total</th>
+              <th class="px-4 py-3 text-left text-[#171512] text-sm font-medium leading-normal">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of cartItems; let i = index; trackBy: trackByProductId" 
+                class="border-t border-[#e4e2dd] cart-item-enter">
+              <!-- Product Image and Name -->
+              <td class="px-4 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-full overflow-hidden bg-[#f4f3f1] flex-shrink-0 cursor-pointer"
+                       (click)="viewProduct(item.product)">
+            <img 
+              [src]="getImageUrl(item.product.imageUrl)" 
+              [alt]="item.product.name"
+                      class="w-full h-full object-cover"
+              loading="lazy"
+                      (error)="handleImageError($event)">
+                  </div>
+                  <div class="min-w-0">
+                    <h3 class="text-[#171512] text-sm font-medium leading-normal cursor-pointer hover:text-[#837b67] transition-colors truncate"
+              (click)="viewProduct(item.product)">
+              {{ item.product.name }}
+            </h3>
+                    <div class="text-[#837b67] text-xs mt-1">{{ item.product.category }}</div>
+                    <div class="flex items-center gap-1 mt-1" 
+                         [class]="item.product.inStock ? 'text-green-600' : 'text-red-600'">
+                      <mat-icon class="text-[12px] w-[12px] h-[12px]">
+                        {{ item.product.inStock ? 'check_circle' : 'cancel' }}
+                      </mat-icon>
+                      <span class="text-xs">{{ item.product.inStock ? 'In Stock' : 'Out of Stock' }}</span>
+                    </div>
+            </div>
+          </div>
+              </td>
+
+              <!-- Price -->
+              <td class="px-4 py-4 text-[#837b67] text-sm font-normal leading-normal">
+                ${{ formatPrice(item.product.price) }}
+              </td>
+              
+              <!-- Quantity Controls -->
+              <td class="px-4 py-4">
+                <div class="flex items-center gap-2">
+                  <button 
+                    class="w-8 h-8 rounded-full bg-[#f4f3f1] hover:bg-[#e4e2dd] flex items-center justify-center transition-colors"
+                        (click)="decrementQuantity(item)" 
+                        [disabled]="item.quantity <= 1"
+                        [attr.aria-label]="'Decrease quantity for ' + item.product.name">
+                    <mat-icon class="text-[16px] w-[16px] h-[16px] text-[#171512]">remove</mat-icon>
+                </button>
+                  <input 
+                    type="number" 
+                       min="1" 
+                       max="99"
+                       [value]="item.quantity" 
+                       (change)="updateQuantity(item, $event)" 
+                    class="w-12 h-8 text-center border border-[#e4e2dd] rounded text-[#171512] text-sm focus:outline-none focus:border-[#837b67]"
+                       [attr.aria-label]="'Quantity for ' + item.product.name">
+                  <button 
+                    class="w-8 h-8 rounded-full bg-[#f4f3f1] hover:bg-[#e4e2dd] flex items-center justify-center transition-colors"
+                        (click)="incrementQuantity(item)"
+                        [attr.aria-label]="'Increase quantity for ' + item.product.name">
+                    <mat-icon class="text-[16px] w-[16px] h-[16px] text-[#171512]">add</mat-icon>
+                </button>
+              </div>
+              </td>
+
+              <!-- Total -->
+              <td class="px-4 py-4 text-[#171512] text-sm font-medium leading-normal">
+                ${{ formatPrice(item.product.price * item.quantity) }}
+              </td>
+              
+              <!-- Remove Button -->
+              <td class="px-4 py-4">
+                <button 
+                  class="w-8 h-8 rounded-full bg-red-50 hover:bg-red-100 flex items-center justify-center transition-colors"
+                      (click)="removeItem(item.product.id)" 
+                      [attr.aria-label]="'Remove ' + item.product.name + ' from cart'"
+                      matTooltip="Remove from cart">
+                  <mat-icon class="text-[16px] w-[16px] h-[16px] text-red-600">delete</mat-icon>
+              </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+
+      <!-- Cart Action Buttons -->
+      <div class="flex justify-end gap-3 mt-4">
+        <button
+          class="flex items-center justify-center px-4 py-2 bg-[#f4f3f1] text-[#171512] text-sm font-bold rounded-xl hover:bg-[#e4e2dd] transition-colors"
+          (click)="clearCart()"
+          aria-label="Clear all items from cart">
+          <span>Clear Cart</span>
+        </button>
+        <button
+          class="flex items-center justify-center px-4 py-2 bg-[#f3e8cc] text-[#171512] text-sm font-bold rounded-xl hover:bg-[#f0e4c4] transition-colors"
+          (click)="checkout()"
+          [attr.aria-label]="'Proceed to checkout with total of $' + formatPrice(cartTotal)">
+          <span>Checkout</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-xl border border-[#e4e2dd] p-6 sticky top-4">
+        <h3 class="text-[#171512] text-lg font-bold leading-tight mb-4">Order Summary</h3>
+        
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <p class="text-[#837b67] text-sm font-normal leading-normal">
+              Subtotal ({{ cartItems.length }} {{ cartItems.length === 1 ? 'item' : 'items' }})
+            </p>
+            <p class="text-[#171512] text-sm font-normal leading-normal">${{ formatPrice(cartTotal) }}</p>
+          </div>
+          
+          <div class="flex justify-between items-center">
+            <p class="text-[#837b67] text-sm font-normal leading-normal">Shipping</p>
+            <p class="text-[#171512] text-sm font-normal leading-normal">$5.99</p>
+      </div>
+
+          <div class="flex justify-between items-center">
+            <p class="text-[#837b67] text-sm font-normal leading-normal">Tax</p>
+            <p class="text-[#171512] text-sm font-normal leading-normal">${{ formatPrice(cartTotal * 0.07) }}</p>
+        </div>
+        
+          <div class="border-t border-[#e4e2dd] pt-3">
+            <div class="flex justify-between items-center">
+              <p class="text-[#171512] text-base font-semibold">Total</p>
+              <p class="text-[#171512] text-base font-semibold">${{ formatPrice(cartTotal + 5.99 + (cartTotal * 0.07)) }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-6 space-y-3">
+          <button
+            class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#f3e8cc] text-[#171512] text-sm font-bold rounded-xl hover:bg-[#f0e4c4] transition-colors"
+            (click)="checkout()"
+            [attr.aria-label]="'Proceed to checkout with total of $' + formatPrice(cartTotal + 5.99 + (cartTotal * 0.07))">
+            <mat-icon class="text-[18px] w-[18px] h-[18px]">payment</mat-icon>
+            <span>Proceed to Checkout</span>
+          </button>
+
+          <button
+            class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#f4f3f1] text-[#171512] text-sm font-bold rounded-xl hover:bg-[#e4e2dd] transition-colors"
+            routerLink="/products">
+            <mat-icon class="text-[18px] w-[18px] h-[18px]">shopping_bag</mat-icon>
+            <span>Continue Shopping</span>
+          </button>
+        </div>
+      </div>
+      </div>
+  </div>
+</div> 

@@ -1,0 +1,206 @@
+/* Urban Threads Orders List Styles */
+
+/* Global font family override */
+* {
+  font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif !important;
+}
+
+/* Mobile responsive adjustments */
+    @media (max-width: 768px) {
+  .px-40 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    }
+  
+  header {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .flex.items-center.gap-9 {
+    display: none;
+      }
+
+  .flex.flex-1.justify-end.gap-8 {
+    flex: none;
+    width: 100%;
+      justify-content: space-between;
+    margin-top: 1rem;
+      }
+
+  .min-w-40 {
+    min-width: 200px;
+        flex: 1;
+  }
+  
+  /* Force mobile layout for order cards */
+  .order-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    }
+
+  .order-image {
+    width: 100% !important;
+    min-width: auto !important;
+    max-width: none !important;
+  }
+  
+  .order-details {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+      }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 24px !important;
+          }
+
+  .min-w-72 {
+    min-width: auto;
+  }
+}
+
+/* Order card styles */
+.order-card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.order-card:hover {
+        transform: translateY(-2px);
+    }
+
+/* Image loading states */
+.aspect-video {
+  background-color: #f4f3f1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23837b67' viewBox='0 0 256 256'%3E%3Cpath d='M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40ZM40,56H216V200H40ZM144,88a16,16,0,1,1-16-16A16,16,0,0,1,144,88Zm-16,32a8,8,0,0,0-8,8v48a8,8,0,0,0,16,0V128A8,8,0,0,0,128,120Z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 48px 48px;
+            }
+
+/* Button hover effects */
+button:hover {
+                transform: translateY(-1px);
+  transition: all 0.2s ease-in-out;
+              }
+
+button {
+  transition: all 0.2s ease-in-out;
+              }
+
+/* Loading spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+        }
+      }
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+          }
+
+/* Focus states for accessibility */
+button:focus,
+input:focus,
+a:focus {
+  outline: 2px solid #171512;
+  outline-offset: 2px;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+          }
+
+::-webkit-scrollbar-track {
+  background: #f4f3f1;
+              }
+
+::-webkit-scrollbar-thumb {
+  background: #837b67;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #171512;
+              }
+
+/* Print styles */
+@media print {
+  header,
+  .flex.gap-2,
+        button {
+    display: none !important;
+  }
+  
+  .px-40 {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  
+  .bg-white {
+    background: white !important;
+  }
+  
+  * {
+    color: black !important;
+          }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .text-gray-600 {
+    color: #000 !important;
+            }
+
+  .bg-gray-100 {
+    background-color: #fff !important;
+    border: 1px solid #000 !important;
+            }
+  
+  .bg-yellow-100 {
+    background-color: #fff !important;
+    border: 2px solid #000 !important;
+            }
+          }
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dark mode support (if needed in future) */
+@media (prefers-color-scheme: dark) {
+  .bg-white {
+    background-color: #1a1a1a !important;
+  }
+  
+  .text-dark {
+    color: #f4f3f1 !important;
+  }
+
+  .text-gray-600 {
+    color: #a0a0a0 !important;
+  }
+
+  .border-gray-100 {
+    border-bottom-color: #333 !important;
+  }
+
+  .bg-gray-100 {
+    background-color: #333 !important;
+  }
+
+  .bg-yellow-100 {
+    background-color: #444 !important;
+  }
+} 

@@ -1,0 +1,107 @@
+<footer class="app-footer">
+  <div class="footer-content">
+    <!-- Main Footer Content -->
+    <div class="footer-main">
+      <div class="footer-section brand-section">
+        <div class="footer-brand">
+          <mat-icon>shopping_bag</mat-icon>
+          <span class="brand-name">E-Commerce</span>
+        </div>
+        <p class="brand-description">
+          Your trusted online marketplace for quality products at great prices. 
+          Shop with confidence and enjoy fast, reliable delivery.
+        </p>
+        <div class="social-links">
+          <button mat-icon-button aria-label="Facebook">
+            <mat-icon>facebook</mat-icon>
+          </button>
+          <button mat-icon-button aria-label="Twitter">
+            <mat-icon>twitter</mat-icon>
+          </button>
+          <button mat-icon-button aria-label="Instagram">
+            <mat-icon>instagram</mat-icon>
+          </button>
+          <button mat-icon-button aria-label="LinkedIn">
+            <mat-icon>linkedin</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="footer-section">
+        <h3 class="footer-title">Shop</h3>
+        <ul class="footer-links">
+          <li><a routerLink="/products">All Products</a></li>
+          <li><a routerLink="/products?category=electronics">Electronics</a></li>
+          <li><a routerLink="/products?category=clothing">Clothing</a></li>
+          <li><a routerLink="/products?category=home">Home & Garden</a></li>
+          <li><a routerLink="/products?category=sports">Sports</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h3 class="footer-title">Customer Service</h3>
+        <ul class="footer-links">
+          <li><a routerLink="/help">Help Center</a></li>
+          <li><a routerLink="/contact">Contact Us</a></li>
+          <li><a routerLink="/shipping">Shipping Info</a></li>
+          <li><a routerLink="/returns">Returns & Exchanges</a></li>
+          <li><a routerLink="/track-order">Track Your Order</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h3 class="footer-title">Account</h3>
+        <ul class="footer-links">
+          <li><a routerLink="/auth/login">Sign In</a></li>
+          <li><a routerLink="/auth/register">Create Account</a></li>
+          <li><a routerLink="/profile">My Profile</a></li>
+          <li><a routerLink="/orders">Order History</a></li>
+          <li><a routerLink="/cart">Shopping Cart</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section newsletter-section">
+        <h3 class="footer-title">Stay Connected</h3>
+        <p class="newsletter-description">
+          Subscribe to our newsletter for exclusive deals and updates.
+        </p>
+        <div class="newsletter-form">
+          <mat-form-field appearance="outline" class="newsletter-input">
+            <mat-label>Email address</mat-label>
+            <input matInput type="email" placeholder="Enter your email">
+            <mat-icon matSuffix>email</mat-icon>
+          </mat-form-field>
+          <button mat-raised-button color="primary" class="newsletter-button">
+            Subscribe
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      <div class="footer-bottom-content">
+        <div class="copyright">
+          <p>&copy; {{ currentYear }} E-Commerce Platform. All rights reserved.</p>
+        </div>
+        <div class="footer-bottom-links">
+          <a routerLink="/privacy">Privacy Policy</a>
+          <span class="separator">•</span>
+          <a routerLink="/terms">Terms of Service</a>
+          <span class="separator">•</span>
+          <a routerLink="/cookies">Cookie Policy</a>
+          <span class="separator">•</span>
+          <a routerLink="/accessibility">Accessibility</a>
+        </div>
+        <div class="payment-methods">
+          <span class="payment-label">We accept:</span>
+          <div class="payment-icons">
+            <mat-icon>credit_card</mat-icon>
+            <mat-icon>account_balance</mat-icon>
+            <mat-icon>payment</mat-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

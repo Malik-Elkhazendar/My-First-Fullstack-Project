@@ -1,0 +1,194 @@
+<div class="app-container bg-[#fcf8f8] min-h-screen" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
+  <!-- Header -->
+  <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f3e7e8] px-10 py-3">
+    <div class="flex items-center gap-8">
+      <!-- Logo -->
+      <div class="flex items-center gap-4 text-[#1b0e0e]" routerLink="/" class="cursor-pointer">
+        <div class="size-4">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z"
+              fill="currentColor"
+            ></path>
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z"
+              fill="currentColor"
+            ></path>
+          </svg>
+        </div>
+        <h2 class="text-[#1b0e0e] text-lg font-bold leading-tight tracking-[-0.015em]">Fashion Forward</h2>
+      </div>
+
+    <!-- Desktop Navigation -->
+      <div class="flex items-center gap-9 hidden md:flex">
+        <a class="text-[#1b0e0e] text-sm font-medium leading-normal hover:text-[#994d51] transition-colors" routerLink="/products" [queryParams]="{category: 'new-arrivals'}">New Arrivals</a>
+        <a class="text-[#1b0e0e] text-sm font-medium leading-normal hover:text-[#994d51] transition-colors" routerLink="/products" [queryParams]="{category: 'clothing'}">Clothing</a>
+        <a class="text-[#1b0e0e] text-sm font-medium leading-normal hover:text-[#994d51] transition-colors" routerLink="/products" [queryParams]="{category: 'shoes'}">Shoes</a>
+        <a class="text-[#1b0e0e] text-sm font-medium leading-normal hover:text-[#994d51] transition-colors" routerLink="/products" [queryParams]="{category: 'accessories'}">Accessories</a>
+        <a class="text-[#1b0e0e] text-sm font-medium leading-normal hover:text-[#994d51] transition-colors" routerLink="/products" [queryParams]="{sale: 'true'}">Sale</a>
+      </div>
+    </div>
+
+    <!-- Right Side Actions -->
+    <div class="flex flex-1 justify-end gap-8">
+      <!-- Search Bar -->
+      <label class="flex flex-col min-w-40 !h-10 max-w-64 hidden md:flex">
+        <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+          <div class="text-[#994d51] flex border-none bg-[#f3e7e8] items-center justify-center pl-4 rounded-l-lg border-r-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+              <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
+            </svg>
+          </div>
+          <input
+            placeholder="Search"
+            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#1b0e0e] focus:outline-0 focus:ring-0 border-none bg-[#f3e7e8] focus:border-none h-full placeholder:text-[#994d51] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
+            [(ngModel)]="searchTerm"
+            (keyup.enter)="onSearch()"
+          />
+        </div>
+      </label>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-2">
+        <!-- Wishlist Button -->
+        <button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-[#f3e7e8] text-[#1b0e0e] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5 hover:bg-[#e8dde0] transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+            <path d="M178,32c-20.65,0-38.73,8.88-50,23.89C116.73,40.88,98.65,32,78,32A62.07,62.07,0,0,0,16,94c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,220.66,240,164,240,94A62.07,62.07,0,0,0,178,32ZM128,206.8C109.74,196.16,32,147.69,32,94A46.06,46.06,0,0,1,78,48c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,147.61,146.24,196.15,128,206.8Z"></path>
+          </svg>
+          </button>
+        
+        <!-- Cart Button -->
+        <button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-[#f3e7e8] text-[#1b0e0e] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5 hover:bg-[#e8dde0] transition-colors relative" routerLink="/cart">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+            <path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z"></path>
+          </svg>
+          <span *ngIf="cartItemCount > 0" class="absolute -top-2 -right-2 bg-[#e92932] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ cartItemCount }}</span>
+          </button>
+      </div>
+
+      <!-- User Profile -->
+      <div *ngIf="currentUser" class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 cursor-pointer" 
+           [style.background-image]="'url(' + (currentUser.profileImage || 'https://lh3.googleusercontent.com/aida-public/AB6AXuAmtgJ1aARrqmt16PvWhio7t85y7Lsa6aMUYu_pMRC6ohqBGF91525pmDpf9fr8IIvr2UEplFjQqJK2Ry_s26WXPffv0eOB9BJQxlZB7pUig51g3H6n8Gm_o3YIT-xfymEYoxpOgT9tpd2yC6UwMpCIZhnEULoC8eRtsMYCIr41COp9IWWAcNU1K7Dk5oGxl8STvnbI8KaenQXsn0zFjXShFreNQKv1umGWS1vIb10zX-e77YOwdgXPO3GRUJbTl9u0KGJrNsAj-tE') + ')'"
+           [matMenuTriggerFor]="userMenu">
+      </div>
+      
+      <!-- Login Button for Guests -->
+      <button *ngIf="!currentUser" class="text-[#1b0e0e] text-sm font-medium leading-normal hover:text-[#994d51] transition-colors" routerLink="/auth/login">
+        Sign In
+      </button>
+      
+      <!-- Mobile Menu Button -->
+      <button class="md:hidden flex items-center justify-center w-10 h-10" (click)="toggleMobileMenu()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256">
+          <path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- User Menu -->
+    <mat-menu #userMenu="matMenu" xPosition="before" class="user-menu">
+      <div class="menu-header p-4">
+        <div class="menu-user-info">
+          <div class="menu-user-details">
+            <div class="menu-user-name font-semibold">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</div>
+            <div class="menu-user-email text-sm text-[#994d51]">{{ currentUser?.email }}</div>
+          </div>
+        </div>
+      </div>
+      
+      <mat-divider></mat-divider>
+      
+      <button mat-menu-item routerLink="/profile">
+        <mat-icon>account_circle</mat-icon>
+        <span>My Profile</span>
+      </button>
+      
+      <button mat-menu-item routerLink="/orders">
+        <mat-icon>receipt_long</mat-icon>
+        <span>My Orders</span>
+      </button>
+      
+      <ng-container *ngIf="isAdmin()">
+        <mat-divider></mat-divider>
+        <button mat-menu-item routerLink="/admin">
+          <mat-icon>admin_panel_settings</mat-icon>
+          <span>Admin Dashboard</span>
+        </button>
+      </ng-container>
+      
+      <mat-divider></mat-divider>
+      
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>exit_to_app</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
+  </header>
+
+  <!-- Mobile Navigation Overlay -->
+  <div class="mobile-nav-overlay md:hidden" [class.open]="mobileMenuOpen" (click)="closeMobileMenu()">
+    <nav class="mobile-nav bg-[#fcf8f8] p-6" (click)="$event.stopPropagation()">
+      <div class="mobile-nav-content space-y-4">
+        <!-- Search on Mobile -->
+        <div class="mb-6">
+          <div class="flex w-full items-stretch rounded-lg h-10">
+            <div class="text-[#994d51] flex border-none bg-[#f3e7e8] items-center justify-center pl-4 rounded-l-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+                <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
+              </svg>
+        </div>
+            <input
+              placeholder="Search"
+              class="flex w-full min-w-0 flex-1 rounded-lg text-[#1b0e0e] bg-[#f3e7e8] h-full placeholder:text-[#994d51] px-4 rounded-l-none text-base font-normal leading-normal border-none focus:outline-none"
+              [(ngModel)]="searchTerm"
+              (keyup.enter)="onSearch(); closeMobileMenu()"
+            />
+        </div>
+      </div>
+
+        <!-- Navigation Links -->
+        <a class="block text-[#1b0e0e] text-base font-medium py-2" routerLink="/products" [queryParams]="{category: 'new-arrivals'}" (click)="closeMobileMenu()">New Arrivals</a>
+        <a class="block text-[#1b0e0e] text-base font-medium py-2" routerLink="/products" [queryParams]="{category: 'clothing'}" (click)="closeMobileMenu()">Clothing</a>
+        <a class="block text-[#1b0e0e] text-base font-medium py-2" routerLink="/products" [queryParams]="{category: 'shoes'}" (click)="closeMobileMenu()">Shoes</a>
+        <a class="block text-[#1b0e0e] text-base font-medium py-2" routerLink="/products" [queryParams]="{category: 'accessories'}" (click)="closeMobileMenu()">Accessories</a>
+        <a class="block text-[#1b0e0e] text-base font-medium py-2" routerLink="/products" [queryParams]="{sale: 'true'}" (click)="closeMobileMenu()">Sale</a>
+        
+        <div class="border-t border-[#f3e7e8] pt-4 mt-4">
+          <ng-container *ngIf="currentUser">
+            <a class="block text-[#1b0e0e] text-base font-medium py-2" routerLink="/profile" (click)="closeMobileMenu()">My Profile</a>
+            <a class="block text-[#1b0e0e] text-base font-medium py-2" routerLink="/orders" (click)="closeMobileMenu()">My Orders</a>
+            <button class="block text-[#1b0e0e] text-base font-medium py-2 w-full text-left" (click)="logout(); closeMobileMenu()">Sign Out</button>
+          </ng-container>
+          <ng-container *ngIf="!currentUser">
+            <a class="block text-[#1b0e0e] text-base font-medium py-2" routerLink="/auth/login" (click)="closeMobileMenu()">Sign In</a>
+            <a class="block text-[#1b0e0e] text-base font-medium py-2" routerLink="/auth/register" (click)="closeMobileMenu()">Create Account</a>
+          </ng-container>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <main class="flex-1">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Footer -->
+  <footer class="flex justify-center">
+    <div class="flex max-w-[960px] flex-1 flex-col">
+      <footer class="flex flex-col gap-6 px-5 py-10 text-center">
+        <div class="flex flex-wrap items-center justify-center gap-6 md:flex-row md:justify-around">
+          <a class="text-[#994d51] text-base font-normal leading-normal min-w-40 hover:text-[#1b0e0e] transition-colors" href="#">About Us</a>
+          <a class="text-[#994d51] text-base font-normal leading-normal min-w-40 hover:text-[#1b0e0e] transition-colors" href="#">Contact</a>
+          <a class="text-[#994d51] text-base font-normal leading-normal min-w-40 hover:text-[#1b0e0e] transition-colors" href="#">Privacy Policy</a>
+          <a class="text-[#994d51] text-base font-normal leading-normal min-w-40 hover:text-[#1b0e0e] transition-colors" href="#">Terms of Service</a>
+        </div>
+        <p class="text-[#994d51] text-base font-normal leading-normal">&#64;2024 Fashion Forward. All rights reserved.</p>
+      </footer>
+    </div>
+  </footer>
+</div>

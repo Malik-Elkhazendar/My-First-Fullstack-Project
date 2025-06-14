@@ -1,0 +1,311 @@
+<!-- Page Header -->
+<div class="page-header">
+  <div class="header-content">
+    <div class="header-left">
+      <button 
+        mat-icon-button 
+        class="back-button"
+        (click)="onBackToOrders()"
+        aria-label="Back to orders">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-text" *ngIf="order">
+        <h1 class="page-title">
+          <mat-icon>receipt_long</mat-icon>
+          Order {{ order.orderNumber }}
+        </h1>
+        <p class="page-subtitle">
+          Placed on {{ formatDate(order.createdAt) }} at {{ formatTime(order.createdAt) }}
+        </p>
+      </div>
+    </div>
+    
+    <div class="header-status" *ngIf="order">
+      <mat-chip [class]="'status-' + order.status.toLowerCase()">
+        <mat-icon>{{ getStatusIcon(order.status) }}</mat-icon>
+        {{ getStatusDisplay(order.status) }}
+      </mat-chip>
+    </div>
+  </div>
+</div>
+
+<div class="order-details-container">
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="loading-content">
+      <mat-spinner diameter="60"></mat-spinner>
+      <h2>Loading order details...</h2>
+      <p>Please wait while we fetch your order information</p>
+    </div>
+  </div>
+
+  <!-- Order Details Content -->
+  <div class="order-content" *ngIf="!loading && order">
+    
+    <!-- Order Summary Card -->
+    <mat-card class="summary-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>receipt</mat-icon>
+          Order Summary
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <mat-icon>calendar_today</mat-icon>
+            <div class="item-content">
+              <span class="label">Order Date</span>
+              <span class="value">{{ formatDate(order.createdAt) }}</span>
+            </div>
+          </div>
+          
+          <div class="summary-item">
+            <mat-icon>update</mat-icon>
+            <div class="item-content">
+              <span class="label">Last Updated</span>
+              <span class="value">{{ formatDate(order.updatedAt) }}</span>
+            </div>
+          </div>
+          
+          <div class="summary-item">
+            <mat-icon>payment</mat-icon>
+            <div class="item-content">
+              <span class="label">Payment Method</span>
+              <span class="value">{{ order.paymentInfo.paymentMethod | titlecase }}</span>
+            </div>
+          </div>
+          
+          <div class="summary-item">
+            <mat-icon>account_balance_wallet</mat-icon>
+            <div class="item-content">
+              <span class="label">Payment Status</span>
+              <span class="value payment-status" [class]="'payment-' + order.paymentInfo.paymentStatus.toLowerCase()">
+                {{ order.paymentInfo.paymentStatus | titlecase }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="summary-item" *ngIf="order.trackingNumber">
+            <mat-icon>local_shipping</mat-icon>
+            <div class="item-content">
+              <span class="label">Tracking Number</span>
+              <span class="value tracking-number">{{ order.trackingNumber }}</span>
+            </div>
+          </div>
+          
+          <div class="summary-item" *ngIf="order.estimatedDeliveryDate">
+            <mat-icon>schedule</mat-icon>
+            <div class="item-content">
+              <span class="label">Estimated Delivery</span>
+              <span class="value">{{ formatDate(order.estimatedDeliveryDate) }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Order Items Card -->
+    <mat-card class="items-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>inventory_2</mat-icon>
+          Order Items ({{ order.items.length }})
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="items-list">
+          <div class="order-item" *ngFor="let item of order.items; trackBy: trackByItemId">
+            <div class="item-image">
+              <img 
+                [src]="item.product.imageUrl" 
+                [alt]="item.product.name"
+                (error)="onImageError($event)"
+                loading="lazy">
+            </div>
+            
+            <div class="item-info">
+              <h3 class="item-name">{{ item.product.name }}</h3>
+              <p class="item-category">{{ item.product.category | uppercase }}</p>
+              <p class="item-description">{{ item.product.description }}</p>
+            </div>
+            
+            <div class="item-pricing">
+              <div class="quantity-info">
+                <span class="label">Qty: {{ item.quantity }}</span>
+              </div>
+              <div class="price-info">
+                <span class="unit-price">{{ formatCurrency(item.unitPrice) }} each</span>
+                <span class="total-price">{{ formatCurrency(item.totalPrice) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Two Column Layout for Addresses and Totals -->
+    <div class="two-column-layout">
+      <!-- Addresses Section -->
+      <div class="addresses-section">
+        <!-- Shipping Address -->
+        <mat-card class="address-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>local_shipping</mat-icon>
+              Shipping Address
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="address-content">
+              <div class="recipient-name">
+                {{ order.shippingAddress.firstName }} {{ order.shippingAddress.lastName }}
+              </div>
+              <div class="address-lines">
+                <div>{{ order.shippingAddress.addressLine1 }}</div>
+                <div *ngIf="order.shippingAddress.addressLine2">{{ order.shippingAddress.addressLine2 }}</div>
+                <div>{{ order.shippingAddress.city }}, {{ order.shippingAddress.state }} {{ order.shippingAddress.postalCode }}</div>
+                <div>{{ order.shippingAddress.country }}</div>
+              </div>
+              <div class="contact-info" *ngIf="order.shippingAddress.phoneNumber">
+                <mat-icon>phone</mat-icon>
+                {{ order.shippingAddress.phoneNumber }}
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Billing Address -->
+        <mat-card class="address-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>receipt</mat-icon>
+              Billing Address
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="address-content">
+              <div class="recipient-name">
+                {{ order.billingAddress.firstName }} {{ order.billingAddress.lastName }}
+              </div>
+              <div class="address-lines">
+                <div>{{ order.billingAddress.addressLine1 }}</div>
+                <div *ngIf="order.billingAddress.addressLine2">{{ order.billingAddress.addressLine2 }}</div>
+                <div>{{ order.billingAddress.city }}, {{ order.billingAddress.state }} {{ order.billingAddress.postalCode }}</div>
+                <div>{{ order.billingAddress.country }}</div>
+              </div>
+              <div class="contact-info" *ngIf="order.billingAddress.phoneNumber">
+                <mat-icon>phone</mat-icon>
+                {{ order.billingAddress.phoneNumber }}
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Order Totals Section -->
+      <div class="totals-section">
+        <mat-card class="totals-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>calculate</mat-icon>
+              Order Totals
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="totals-breakdown">
+              <div class="total-row">
+                <span class="label">Subtotal:</span>
+                <span class="value">{{ formatCurrency(order.subtotal) }}</span>
+              </div>
+              <div class="total-row">
+                <span class="label">Shipping:</span>
+                <span class="value">{{ formatCurrency(order.shippingCost) }}</span>
+              </div>
+              <div class="total-row">
+                <span class="label">Tax:</span>
+                <span class="value">{{ formatCurrency(order.taxAmount) }}</span>
+              </div>
+              <div class="total-row" *ngIf="order.discountAmount && order.discountAmount > 0">
+                <span class="label">Discount:</span>
+                <span class="value discount">-{{ formatCurrency(order.discountAmount) }}</span>
+              </div>
+              <mat-divider></mat-divider>
+              <div class="total-row final-total">
+                <span class="label">Total:</span>
+                <span class="value">{{ formatCurrency(order.totalAmount) }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Order Notes Section -->
+    <mat-card class="notes-card" *ngIf="order.notes">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>note</mat-icon>
+          Order Notes
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="notes-content">
+          <p>{{ order.notes }}</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Action Buttons Section -->
+    <div class="action-buttons">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        class="primary-action"
+        (click)="onBackToOrders()">
+        <mat-icon>list</mat-icon>
+        Back to Orders
+      </button>
+      
+      <button 
+        mat-raised-button 
+        color="accent" 
+        class="secondary-action"
+        (click)="onTrackOrder()" 
+        *ngIf="order.trackingNumber">
+        <mat-icon>local_shipping</mat-icon>
+        Track Package
+      </button>
+      
+      <button 
+        mat-stroked-button 
+        class="tertiary-action"
+        (click)="onReorderItems()" 
+        *ngIf="canReorder()">
+        <mat-icon>refresh</mat-icon>
+        Reorder Items
+      </button>
+      
+      <button 
+        mat-raised-button 
+        color="warn" 
+        class="destructive-action"
+        (click)="onCancelOrder()" 
+        *ngIf="canCancelOrder()">
+        <mat-icon>cancel</mat-icon>
+        Cancel Order
+      </button>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!loading && !order" class="error-state">
+    <mat-icon class="error-icon">error_outline</mat-icon>
+    <h2>Order Not Found</h2>
+    <p>The requested order could not be found or you don't have permission to view it.</p>
+    <button mat-raised-button color="primary" (click)="onBackToOrders()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Orders
+    </button>
+  </div>
+</div> 

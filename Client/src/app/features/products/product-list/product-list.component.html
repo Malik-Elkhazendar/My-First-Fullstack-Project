@@ -1,0 +1,218 @@
+<div class="px-4 md:px-40 flex flex-1 justify-center py-5 bg-[#fcf8f8] min-h-screen">
+  <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+    <!-- Breadcrumbs -->
+    <div class="flex flex-wrap gap-2 p-4">
+      <a class="text-[#994d51] text-base font-medium leading-normal hover:text-[#1b0e0e] transition-colors" routerLink="/">Home</a>
+      <span class="text-[#994d51] text-base font-medium leading-normal">/</span>
+      <span class="text-[#1b0e0e] text-base font-medium leading-normal">{{ getCategoryDisplayName() }}</span>
+      </div>
+
+    <!-- Category Header -->
+    <div class="flex flex-wrap justify-between gap-3 p-4">
+      <div class="flex min-w-72 flex-col gap-3">
+        <p class="text-[#1b0e0e] tracking-light text-[32px] font-bold leading-tight">{{ getCategoryDisplayName() }}</p>
+        <p class="text-[#994d51] text-sm font-normal leading-normal">{{ getCategoryDescription() }}</p>
+      </div>
+    </div>
+
+    <!-- Controls Bar -->
+    <div class="flex justify-between gap-2 px-4 py-3">
+      <!-- View Toggle -->
+      <div class="flex gap-2">
+        <button 
+          class="p-2 text-[#1b0e0e] hover:bg-[#f3e7e8] rounded transition-colors"
+          [class.bg-[#f3e7e8]]="viewMode === 'list'"
+          (click)="setViewMode('list')"
+          title="List View">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+            <path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"></path>
+          </svg>
+        </button>
+        <button 
+          class="p-2 text-[#1b0e0e] hover:bg-[#f3e7e8] rounded transition-colors"
+          [class.bg-[#f3e7e8]]="viewMode === 'grid'"
+          (click)="setViewMode('grid')"
+          title="Grid View">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+            <path d="M200,40H56A16,16,0,0,0,40,56V200a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Zm0,80H136V56h64ZM120,56v64H56V56ZM56,136h64v64H56Zm144,64H136V136h64v64Z"></path>
+          </svg>
+        </button>
+    </div>
+
+      <!-- Sort Button -->
+      <button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-[#e92932] text-[#fcf8f8] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-4 hover:bg-[#d41e2a] transition-colors"
+              [matMenuTriggerFor]="sortMenu">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+          <path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,48,88H208a8,8,0,0,1,5.66,13.66Z"></path>
+        </svg>
+        <span class="truncate">Sort</span>
+      </button>
+
+      <!-- Sort Menu -->
+      <mat-menu #sortMenu="matMenu">
+        <button mat-menu-item (click)="setSortOption('name', 'asc')">
+          <span>Name A-Z</span>
+        </button>
+        <button mat-menu-item (click)="setSortOption('name', 'desc')">
+          <span>Name Z-A</span>
+        </button>
+        <button mat-menu-item (click)="setSortOption('price', 'asc')">
+          <span>Price Low to High</span>
+        </button>
+        <button mat-menu-item (click)="setSortOption('price', 'desc')">
+          <span>Price High to Low</span>
+        </button>
+        <button mat-menu-item (click)="setSortOption('rating', 'desc')">
+          <span>Highest Rated</span>
+        </button>
+        <button mat-menu-item (click)="setSortOption('newest', 'desc')">
+          <span>Newest First</span>
+        </button>
+      </mat-menu>
+    </div>
+
+  <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center items-center py-20">
+      <mat-progress-spinner diameter="50" mode="indeterminate"></mat-progress-spinner>
+  </div>
+
+  <!-- Error State -->
+    <div *ngIf="error && !loading" class="flex flex-col items-center justify-center py-20 text-center">
+      <mat-icon class="text-[#994d51] mb-4" style="font-size: 48px; width: 48px; height: 48px;">error_outline</mat-icon>
+      <h3 class="text-[#1b0e0e] text-xl font-semibold mb-2">Oops! Something went wrong</h3>
+      <p class="text-[#994d51] mb-4">{{ error }}</p>
+      <button class="bg-[#e92932] text-white px-6 py-2 rounded-lg hover:bg-[#d41e2a] transition-colors" (click)="retryLoading()">
+      Try Again
+    </button>
+  </div>
+
+    <!-- Products Grid -->
+    <div *ngIf="!loading && !error" class="grid grid-cols-[repeat(auto-fit,minmax(158px,1fr))] gap-3 p-4" 
+         [class.hidden]="viewMode === 'list'">
+      <div *ngFor="let product of filteredProducts; trackBy: trackByProductId" 
+           class="flex flex-col gap-3 pb-3 cursor-pointer group"
+           (click)="viewProduct(product)"
+           (keydown)="onProductKeydown($event, product)"
+           tabindex="0">
+        <div class="w-full bg-center bg-no-repeat aspect-[3/4] bg-cover rounded-lg overflow-hidden relative group-hover:scale-105 transition-transform duration-300"
+             [style.background-image]="'url(' + getImageUrl(product.imageUrl) + ')'"
+             (error)="handleImageError($event)">
+          <!-- Sale Badge -->
+          <div *ngIf="product.originalPrice && product.originalPrice > product.price" 
+               class="absolute top-2 left-2 bg-[#e92932] text-white text-xs px-2 py-1 rounded">
+            SALE
+        </div>
+          <!-- Stock Badge -->
+          <div *ngIf="!product.inStock" 
+               class="absolute top-2 right-2 bg-[#994d51] text-white text-xs px-2 py-1 rounded">
+            OUT OF STOCK
+          </div>
+          <!-- Quick Actions -->
+          <div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <button class="bg-white/90 hover:bg-white text-[#1b0e0e] p-2 rounded-full shadow-lg mr-2"
+                    (click)="addToWishlist(product); $event.stopPropagation()"
+                    title="Add to Wishlist">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="currentColor" viewBox="0 0 256 256">
+                <path d="M178,32c-20.65,0-38.73,8.88-50,23.89C116.73,40.88,98.65,32,78,32A62.07,62.07,0,0,0,16,94c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,220.66,240,164,240,94A62.07,62.07,0,0,0,178,32ZM128,206.8C109.74,196.16,32,147.69,32,94A46.06,46.06,0,0,1,78,48c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,147.61,146.24,196.15,128,206.8Z"></path>
+              </svg>
+            </button>
+            <button class="bg-[#e92932] hover:bg-[#d41e2a] text-white p-2 rounded-full shadow-lg"
+                    [disabled]="!product.inStock || isAddingToCart(product.id)"
+                    (click)="addToCart(product); $event.stopPropagation()"
+                    title="Add to Cart">
+              <mat-progress-spinner *ngIf="isAddingToCart(product.id)" diameter="16" mode="indeterminate" color="accent"></mat-progress-spinner>
+              <svg *ngIf="!isAddingToCart(product.id)" xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="currentColor" viewBox="0 0 256 256">
+                <path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z"></path>
+              </svg>
+            </button>
+          </div>
+          </div>
+
+        <!-- Product Info -->
+        <div class="flex flex-col gap-1">
+          <p class="text-[#1b0e0e] text-base font-medium leading-normal group-hover:text-[#994d51] transition-colors">{{ product.name }}</p>
+          <div class="flex items-center gap-2">
+            <span class="text-[#1b0e0e] font-semibold">{{ formatPrice(product.price) }}</span>
+            <span *ngIf="product.originalPrice && product.originalPrice > product.price" 
+                  class="text-[#994d51] text-sm line-through">{{ formatPrice(product.originalPrice) }}</span>
+          </div>
+          <!-- Rating -->
+          <div class="flex items-center gap-1">
+            <div class="flex">
+              <svg *ngFor="let star of [1,2,3,4,5]" 
+                   xmlns="http://www.w3.org/2000/svg" 
+                   width="12px" height="12px" 
+                   [attr.fill]="star <= product.rating ? '#fbbf24' : '#e5e7eb'" 
+                   viewBox="0 0 256 256">
+                <path d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0L165.93,81.17l59.46,5.15A16,16,0,0,1,234.5,114.38Z"></path>
+              </svg>
+            </div>
+            <span class="text-[#994d51] text-xs">({{ product.rating }})</span>
+          </div>
+            </div>
+          </div>
+        </div>
+
+    <!-- Products List View -->
+    <div *ngIf="!loading && !error && viewMode === 'list'" class="flex flex-col gap-4 p-4">
+      <div *ngFor="let product of filteredProducts; trackBy: trackByProductId" 
+           class="flex gap-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+           (click)="viewProduct(product)">
+        <div class="w-24 h-24 bg-center bg-no-repeat bg-cover rounded-lg flex-shrink-0"
+             [style.background-image]="'url(' + getImageUrl(product.imageUrl) + ')'">
+        </div>
+        <div class="flex-1 flex flex-col justify-between">
+          <div>
+            <h3 class="text-[#1b0e0e] font-semibold text-lg">{{ product.name }}</h3>
+            <p class="text-[#994d51] text-sm mt-1">{{ product.description }}</p>
+            <div class="flex items-center gap-1 mt-2">
+              <div class="flex">
+                <svg *ngFor="let star of [1,2,3,4,5]" 
+                     xmlns="http://www.w3.org/2000/svg" 
+                     width="14px" height="14px" 
+                     [attr.fill]="star <= product.rating ? '#fbbf24' : '#e5e7eb'" 
+                     viewBox="0 0 256 256">
+                  <path d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0L165.93,81.17l59.46,5.15A16,16,0,0,1,234.5,114.38Z"></path>
+                </svg>
+              </div>
+              <span class="text-[#994d51] text-sm">({{ product.rating }})</span>
+            </div>
+                </div>
+          <div class="flex items-center justify-between mt-3">
+            <div class="flex items-center gap-2">
+              <span class="text-[#1b0e0e] font-bold text-lg">{{ formatPrice(product.price) }}</span>
+              <span *ngIf="product.originalPrice && product.originalPrice > product.price" 
+                    class="text-[#994d51] text-sm line-through">{{ formatPrice(product.originalPrice) }}</span>
+              </div>
+            <div class="flex gap-2">
+              <button class="bg-[#f3e7e8] hover:bg-[#e8dde0] text-[#1b0e0e] px-3 py-1 rounded transition-colors"
+                      (click)="addToWishlist(product); $event.stopPropagation()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="currentColor" viewBox="0 0 256 256">
+                  <path d="M178,32c-20.65,0-38.73,8.88-50,23.89C116.73,40.88,98.65,32,78,32A62.07,62.07,0,0,0,16,94c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,220.66,240,164,240,94A62.07,62.07,0,0,0,178,32ZM128,206.8C109.74,196.16,32,147.69,32,94A46.06,46.06,0,0,1,78,48c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,147.61,146.24,196.15,128,206.8Z"></path>
+                </svg>
+              </button>
+              <button class="bg-[#e92932] hover:bg-[#d41e2a] text-white px-4 py-1 rounded transition-colors"
+                      [disabled]="!product.inStock || isAddingToCart(product.id)"
+                      (click)="addToCart(product); $event.stopPropagation()">
+                <span *ngIf="!isAddingToCart(product.id)">Add to Cart</span>
+                <mat-progress-spinner *ngIf="isAddingToCart(product.id)" diameter="16" mode="indeterminate" color="accent"></mat-progress-spinner>
+              </button>
+        </div>
+          </div>
+        </div>
+                </div>
+        </div>
+
+        <!-- Empty State -->
+    <div *ngIf="!loading && !error && filteredProducts.length === 0" class="flex flex-col items-center justify-center py-20 text-center">
+      <svg xmlns="http://www.w3.org/2000/svg" width="64px" height="64px" fill="#994d51" viewBox="0 0 256 256" class="mb-4">
+        <path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z"></path>
+      </svg>
+      <h3 class="text-[#1b0e0e] text-xl font-semibold mb-2">No products found</h3>
+      <p class="text-[#994d51] mb-4">Try adjusting your search or filter criteria</p>
+      <button class="bg-[#e92932] text-white px-6 py-2 rounded-lg hover:bg-[#d41e2a] transition-colors" (click)="clearFilters()">
+            Clear Filters
+          </button>
+        </div>
+      </div>
+</div>

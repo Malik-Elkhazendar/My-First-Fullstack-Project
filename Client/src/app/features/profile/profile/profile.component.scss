@@ -1,0 +1,436 @@
+@use "sass:color";
+
+// Variables
+$purple-accent: #9c27b0;
+$background-dark: #121212;
+$card-bg: #1e1e1e;
+$text-primary: #ffffff;
+$text-secondary: rgba(255, 255, 255, 0.7);
+$success-color: #4caf50;
+$warning-color: #ff9800;
+$error-color: #f44336;
+
+:host {
+  display: block;
+  background-color: $background-dark;
+  min-height: 100vh;
+  color: $text-primary;
+}
+
+.profile-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: $purple-accent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 500;
+    color: white;
+    margin-right: 1.5rem;
+    text-transform: uppercase;
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+    margin: 0;
+    color: $text-primary;
+  }
+}
+
+.profile-card {
+  background-color: $card-bg;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  
+  mat-card-header {
+    padding: 1rem 1.5rem 0;
+    
+    mat-card-title {
+      color: $text-primary;
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+  }
+  
+  mat-card-content {
+    padding: 1.5rem;
+  }
+}
+
+// Tab styling
+.profile-tabs {
+  .tab-content {
+    padding: 1.5rem 0;
+  }
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  
+  mat-form-field {
+    flex: 1;
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  
+  button {
+    display: flex;
+    align-items: center;
+    
+    mat-icon {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+// Address Management Styles
+.address-section {
+  margin-bottom: 2rem;
+  
+  .section-header {
+    margin-bottom: 1.5rem;
+    
+    h3 {
+      color: $text-primary;
+      font-size: 1.5rem;
+      margin: 0 0 0.5rem 0;
+    }
+    
+    .section-description {
+      color: $text-secondary;
+      margin: 0;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  
+  p {
+    margin-top: 1rem;
+    color: $text-secondary;
+  }
+}
+
+.address-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.no-addresses {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: $text-secondary;
+  
+  .no-addresses-icon {
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+  
+  h4 {
+    margin: 0 0 0.5rem 0;
+    color: $text-primary;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+}
+
+.address-item {
+  background-color: color.adjust($card-bg, $lightness: 3%);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: rgba($purple-accent, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.address-content {
+  .address-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+    
+    h4 {
+      margin: 0;
+      color: $text-primary;
+      font-size: 1.1rem;
+    }
+    
+    .address-badges {
+      display: flex;
+      gap: 0.5rem;
+      
+      .default-badge {
+        background-color: $success-color;
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+      
+      .type-badge {
+        background-color: $purple-accent;
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+    }
+  }
+  
+  .address-text {
+    color: $text-secondary;
+    margin: 0 0 1rem 0;
+    line-height: 1.4;
+  }
+  
+  .address-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    
+    button {
+      display: flex;
+      align-items: center;
+      
+      mat-icon {
+        margin-right: 0.25rem;
+        font-size: 1rem;
+        width: 1rem;
+        height: 1rem;
+      }
+    }
+  }
+}
+
+.add-address-section {
+  margin-top: 1.5rem;
+  
+  h4 {
+    color: $text-primary;
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+  }
+}
+
+.section-divider {
+  margin: 2rem 0;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+// Security Section Styles
+.security-section {
+  margin-bottom: 2rem;
+  
+  h3 {
+    color: $text-primary;
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem 0;
+  }
+  
+  .section-description {
+    color: $text-secondary;
+    margin: 0 0 1.5rem 0;
+    font-size: 0.9rem;
+  }
+  
+  .security-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    
+    .security-button {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      width: fit-content;
+      
+      mat-icon {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}
+
+.danger-section {
+  h3 {
+    color: $error-color;
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem 0;
+  }
+  
+  .section-description {
+    color: $text-secondary;
+    margin: 0 0 1.5rem 0;
+    font-size: 0.9rem;
+  }
+  
+  .danger-button {
+    display: flex;
+    align-items: center;
+    
+    mat-icon {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+// Override Angular Material for dark theme
+::ng-deep {
+  .mat-mdc-card {
+    --mdc-elevated-card-container-color: #{$card-bg};
+  }
+  
+  .mat-mdc-text-field-wrapper {
+    background-color: color.adjust($card-bg, $lightness: 5%) !important;
+  }
+  
+  .mat-mdc-form-field-focus-overlay {
+    background-color: rgba(255, 255, 255, 0.04);
+  }
+  
+  .mat-mdc-card-title {
+    color: $text-primary;
+  }
+  
+  // Tab styling
+  .mat-mdc-tab-group {
+    .mat-mdc-tab-header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .mat-mdc-tab {
+      color: $text-secondary;
+      
+      &.mdc-tab--active {
+        color: $purple-accent;
+      }
+    }
+    
+    .mat-mdc-tab-body-content {
+      background-color: transparent;
+    }
+  }
+  
+  // Snackbar styling
+  .success-snackbar {
+    background-color: $success-color !important;
+    color: white !important;
+  }
+  
+  .error-snackbar {
+    background-color: $error-color !important;
+    color: white !important;
+  }
+  
+  // Spinner styling
+  .mat-mdc-progress-spinner circle {
+    stroke: $purple-accent;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 1rem;
+  }
+  
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+    
+    .profile-avatar {
+      margin-right: 0;
+      margin-bottom: 1rem;
+    }
+    
+    h1 {
+      font-size: 2rem;
+    }
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .address-item {
+    padding: 1rem;
+  }
+  
+  .address-content {
+    .address-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    
+    .address-actions {
+      flex-direction: column;
+      
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+  
+  .security-section {
+    .security-actions {
+      .security-button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+  
+  .danger-section {
+    .danger-button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+} 

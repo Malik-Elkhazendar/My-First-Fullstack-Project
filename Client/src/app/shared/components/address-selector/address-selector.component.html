@@ -1,0 +1,207 @@
+<div class="address-selector-container">
+  <mat-card class="address-selector-card">
+    <mat-card-header>
+      <mat-card-title>{{ config.title }}</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Loading State -->
+      <div *ngIf="loading$ | async" class="loading-container">
+        <mat-spinner diameter="30"></mat-spinner>
+        <p>Loading addresses...</p>
+      </div>
+
+      <!-- Address Selection -->
+      <div *ngIf="!(loading$ | async)" class="address-selection">
+        <!-- Mode Selection -->
+        <div class="mode-selection" *ngIf="addresses.length > 0 && config.allowNewAddress">
+          <mat-radio-group 
+            [value]="selectionMode" 
+            (change)="onSelectionModeChange($event.value)"
+            [disabled]="disabled">
+            <mat-radio-button value="existing">Use saved address</mat-radio-button>
+            <mat-radio-button value="new">Add new address</mat-radio-button>
+          </mat-radio-group>
+        </div>
+
+        <!-- Existing Addresses -->
+        <div *ngIf="selectionMode === 'existing' && addresses.length > 0" class="existing-addresses">
+          <div class="address-list">
+            <div 
+              *ngFor="let address of addresses" 
+              class="address-item"
+              [class.selected]="selectionForm.value.selectedAddressId === address.id"
+              (click)="onAddressSelect(address.id!)">
+              
+              <mat-radio-button 
+                [value]="address.id" 
+                [checked]="selectionForm.value.selectedAddressId === address.id"
+                [disabled]="disabled">
+              </mat-radio-button>
+
+              <div class="address-content">
+                <div class="address-header">
+                  <h4>{{ getAddressLabel(address) }}</h4>
+                  <div class="address-actions" *ngIf="!disabled">
+                    <button 
+                      mat-icon-button 
+                      (click)="onEditAddress(address); $event.stopPropagation()"
+                      matTooltip="Edit address">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button 
+                      mat-icon-button 
+                      color="warn"
+                      (click)="onDeleteAddress(address); $event.stopPropagation()"
+                      matTooltip="Delete address">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </div>
+                <p class="address-text">{{ formatAddress(address) }}</p>
+                <div class="address-badges">
+                  <span *ngIf="address.isDefault" class="default-badge">Default</span>
+                  <span class="type-badge">{{ address.type | titlecase }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- No Addresses Message -->
+        <div *ngIf="selectionMode === 'existing' && addresses.length === 0" class="no-addresses">
+          <mat-icon class="no-addresses-icon">location_off</mat-icon>
+          <h3>No saved addresses</h3>
+          <p>You don't have any saved {{ config.type }} addresses yet.</p>
+          <button 
+            *ngIf="config.allowNewAddress"
+            mat-raised-button 
+            color="primary" 
+            (click)="onSelectionModeChange('new')">
+            <mat-icon>add</mat-icon>
+            Add New Address
+          </button>
+        </div>
+
+        <!-- New Address Form -->
+        <div *ngIf="showNewAddressForm" class="new-address-form">
+          <form [formGroup]="newAddressForm">
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Address Label</mat-label>
+                <input matInput formControlName="label" placeholder="e.g., Home, Work">
+                <mat-error *ngIf="getFieldError('label')">{{ getFieldError('label') }}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>First Name</mat-label>
+                <input matInput formControlName="firstName">
+                <mat-error *ngIf="getFieldError('firstName')">{{ getFieldError('firstName') }}</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Last Name</mat-label>
+                <input matInput formControlName="lastName">
+                <mat-error *ngIf="getFieldError('lastName')">{{ getFieldError('lastName') }}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Company (Optional)</mat-label>
+                <input matInput formControlName="company">
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Address Line 1</mat-label>
+                <input matInput formControlName="addressLine1">
+                <mat-error *ngIf="getFieldError('addressLine1')">{{ getFieldError('addressLine1') }}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Address Line 2 (Optional)</mat-label>
+                <input matInput formControlName="addressLine2">
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>City</mat-label>
+                <input matInput formControlName="city">
+                <mat-error *ngIf="getFieldError('city')">{{ getFieldError('city') }}</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>State</mat-label>
+                <mat-select formControlName="state">
+                  <mat-option *ngFor="let state of states" [value]="state.code">
+                    {{ state.name }}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="getFieldError('state')">{{ getFieldError('state') }}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Postal Code</mat-label>
+                <input matInput formControlName="postalCode">
+                <mat-error *ngIf="getFieldError('postalCode')">{{ getFieldError('postalCode') }}</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Country</mat-label>
+                <mat-select formControlName="country">
+                  <mat-option *ngFor="let country of countries" [value]="country.code">
+                    {{ country.name }}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="getFieldError('country')">{{ getFieldError('country') }}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Phone Number (Optional)</mat-label>
+                <input matInput formControlName="phoneNumber" type="tel">
+              </mat-form-field>
+            </div>
+
+            <div class="form-row" *ngIf="config.showSaveOption">
+              <mat-checkbox formControlName="saveAddress">
+                Save this address for future use
+              </mat-checkbox>
+            </div>
+
+            <div class="form-actions">
+              <button 
+                *ngIf="addresses.length > 0"
+                mat-button 
+                type="button" 
+                (click)="onSelectionModeChange('existing')">
+                <mat-icon>arrow_back</mat-icon>
+                Back to Saved Addresses
+              </button>
+
+              <button 
+                mat-raised-button 
+                color="primary" 
+                type="button"
+                [disabled]="!newAddressForm.valid"
+                (click)="onCreateNewAddress()">
+                <mat-icon>save</mat-icon>
+                Save Address
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div> 
