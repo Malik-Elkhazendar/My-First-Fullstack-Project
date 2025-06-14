@@ -12,6 +12,7 @@ $error-color: #f44336;
 
 :host {
   display: block;
+  font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;
   background-color: $background-dark;
   min-height: 100vh;
 }
@@ -286,5 +287,183 @@ $error-color: #f44336;
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
+  }
+}
+
+// Enhanced form styling
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(243, 193, 68, 0.1);
+    border-color: #f3c144;
+  }
+  
+  &.border-red-300 {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  }
+}
+
+// Custom checkbox styling
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+  &:checked {
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='rgb(24,22,17)' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+}
+
+// Button hover effects
+button[type="submit"],
+button[type="button"] {
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(243, 193, 68, 0.3);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+// Loading animation
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+// Spin animation for loading spinner
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+// Enhanced error styling
+.text-red-600 {
+  font-weight: 500;
+}
+
+// Link hover effects
+a {
+  transition: all 0.2s ease-in-out;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Focus states for accessibility
+button:focus,
+input:focus,
+a:focus {
+  outline: 2px solid #f3c144;
+  outline-offset: 2px;
+}
+
+// Enhanced visual feedback
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+// Form validation visual enhancements
+.border-red-300 {
+  border-color: #fca5a5 !important;
+  background-color: #fef2f2 !important;
+}
+
+.border-light {
+  border-color: #e6e3db !important;
+  background-color: white !important;
+}
+
+// Success state styling (for future use)
+.border-green-300 {
+  border-color: #86efac !important;
+  background-color: #f0fdf4 !important;
+}
+
+// Enhanced spacing and typography
+.space-y-2 > * + * {
+  margin-top: 0.5rem;
+}
+
+.space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+
+.space-y-8 > * + * {
+  margin-top: 2rem;
+}
+
+.space-y-3 > * + * {
+  margin-top: 0.75rem;
+}
+
+// Custom scrollbar for better UX (if needed)
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f3e7e8;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #f3c144;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e6b73d;
+}
+
+// Responsive design improvements
+@media (max-width: 640px) {
+  .px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .py-8 {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+}
+
+// Enhanced button styling for demo buttons
+button[type="button"] {
+  &:hover:not(:disabled) {
+    box-shadow: 0 2px 8px rgba(245, 243, 240, 0.4);
+  }
+}
+
+// Password toggle button styling
+.relative button {
+  &:hover {
+    background-color: rgba(243, 193, 68, 0.1);
+    border-radius: 4px;
   }
 } 

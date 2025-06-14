@@ -5,9 +5,7 @@
 }
 
 // Remove all Material Design styles and use the new design system
-.register-form {
-  // Remove any header-specific styles since we're using the app-level header
-}
+// Form container styles are handled by Tailwind classes in the template
 
 // Form input styling
 .form-input {
