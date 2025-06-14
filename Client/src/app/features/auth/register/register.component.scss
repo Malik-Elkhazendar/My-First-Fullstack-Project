@@ -1,267 +1,182 @@
-// Import SASS color module
-@use "sass:color";
-
-// Variables
-$purple-accent: #9c27b0;
-$background-dark: #121212;
-$card-bg: #1e1e1e;
-$text-primary: #ffffff;
-$text-secondary: rgba(255, 255, 255, 0.7);
-$text-hint: rgba(255, 255, 255, 0.5);
-$error-color: #f44336;
-
+// Register component styles matching the Fashion Forward theme
 :host {
   display: block;
-  background-color: $background-dark;
-  min-height: 100vh;
+  font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;
 }
 
-.auth-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 20px;
-  background-color: $background-dark;
-  background-image: 
-    radial-gradient(circle at 25% 25%, rgba(156, 39, 176, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(156, 39, 176, 0.05) 0%, transparent 50%);
+// Remove all Material Design styles and use the new design system
+.register-form {
+  // Remove any header-specific styles since we're using the app-level header
 }
 
-.auth-card-wrapper {
-  width: 100%;
-  max-width: 500px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.auth-logo {
-  display: flex;
-  align-items: center;
-  margin-bottom: 24px;
-  color: $text-primary;
+// Form input styling
+.form-input {
+  border: none;
+  outline: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
   
-  .logo-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background-color: $purple-accent;
-    margin-right: 12px;
-    
-    mat-icon {
-      font-size: 28px;
-      width: 28px;
-      height: 28px;
-    }
+  &:focus {
+    outline: none;
+    border-color: #f3c144 !important;
   }
   
-  .logo-text {
-    font-size: 28px;
-    font-weight: 700;
-    margin: 0;
-    background: linear-gradient(90deg, #9c27b0, #e91e63);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  &::placeholder {
+    color: #8a7e60;
   }
 }
 
-.auth-card {
-  width: 100%;
-  border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-  background-color: $card-bg;
-  color: $text-primary;
-  
-  mat-card-header {
-    padding: 24px 24px 0;
-    
-    mat-card-title {
-      font-size: 24px;
-      margin-bottom: 8px;
-      color: $text-primary;
-    }
-    
-    mat-card-subtitle {
-      color: $text-secondary;
-      font-size: 16px;
-      margin-bottom: 0;
-    }
+// Enhanced form styling
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(243, 193, 68, 0.1);
+    border-color: #f3c144;
   }
   
-  mat-card-content {
-    padding: 24px;
+  &.border-red-300 {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
   }
 }
 
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.form-row-2col {
-  display: flex;
-  gap: 16px;
+// Custom checkbox styling
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   
-  mat-form-field {
-    flex: 1;
+  &:checked {
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='rgb(24,22,17)' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
   }
 }
 
-.full-width {
-  width: 100%;
-}
-
-.terms-checkbox {
-  margin-top: 8px;
-  
-  a {
-    color: $purple-accent;
-    text-decoration: none;
-    
-    &:hover {
-      text-decoration: underline;
-    }
+// Button hover effects
+button[type="submit"] {
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(243, 193, 68, 0.3);
   }
   
-  mat-error {
-    font-size: 12px;
-    margin-top: 4px;
-    display: block;
+  &:active:not(:disabled) {
+    transform: translateY(0);
   }
 }
 
-.submit-button {
-  margin-top: 16px;
-  padding: 8px 0;
-  font-size: 16px;
+// Loading animation
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+// Spin animation for loading spinner
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+// Enhanced error styling
+.text-red-600 {
   font-weight: 500;
-  background-color: $purple-accent;
+}
+
+// Link hover effects
+a {
+  transition: all 0.2s ease-in-out;
   
-  mat-icon {
-    margin-right: 8px;
+  &:hover {
+    text-decoration: underline;
   }
 }
 
-.auth-error, .password-match-error {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: rgba($error-color, 0.1);
-  color: $error-color;
-  padding: 12px 16px;
-  border-radius: 4px;
-  margin-bottom: 16px;
+// Responsive design improvements
+@media (max-width: 640px) {
+  .grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
   
-  mat-icon {
-    color: $error-color;
+  .sm-grid-cols-2 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 }
 
-.password-match-error {
-  margin: -8px 0 8px;
-  padding: 8px 12px;
-  font-size: 12px;
+// Focus states for accessibility
+button:focus,
+input:focus,
+a:focus {
+  outline: 2px solid #f3c144;
+  outline-offset: 2px;
 }
 
-.auth-card-actions {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 16px 24px 24px;
-  
-  span {
-    color: $text-secondary;
-    margin-right: 8px;
-  }
-  
-  a {
-    color: $purple-accent;
-    font-weight: 500;
-  }
+// Enhanced visual feedback
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
 }
 
-.auth-footer {
-  margin-top: 24px;
-  text-align: center;
-  
-  p {
-    color: $text-hint;
-    font-size: 14px;
-    margin-bottom: 8px;
-  }
-  
-  .auth-links {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    
-    a {
-      color: $text-secondary;
-      text-decoration: none;
-      font-size: 14px;
-      
-      &:hover {
-        color: $purple-accent;
-        text-decoration: underline;
-      }
-    }
-    
-    .separator {
-      color: $text-hint;
-    }
-  }
+// Form validation visual enhancements
+.border-red-300 {
+  border-color: #fca5a5 !important;
+  background-color: #fef2f2 !important;
 }
 
-// Material form customization for dark theme
-::ng-deep {
-  .mat-mdc-form-field {
-    .mat-mdc-text-field-wrapper {
-      background-color: color.adjust($card-bg, $lightness: 3%);
-      border-radius: 4px;
-    }
-    
-    .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-floating-label, 
-    .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-text-field__input {
-      color: $text-primary;
-    }
-    
-    .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__leading, 
-    .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__notch, 
-    .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__trailing {
-      border-color: rgba(255, 255, 255, 0.12);
-    }
-    
-    .mat-mdc-form-field-icon-prefix,
-    .mat-mdc-form-field-icon-suffix {
-      color: $text-secondary;
-    }
-  }
-  
-  .mat-mdc-checkbox .mdc-checkbox .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background {
-    background-color: $purple-accent;
-    border-color: $purple-accent;
-  }
+.border-light {
+  border-color: #e6e3db !important;
+  background-color: white !important;
 }
 
-// Responsive adjustments
-@media (max-width: 600px) {
-  .form-row-2col {
-    flex-direction: column;
-    gap: 0;
-  }
-  
-  .auth-card-wrapper {
-    max-width: 100%;
-  }
-  
-  .auth-card {
-    border-radius: 8px;
-  }
+// Success state styling (for future use)
+.border-green-300 {
+  border-color: #86efac !important;
+  background-color: #f0fdf4 !important;
+}
+
+// Enhanced spacing and typography
+.space-y-2 > * + * {
+  margin-top: 0.5rem;
+}
+
+.space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+
+.space-y-8 > * + * {
+  margin-top: 2rem;
+}
+
+// Custom scrollbar for better UX (if needed)
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f3e7e8;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #f3c144;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e6b73d;
 } 

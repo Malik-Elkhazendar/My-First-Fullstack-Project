@@ -2,15 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -20,15 +12,7 @@ import { AuthService } from '../../../core/services/auth.service';
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatProgressBarModule,
-    MatSnackBarModule,
-    MatDividerModule,
-    MatCheckboxModule
+    MatSnackBarModule
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
@@ -71,8 +55,11 @@ export class RegisterComponent {
   // Convenience getter for easy access to form fields
   get f() { return this.registerForm.controls; }
 
-  // Password strength validator
-  createPasswordStrengthValidator() {
+  /**
+   * Password strength validator
+   * Ensures password contains uppercase, lowercase letters and numbers
+   */
+  private createPasswordStrengthValidator() {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;
 
@@ -89,8 +76,11 @@ export class RegisterComponent {
     }
   }
 
-  // Password match validator
-  createPasswordMatchValidator() {
+  /**
+   * Password match validator
+   * Ensures password and confirm password fields match
+   */
+  private createPasswordMatchValidator() {
     return (group: AbstractControl): ValidationErrors | null => {
       const password = group.get('password')?.value;
       const confirmPassword = group.get('confirmPassword')?.value;
@@ -99,12 +89,16 @@ export class RegisterComponent {
     }
   }
 
+  /**
+   * Handle form submission
+   */
   onSubmit(): void {
     this.submitted = true;
     this.registerError = null;
 
     // Stop here if form is invalid
     if (this.registerForm.invalid) {
+      this.showValidationErrors();
       return;
     }
 
@@ -119,26 +113,92 @@ export class RegisterComponent {
       confirmPassword: formValues.confirmPassword
     }).subscribe({
       next: () => {
-        this.snackBar.open('Registration successful!', 'Close', { duration: 3000 });
+        this.showSuccess('Registration successful! Welcome to Fashion Forward!');
         this.router.navigate(['/']);
       },
-      error: error => {
-        this.registerError = error.message || 'Registration failed. Please try again.';
-        this.loading = false;
-        this.snackBar.open(this.registerError || 'Registration error', 'Close', { duration: 5000 });
-      }
+              error: error => {
+          this.registerError = error.message || 'Registration failed. Please try again.';
+          this.loading = false;
+          this.showError(this.registerError || 'Registration failed. Please try again.');
+        }
     });
   }
 
-  // Check if the form field has errors and was touched or form was submitted
+  /**
+   * Check if the form field has errors and was touched or form was submitted
+   */
   hasError(controlName: string, errorName: string): boolean {
     const control = this.f[controlName];
     return (control.touched || this.submitted) && control.hasError(errorName);
   }
 
-  // Check password match error
+  /**
+   * Check password match error
+   */
   hasPasswordMismatch(): boolean {
     return (this.submitted || this.f['confirmPassword'].touched) && 
            this.registerForm.hasError('passwordMismatch');
+  }
+
+  /**
+   * Show validation errors for better UX
+   */
+  private showValidationErrors(): void {
+    const errors: string[] = [];
+    
+    if (this.hasError('firstName', 'required')) {
+      errors.push('First name is required');
+    }
+    if (this.hasError('lastName', 'required')) {
+      errors.push('Last name is required');
+    }
+    if (this.hasError('email', 'required')) {
+      errors.push('Email is required');
+    } else if (this.hasError('email', 'email')) {
+      errors.push('Please enter a valid email address');
+    }
+    if (this.hasError('password', 'required')) {
+      errors.push('Password is required');
+    } else if (this.hasError('password', 'minlength')) {
+      errors.push('Password must be at least 6 characters');
+    } else if (this.hasError('password', 'passwordStrength')) {
+      errors.push('Password must contain uppercase, lowercase letters and numbers');
+    }
+    if (this.hasError('confirmPassword', 'required')) {
+      errors.push('Confirm password is required');
+    } else if (this.hasPasswordMismatch()) {
+      errors.push('Passwords do not match');
+    }
+    if (this.f['agreeTerms'].errors) {
+      errors.push('You must agree to the terms to continue');
+    }
+
+    if (errors.length > 0) {
+      this.showError(`Please fix the following errors: ${errors.join(', ')}`);
+    }
+  }
+
+  /**
+   * Show success message
+   */
+  private showSuccess(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 5000,
+      panelClass: ['success-snackbar'],
+      horizontalPosition: 'center',
+      verticalPosition: 'top'
+    });
+  }
+
+  /**
+   * Show error message
+   */
+  private showError(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 7000,
+      panelClass: ['error-snackbar'],
+      horizontalPosition: 'center',
+      verticalPosition: 'top'
+    });
   }
 } 
