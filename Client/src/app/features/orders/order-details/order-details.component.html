@@ -109,16 +109,43 @@
               </thead>
               <tbody>
                 <tr *ngFor="let item of order.items; trackBy: trackByItemId" class="border-t border-t-[#e4e2dd]">
-                  <td class="h-[72px] px-4 py-2 text-[#171512] text-sm font-normal leading-normal">
-                    {{ item.product.name }}
+                  <td class="px-4 py-2 text-[#171512] text-sm font-normal leading-normal">
+                    <div class="flex items-center gap-3">
+                      <!-- Product Image -->
+                      <div class="flex-shrink-0">
+                        <img 
+                          [src]="getImageUrl(item.product.imageUrl)" 
+                          [alt]="item.product.name"
+                          (error)="onImageError($event)"
+                          class="product-image w-16 h-16 object-cover rounded-lg border border-[#e4e2dd] bg-gray-50"
+                          loading="lazy"
+                        />
+                      </div>
+                      <!-- Product Details -->
+                      <div class="flex-1 min-w-0">
+                        <p class="font-medium text-[#171512] truncate">{{ item.product.name }}</p>
+                        <p class="text-xs text-[#837b67] mt-1 line-clamp-2">{{ item.product.description }}</p>
+                        <div class="flex items-center gap-2 mt-1">
+                          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[#f4f3f1] text-[#837b67]">
+                            {{ item.product.category }}
+                          </span>
+                          <div class="flex items-center gap-1" *ngIf="item.product.rating">
+                            <mat-icon class="text-yellow-400 text-sm">star</mat-icon>
+                            <span class="text-xs text-[#837b67]">{{ item.product.rating }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </td>
-                  <td class="h-[72px] px-4 py-2 text-[#837b67] text-sm font-normal leading-normal">
+                  <td class="h-[72px] px-4 py-2 text-[#837b67] text-sm font-normal leading-normal align-top">
                     {{ formatCurrency(item.unitPrice) }}
                   </td>
-                  <td class="h-[72px] px-4 py-2 text-[#837b67] text-sm font-normal leading-normal">
-                    {{ item.quantity }}
+                  <td class="h-[72px] px-4 py-2 text-[#837b67] text-sm font-normal leading-normal align-top">
+                    <div class="flex items-center justify-center w-8 h-8 bg-[#f4f3f1] rounded-full text-sm font-medium">
+                      {{ item.quantity }}
+                    </div>
                   </td>
-                  <td class="h-[72px] px-4 py-2 text-[#837b67] text-sm font-normal leading-normal">
+                  <td class="h-[72px] px-4 py-2 text-[#171512] text-sm font-semibold leading-normal align-top">
                     {{ formatCurrency(item.totalPrice) }}
                   </td>
                 </tr>

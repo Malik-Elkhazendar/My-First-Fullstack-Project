@@ -23,4 +23,38 @@
 // Ensure proper font inheritance
 body, html {
   font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;
+}
+
+// Product image styles
+.product-image {
+  transition: transform 0.2s ease-in-out;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+// Line clamp utility for product descriptions
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// Enhanced table row styling
+tbody tr {
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: rgba(244, 243, 241, 0.3);
+  }
+}
+
+// Rating star styling
+.mat-icon.text-yellow-400 {
+  color: #fbbf24 !important;
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
 } 

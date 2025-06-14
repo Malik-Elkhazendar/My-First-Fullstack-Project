@@ -486,6 +486,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     this.showSuccess(`${this.order.items.length} items added to cart from order ${this.order.orderNumber}`);
   }
 
+  getImageUrl(imagePath: string): string {
+    return this.imageService.getImageUrl(imagePath);
+  }
+
   onImageError(event: Event): void {
     this.imageService.handleImageError(event);
   }
