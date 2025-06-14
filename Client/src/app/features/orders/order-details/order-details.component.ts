@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,6 +8,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { Observable, Subject, of } from 'rxjs';
 import { takeUntil, switchMap, delay } from 'rxjs/operators';
 
@@ -18,20 +19,24 @@ import {
   Order, 
   OrderStatus, 
   PaymentMethod, 
-  PaymentStatus 
+  PaymentStatus,
+  OrderItem
 } from '../../../core/models/order.model';
+
 
 @Component({
   selector: 'app-order-details',
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
     MatProgressSpinnerModule,
-    MatDividerModule
+    MatDividerModule,
+    MatDialogModule
   ],
   templateUrl: './order-details.component.html',
   styleUrls: ['./order-details.component.scss'],
@@ -41,8 +46,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   
   order: Order | null = null;
-  loading = false;
+  loading = true;
   orderId: number | null = null;
+  detailsExpanded = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -51,6 +57,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     private imageService: ImageService,
     private cartService: CartService,
     private snackBar: MatSnackBar,
+    private dialog: MatDialog,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -62,8 +69,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
         this.loading = true;
         this.cdr.markForCheck();
         
-        // For now, use mock data with a delay to simulate loading
-        return of(this.getMockOrderById(this.orderId)).pipe(delay(500));
+        // Use the OrderService to get the order
+        return this.orderService.getOrderById(this.orderId);
       })
     ).subscribe({
       next: (order) => {
@@ -318,21 +325,62 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
   // Enhanced utility methods
   getStatusDisplay(status: OrderStatus): string {
-    return status.charAt(0).toUpperCase() + status.slice(1);
+    switch (status) {
+      case OrderStatus.Pending:
+        return 'Pending';
+      case OrderStatus.Confirmed:
+        return 'Confirmed';
+      case OrderStatus.Processing:
+        return 'Processing';
+      case OrderStatus.Shipped:
+        return 'Shipped';
+      case OrderStatus.Delivered:
+        return 'Delivered';
+      case OrderStatus.Cancelled:
+        return 'Cancelled';
+      default:
+        return 'Unknown';
+    }
   }
 
-  getStatusIcon(status: string): string {
-    const iconMap: Record<string, string> = {
-      'pending': 'schedule',
-      'confirmed': 'check_circle',
-      'processing': 'autorenew',
-      'shipped': 'local_shipping',
-      'delivered': 'done_all',
-      'cancelled': 'cancel',
-      'refunded': 'undo',
-      'failed': 'error'
-    };
-    return iconMap[status.toLowerCase()] || 'help';
+  getStatusProgress(): number {
+    if (!this.order) return 0;
+    
+    switch (this.order.status) {
+      case OrderStatus.Pending:
+        return 10;
+      case OrderStatus.Confirmed:
+        return 25;
+      case OrderStatus.Processing:
+        return 50;
+      case OrderStatus.Shipped:
+        return 75;
+      case OrderStatus.Delivered:
+        return 100;
+      case OrderStatus.Cancelled:
+        return 0;
+      default:
+        return 0;
+    }
+  }
+
+  getStatusIcon(status: OrderStatus): string {
+    switch (status) {
+      case OrderStatus.Pending:
+        return 'schedule';
+      case OrderStatus.Confirmed:
+        return 'check_circle';
+      case OrderStatus.Processing:
+        return 'autorenew';
+      case OrderStatus.Shipped:
+        return 'local_shipping';
+      case OrderStatus.Delivered:
+        return 'done_all';
+      case OrderStatus.Cancelled:
+        return 'cancel';
+      default:
+        return 'help';
+    }
   }
 
   trackByItemId(index: number, item: any): number {
@@ -368,7 +416,13 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   // Action methods
   canCancelOrder(): boolean {
     if (!this.order) return false;
-    return ['pending', 'confirmed', 'processing'].includes(this.order.status.toLowerCase());
+    
+    const cancelableStatuses = [OrderStatus.Pending, OrderStatus.Confirmed];
+    const orderDate = new Date(this.order.createdAt);
+    const now = new Date();
+    const hoursDiff = (now.getTime() - orderDate.getTime()) / (1000 * 60 * 60);
+    
+    return cancelableStatuses.includes(this.order.status) && hoursDiff <= 24;
   }
 
   canReorder(): boolean {
@@ -376,17 +430,40 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     return ['delivered', 'cancelled'].includes(this.order.status.toLowerCase());
   }
 
+  /**
+   * Handle order cancellation with confirmation
+   */
   onCancelOrder(): void {
-    if (!this.order?.id) return;
-    
-    const confirmMessage = `Are you sure you want to cancel order ${this.order.orderNumber}?`;
+    if (!this.order || !this.canCancelOrder()) {
+      return;
+    }
+
+    const confirmMessage = `Are you sure you want to cancel order ${this.order.orderNumber}?\n\nThis action cannot be undone and you may be charged a cancellation fee.`;
     
     if (confirm(confirmMessage)) {
-      // Update order status locally for demo
-      this.order.status = OrderStatus.Cancelled;
-      this.showSuccess('Order cancelled successfully');
-      this.cdr.markForCheck();
+      this.performOrderCancellation();
     }
+  }
+
+  /**
+   * Perform the actual order cancellation
+   */
+  private performOrderCancellation(): void {
+    if (!this.order?.id) return;
+
+    this.orderService.cancelOrder(this.order.id, { reason: 'Cancelled by user' }).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (cancelledOrder) => {
+        this.order = cancelledOrder;
+        this.showSuccess('Order cancelled successfully');
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.showError('Failed to cancel order. Please try again.');
+        console.error('Order cancellation error:', error);
+      }
+    });
   }
 
   onTrackOrder(): void {
@@ -437,5 +514,41 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
       duration: 4000,
       panelClass: ['info-snackbar']
     });
+  }
+
+  /**
+   * Toggle the expanded state of additional details section
+   */
+  toggleDetailsExpanded(): void {
+    this.detailsExpanded = !this.detailsExpanded;
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Get item specifications for display (size, color, etc.)
+   */
+  getItemSpecs(item: OrderItem): string {
+    const specs: string[] = [];
+    
+    // Add size if available (mock data - in real app this would come from product variants)
+    if (item.product.category === 'Clothing') {
+      specs.push('Size: M');
+    } else if (item.product.category === 'Shoes') {
+      specs.push('Size: 9');
+    }
+    
+    // Add color if available (mock data)
+    const colors = ['Black', 'White', 'Blue', 'Red', 'Gray'];
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    specs.push(`Color: ${randomColor}`);
+    
+    return specs.join(', ');
+  }
+
+  /**
+   * Check if the order is delivered
+   */
+  isDelivered(): boolean {
+    return this.order?.status === OrderStatus.Delivered;
   }
 } 
