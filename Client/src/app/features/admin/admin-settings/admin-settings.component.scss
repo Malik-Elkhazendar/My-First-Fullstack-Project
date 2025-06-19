@@ -1,0 +1,66 @@
+// Admin Settings Component Styles
+
+// Active navigation styling
+.active {
+  background-color: #f4f3f1 !important;
+}
+
+// Custom scrollbar styling
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+// Responsive design adjustments
+@media (max-width: 768px) {
+  .layout-content-container {
+    width: 100% !important;
+  }
+  
+  .gap-1 {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .px-6 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
+// Form input focus states
+.form-input:focus {
+  outline: none !important;
+  border-color: #e4e2dd !important;
+  box-shadow: 0 0 0 3px rgba(228, 226, 221, 0.1) !important;
+}
+
+// Button hover effects
+button:hover {
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+// Tab transition effects
+[class*="border-b-"] {
+  transition: all 0.2s ease;
+}
+
+// Custom toggle styling for maintenance mode
+label:has(input[type="checkbox"]:checked) {
+  justify-content: flex-end;
+  background-color: #f3e8cd !important;
+} 

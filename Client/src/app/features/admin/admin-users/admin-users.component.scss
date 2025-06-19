@@ -1,0 +1,307 @@
+// Admin Users Styles
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f4f3f1;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #171512;
+  color: #e4e2dd;
+  padding: 1.5rem 0;
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  padding: 0 1.5rem 2rem;
+  border-bottom: 1px solid #333;
+  
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #e4e2dd;
+  }
+}
+
+.sidebar-nav {
+  padding: 1rem 0;
+  
+  .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    color: #837b67;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background-color: rgba(228, 226, 221, 0.1);
+      color: #e4e2dd;
+    }
+    
+    &.active {
+      background-color: rgba(228, 226, 221, 0.15);
+      color: #e4e2dd;
+      border-right: 3px solid #e4e2dd;
+    }
+    
+    mat-icon {
+      margin-right: 0.75rem;
+      font-size: 1.25rem;
+    }
+  }
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 250px;
+  padding: 2rem;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  
+  h1 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #171512;
+  }
+}
+
+.filters-section {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  
+  .search-field {
+    flex: 1;
+    max-width: 400px;
+  }
+  
+  .status-field {
+    min-width: 150px;
+  }
+}
+
+.table-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.users-table {
+  width: 100%;
+  
+  .user-info {
+    .user-name {
+      font-weight: 500;
+      color: #171512;
+    }
+  }
+  
+  .user-email {
+    color: #837b67;
+  }
+  
+  .registration-date,
+  .last-login {
+    color: #837b67;
+    font-size: 0.875rem;
+  }
+  
+  .order-count {
+    font-weight: 500;
+    color: #171512;
+  }
+  
+  .total-spent {
+    font-weight: 600;
+    color: #171512;
+  }
+  
+  .status-active {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+  }
+  
+  .status-inactive {
+    background-color: #ffebee;
+    color: #c62828;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 0.25rem;
+    
+    .delete-btn {
+      color: #c62828;
+      
+      &:hover {
+        background-color: rgba(198, 40, 40, 0.1);
+      }
+    }
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #837b67;
+  
+  mat-icon {
+    font-size: 4rem;
+    width: 4rem;
+    height: 4rem;
+    margin-bottom: 1rem;
+    color: #837b67;
+  }
+  
+  h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.5rem;
+    color: #171512;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 1rem;
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  
+  .main-content {
+    margin-left: 0;
+    padding: 1rem;
+  }
+  
+  .content-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .filters-section {
+    flex-direction: column;
+    
+    .search-field,
+    .status-field {
+      max-width: none;
+    }
+  }
+  
+  .users-table {
+    font-size: 0.875rem;
+  }
+}
+
+// Admin Users Component Styles
+
+.transition-colors {
+  transition: color 0.2s ease-in-out;
+}
+
+// Ensure responsive table behavior
+@media (max-width: 768px) {
+  .px-40 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+// Fix focus styles for the search input
+.form-input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+// Hover effects for interactive elements
+button:hover {
+  opacity: 0.8;
+  transition: opacity 0.2s ease-in-out;
+}
+
+// Table styling improvements
+table {
+  min-width: 100%;
+}
+
+tbody tr:hover {
+  background-color: rgba(244, 243, 241, 0.3);
+  transition: background-color 0.2s ease-in-out;
+}
+
+// Active navigation item
+.active {
+  background-color: #f4f3f1 !important;
+  
+  svg {
+    font-weight: bold;
+  }
+}
+
+// Dropdown styling
+.relative {
+  .absolute {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    animation: fadeIn 0.15s ease-out;
+  }
+  
+  button:hover {
+    background-color: #e8e6e2;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Sidebar navigation improvements
+.layout-content-container {
+  .flex-col {
+    .gap-2 {
+      a {
+        &:hover {
+          background-color: #f4f3f1;
+        }
+        
+        &.active {
+          background-color: #f4f3f1;
+          
+          div[data-icon] {
+            font-weight: bolder;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Empty state styling
+.flex-col.items-center.justify-center {
+  svg {
+    opacity: 0.6;
+  }
+} 

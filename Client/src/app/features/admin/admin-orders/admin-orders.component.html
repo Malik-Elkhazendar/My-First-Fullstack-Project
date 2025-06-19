@@ -1,0 +1,325 @@
+<div class="relative flex size-full min-h-screen flex-col bg-gradient-to-br from-[#fcf8f8] to-white group/design-root overflow-x-hidden" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
+  <div class="layout-container flex h-full grow flex-col">
+    <div class="gap-1 px-6 flex flex-1 justify-center py-5">
+      
+      <!-- Sidebar Navigation -->
+      <div class="layout-content-container flex flex-col w-80">
+        <div class="flex h-full min-h-[700px] flex-col justify-between bg-white p-4 rounded-2xl shadow-sm border border-[#f4f3f1]">
+          <div class="flex flex-col gap-4">
+            <h1 class="text-[#171512] text-base font-medium leading-normal">Admin Panel</h1>
+            <div class="flex flex-col gap-2">
+              <a routerLink="/admin" 
+                 routerLinkActive="active"
+                 [routerLinkActiveOptions]="{exact: true}"
+                 class="flex items-center gap-3 px-3 py-2 cursor-pointer transition-colors rounded-full hover:bg-[#f4f3f1]">
+                <div class="text-[#171512]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                    <path d="M104,216V152h48v64a8,8,0,0,0,8,8h48a8,8,0,0,0,8-8V112a8,8,0,0,0-2.34-5.66l-80-80a8,8,0,0,0-11.32,0l-80,80A8,8,0,0,0,40,112V208a8,8,0,0,0,8,8H96A8,8,0,0,0,104,216Z"></path>
+                  </svg>
+                </div>
+                <p class="text-[#171512] text-sm font-medium leading-normal">Dashboard</p>
+              </a>
+              
+              <a routerLink="/admin/products" 
+                 routerLinkActive="active"
+                 class="flex items-center gap-3 px-3 py-2 cursor-pointer transition-colors rounded-full hover:bg-[#f4f3f1]">
+                <div class="text-[#171512]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                    <path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z"></path>
+                  </svg>
+                </div>
+                <p class="text-[#171512] text-sm font-medium leading-normal">Products</p>
+              </a>
+              
+              <a routerLink="/admin/orders" 
+                 routerLinkActive="active"
+                 class="flex items-center gap-3 px-3 py-2 cursor-pointer transition-colors rounded-full bg-[#f4f3f1]">
+                <div class="text-[#171512]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                    <path d="M72,104a8,8,0,0,1,8-8h96a8,8,0,0,1,0,16H80A8,8,0,0,1,72,104Zm8,40h96a8,8,0,0,0,0-16H80a8,8,0,0,0,0,16ZM232,56V208a8,8,0,0,1-11.58,7.15L192,200.94l-28.42,14.21a8,8,0,0,1-7.16,0L128,200.94,99.58,215.15a8,8,0,0,1-7.16,0L64,200.94,35.58,215.15A8,8,0,0,1,24,208V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56Zm-16,0H40V195.06l20.42-10.22a8,8,0,0,1,7.16,0L96,199.06l28.42-14.22a8,8,0,0,1,7.16,0L160,199.06l28.42-14.22a8,8,0,0,1,7.16,0L216,195.06Z"></path>
+                  </svg>
+                </div>
+                <p class="text-[#171512] text-sm font-medium leading-normal">Orders</p>
+              </a>
+              
+              <a routerLink="/admin/users" 
+                 routerLinkActive="active"
+                 class="flex items-center gap-3 px-3 py-2 cursor-pointer transition-colors rounded-full hover:bg-[#f4f3f1]">
+                <div class="text-[#171512]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                    <path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"></path>
+                  </svg>
+                </div>
+                <p class="text-[#171512] text-sm font-medium leading-normal">Users</p>
+              </a>
+              
+              <a routerLink="/admin/settings" 
+                 routerLinkActive="active"
+                 class="flex items-center gap-3 px-3 py-2 cursor-pointer transition-colors rounded-full hover:bg-[#f4f3f1]">
+                <div class="text-[#171512]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                    <path d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Zm88-29.84q.06-2.16,0-4.32l14.92-18.64a8,8,0,0,0,1.48-7.06,107.21,107.21,0,0,0-10.88-26.25a8,8,0,0,0-6-3.93l-23.72-2.64q-1.48-1.56-3-3L186,40.54a8,8,0,0,0-3.94-6,107.71,107.71,0,0,0-26.25-10.87a8,8,0,0,0-7.06,1.49L130.16,40Q128,40,125.84,40L107.2,25.11a8,8,0,0,0-7.06-1.48A107.6,107.6,0,0,0,73.89,34.51a8,8,0,0,0-3.93,6L67.32,64.27q-1.56,1.49-3,3L40.54,70a8,8,0,0,0-6,3.94,107.71,107.71,0,0,0-10.87,26.25a8,8,0,0,0,1.49,7.06L40,125.84Q40,128,40,130.16L25.11,148.8a8,8,0,0,0-1.48,7.06,107.21,107.21,0,0,0,10.88,26.25a8,8,0,0,0,6,3.93l23.72,2.64q1.49,1.56,3,3L70,215.46a8,8,0,0,0,3.94,6,107.71,107.71,0,0,0,26.25,10.87a8,8,0,0,0,7.06-1.49L125.84,216q2.16.06,4.32,0l18.64,14.92a8,8,0,0,0,7.06,1.48,107.21,107.21,0,0,0,26.25-10.88a8,8,0,0,0,3.93-6l2.64-23.72q1.56-1.48,3-3L215.46,186a8,8,0,0,0,6-3.94,107.71,107.71,0,0,0,10.87-26.25a8,8,0,0,0-1.49-7.06Zm-16.1-6.5a73.93,73.93,0,0,1,0,8.68,8,8,0,0,0,1.74,5.48l14.19,17.73a91.57,91.57,0,0,1-6.23,15L187,173.11a8,8,0,0,0-5.1,2.64,74.11,74.11,0,0,1-6.14,6.14,8,8,0,0,0-2.64,5.1l-2.51,22.58a91.32,91.32,0,0,1-15,6.23l-17.74-14.19a8,8,0,0,0-5-1.75h-.48a73.93,73.93,0,0,1-8.68,0,8,8,0,0,0-5.48,1.74L100.45,215.8a91.57,91.57,0,0,1-15-6.23L82.89,187a8,8,0,0,0-2.64-5.1,74.11,74.11,0,0,1-6.14-6.14,8,8,0,0,0-5.1-2.64L46.43,170.6a91.32,91.32,0,0,1-6.23-15l14.19-17.74a8,8,0,0,0,1.74-5.48,73.93,73.93,0,0,1,0-8.68,8,8,0,0,0-1.74-5.48L40.2,100.45a91.57,91.57,0,0,1,6.23-15L69,82.89a8,8,0,0,0,5.1-2.64,74.11,74.11,0,0,1,6.14-6.14A8,8,0,0,0,82.89,69L85.4,46.43a91.32,91.32,0,0,1,15-6.23l17.74,14.19a8,8,0,0,0,5.48,1.74,73.93,73.93,0,0,1,8.68,0,8,8,0,0,0,5.48-1.74L155.55,40.2a91.57,91.57,0,0,1,15,6.23L173.11,69a8,8,0,0,0,2.64,5.1,74.11,74.11,0,0,1,6.14,6.14,8,8,0,0,0,5.1,2.64l22.58,2.51a91.32,91.32,0,0,1,6.23,15l-14.19,17.74A8,8,0,0,0,199.87,123.66Z"></path>
+                  </svg>
+                </div>
+                <p class="text-[#171512] text-sm font-medium leading-normal">Settings</p>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+        
+        <!-- Enhanced Header Section -->
+        <div class="flex flex-wrap justify-between items-center gap-6 p-6 bg-white rounded-2xl shadow-sm border border-[#f4f3f1] mb-8">
+          <div class="flex min-w-72 flex-col gap-3">
+            <div class="flex items-center gap-3">
+              <div class="p-3 bg-gradient-to-r from-[#e92932] to-[#994d51] rounded-xl">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="white" viewBox="0 0 256 256">
+                  <path d="M72,104a8,8,0,0,1,8-8h96a8,8,0,0,1,0,16H80A8,8,0,0,1,72,104Zm8,40h96a8,8,0,0,0,0-16H80a8,8,0,0,0,0,16ZM232,56V208a8,8,0,0,1-11.58,7.15L192,200.94l-28.42,14.21a8,8,0,0,1-7.16,0L128,200.94,99.58,215.15a8,8,0,0,1-7.16,0L64,200.94,35.58,215.15A8,8,0,0,1,24,208V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56Zm-16,0H40V195.06l20.42-10.22a8,8,0,0,1,7.16,0L96,199.06l28.42-14.22a8,8,0,0,1,7.16,0L160,199.06l28.42-14.22a8,8,0,0,1,7.16,0L216,195.06Z"></path>
+                </svg>
+              </div>
+              <div>
+                <h1 class="text-[#171512] text-3xl font-bold leading-tight tracking-[-0.02em]">Orders Management</h1>
+                <p class="text-[#837b67] text-base font-medium leading-normal mt-1">Track and manage all customer orders efficiently</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Quick Stats -->
+          <div class="flex gap-6">
+            <div class="text-center">
+              <div class="text-2xl font-bold text-[#171512]">{{ filteredOrders.length }}</div>
+              <div class="text-sm text-[#837b67]">Total Orders</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-[#e92932]">{{ getPendingCount() }}</div>
+              <div class="text-sm text-[#837b67]">Pending</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-[#994d51]">{{ getProcessingCount() }}</div>
+              <div class="text-sm text-[#837b67]">Processing</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Enhanced Search and Filters Section -->
+        <div class="bg-white rounded-2xl shadow-sm border border-[#f4f3f1] p-6 mb-8">
+          <!-- Search Bar -->
+          <div class="mb-6">
+            <label class="flex flex-col">
+              <span class="text-sm font-semibold text-[#171512] mb-2">Search Orders</span>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" class="text-[#837b67]" viewBox="0 0 256 256">
+                    <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
+                  </svg>
+                </div>
+                <input 
+                  placeholder="Search by order ID, customer name, or email..." 
+                  [(ngModel)]="searchTerm" 
+                  (input)="onSearch()" 
+                  class="w-full pl-12 pr-4 py-4 text-[#171512] bg-[#f4f3f1] border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#e92932] focus:bg-white transition-all duration-200 text-base font-normal leading-normal placeholder:text-[#837b67]" 
+                />
+              </div>
+            </label>
+          </div>
+          
+          <!-- Filters -->
+          <div class="border-t border-[#f4f3f1] pt-6">
+            <h3 class="text-lg font-semibold text-[#171512] mb-4 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+                <path d="M230,208a8,8,0,0,1-8,8H34a8,8,0,0,1-6.66-12.44L76,128V40a8,8,0,0,1,8-8H172a8,8,0,0,1,8,8v88l48.66,75.56A8,8,0,0,1,230,208Z"></path>
+              </svg>
+              Filters
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <!-- Status Filter -->
+              <div class="flex flex-col">
+                <label class="text-sm font-semibold text-[#171512] mb-2">Order Status</label>
+                <div class="relative">
+                  <select [(ngModel)]="selectedStatus" (change)="onStatusChange()" class="w-full px-4 py-3 text-[#171512] bg-[#f4f3f1] border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#e92932] focus:bg-white transition-all duration-200 text-base font-normal leading-normal appearance-none pr-12">
+                    <option value="">All Statuses</option>
+                    <option value="Pending">🟡 Pending</option>
+                    <option value="Processing">🔵 Processing</option>
+                    <option value="Shipped">🟠 Shipped</option>
+                    <option value="Delivered">🟢 Delivered</option>
+                    <option value="Cancelled">🔴 Cancelled</option>
+                  </select>
+                  <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                    <svg class="w-5 h-5 text-[#837b67]" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Date Range Filters -->
+              <div class="flex flex-col">
+                <label class="text-sm font-semibold text-[#171512] mb-2">Start Date</label>
+                <input 
+                  type="date" 
+                  [(ngModel)]="startDate" 
+                  (change)="onDateRangeChange()" 
+                  class="w-full px-4 py-3 text-[#171512] bg-[#f4f3f1] border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#e92932] focus:bg-white transition-all duration-200 text-base font-normal leading-normal" 
+                />
+              </div>
+              
+              <div class="flex flex-col">
+                <label class="text-sm font-semibold text-[#171512] mb-2">End Date</label>
+                <input 
+                  type="date" 
+                  [(ngModel)]="endDate" 
+                  (change)="onDateRangeChange()" 
+                  class="w-full px-4 py-3 text-[#171512] bg-[#f4f3f1] border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#e92932] focus:bg-white transition-all duration-200 text-base font-normal leading-normal" 
+                />
+              </div>
+            </div>
+            
+            <!-- Clear Filters Button -->
+            <div class="mt-4 flex justify-end" *ngIf="searchTerm || selectedStatus || startDate || endDate">
+              <button (click)="clearFilters()" class="px-4 py-2 text-[#837b67] hover:text-[#171512] font-medium transition-colors duration-200 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="currentColor" viewBox="0 0 256 256">
+                  <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path>
+                </svg>
+                Clear Filters
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Loading State -->
+        <div *ngIf="loading && filteredOrders.length === 0" class="flex justify-center items-center py-20">
+          <div class="flex flex-col items-center gap-4">
+            <div class="animate-spin rounded-full h-12 w-12 border-4 border-[#f4f3f1] border-t-[#e92932]"></div>
+            <p class="text-[#837b67] font-medium">Loading orders...</p>
+          </div>
+        </div>
+        
+        <!-- Enhanced Orders Table -->
+        <div class="bg-white rounded-2xl shadow-sm border border-[#f4f3f1] overflow-hidden" *ngIf="!loading || filteredOrders.length > 0">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gradient-to-r from-[#f4f3f1] to-[#fcf8f8]">
+                <tr>
+                  <th class="px-6 py-4 text-left text-[#171512] text-sm font-semibold leading-normal">Order Details</th>
+                  <th class="px-6 py-4 text-left text-[#171512] text-sm font-semibold leading-normal">Customer</th>
+                  <th class="px-6 py-4 text-left text-[#171512] text-sm font-semibold leading-normal">Date & Items</th>
+                  <th class="px-6 py-4 text-left text-[#171512] text-sm font-semibold leading-normal">Amount</th>
+                  <th class="px-6 py-4 text-left text-[#171512] text-sm font-semibold leading-normal">Status</th>
+                  <th class="px-6 py-4 text-left text-[#171512] text-sm font-semibold leading-normal">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#f4f3f1]">
+                <tr *ngFor="let order of filteredOrders; trackBy: trackByOrderId" class="hover:bg-[#fcf8f8] transition-colors duration-200">
+                  <!-- Order Details -->
+                  <td class="px-6 py-4">
+                    <div class="flex flex-col">
+                      <span class="text-[#171512] font-semibold text-base">{{ order.id }}</span>
+                      <span class="text-[#837b67] text-sm">Order ID</span>
+                    </div>
+                  </td>
+                  
+                  <!-- Customer -->
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 bg-gradient-to-r from-[#e92932] to-[#994d51] rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                        {{ getCustomerInitials(order.customer) }}
+                      </div>
+                      <div class="flex flex-col">
+                        <span class="text-[#171512] font-medium">{{ order.customer }}</span>
+                        <span class="text-[#837b67] text-sm">Customer</span>
+                      </div>
+                    </div>
+                  </td>
+                  
+                  <!-- Date & Items -->
+                  <td class="px-6 py-4">
+                    <div class="flex flex-col">
+                      <span class="text-[#171512] font-medium">{{ formatDate(order.date) }}</span>
+                      <span class="text-[#837b67] text-sm">{{ order.itemCount }} {{ order.itemCount === 1 ? 'item' : 'items' }}</span>
+                    </div>
+                  </td>
+                  
+                  <!-- Amount -->
+                  <td class="px-6 py-4">
+                    <div class="flex flex-col">
+                      <span class="text-[#171512] font-bold text-lg">{{ formatCurrency(order.total) }}</span>
+                      <span class="text-[#837b67] text-sm">Total</span>
+                    </div>
+                  </td>
+                  
+                  <!-- Status -->
+                  <td class="px-6 py-4">
+                    <div class="flex flex-col gap-2">
+                      <span [ngClass]="getStatusBadgeClass(order.status)" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium w-fit">
+                        {{ getStatusEmoji(order.status) }} {{ getStatusDisplayText(order.status) }}
+                      </span>
+                      <button 
+                        *ngIf="canAdvanceStatus(order.status)"
+                        (click)="onUpdateStatus(order, getNextStatus(order.status)!)" 
+                        class="text-xs text-[#e92932] hover:text-[#994d51] font-medium transition-colors duration-200 text-left"
+                      >
+                        → Advance to {{ getStatusDisplayText(getNextStatus(order.status)!) }}
+                      </button>
+                    </div>
+                  </td>
+                  
+                  <!-- Actions -->
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-2">
+                      <button 
+                        (click)="onViewOrder(order)" 
+                        class="px-4 py-2 bg-[#f4f3f1] hover:bg-[#e4e2dd] text-[#171512] rounded-lg font-medium transition-all duration-200 flex items-center gap-2"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="currentColor" viewBox="0 0 256 256">
+                          <path d="M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.57,61.26,162.88,48,128,48S61.43,61.26,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.5c.35.79,8.82,19.57,27.65,38.4C61.43,194.74,93.12,208,128,208s66.57-13.26,91.66-38.34c18.83-18.83,27.3-37.61,27.65-38.4A8,8,0,0,0,247.31,124.76ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.47,133.47,0,0,1,25,128,133.33,133.33,0,0,1,48.07,97.25C70.33,75.19,97.22,64,128,64s57.67,11.19,79.93,33.25A133.46,133.46,0,0,1,231.05,128C223.84,141.46,192.43,192,128,192Zm0-112a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z"></path>
+                        </svg>
+                        View
+                      </button>
+                      <button 
+                        (click)="onPrintInvoice(order)" 
+                        class="px-4 py-2 bg-[#e92932] hover:bg-[#994d51] text-white rounded-lg font-medium transition-all duration-200 flex items-center gap-2"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="currentColor" viewBox="0 0 256 256">
+                          <path d="M214,112H182V40a6,6,0,0,0-6-6H80a6,6,0,0,0-6,6v72H42a14,14,0,0,0-14,14v64a14,14,0,0,0,14,14H74v32a6,6,0,0,0,6,6h96a6,6,0,0,0,6-6V204h32a14,14,0,0,0,14-14V126A14,14,0,0,0,214,112ZM86,46h84v66H86Zm84,164H86V182h84Zm40-26a2,2,0,0,1-2,2H182V174a6,6,0,0,0-6-6H80a6,6,0,0,0-6,6v12H42a2,2,0,0,1-2-2V126a2,2,0,0,1,2-2H214a2,2,0,0,1,2,2ZM186,148a10,10,0,1,1-10-10A10,10,0,0,1,186,148Z"></path>
+                        </svg>
+                        Print
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Enhanced Empty State -->
+        <div *ngIf="!loading && filteredOrders.length === 0" class="bg-white rounded-2xl shadow-sm border border-[#f4f3f1] p-12 text-center">
+          <div class="flex flex-col items-center gap-6">
+            <div class="w-24 h-24 bg-gradient-to-r from-[#f4f3f1] to-[#e4e2dd] rounded-full flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48px" height="48px" fill="currentColor" class="text-[#837b67]" viewBox="0 0 256 256">
+                <path d="M72,104a8,8,0,0,1,8-8h96a8,8,0,0,1,0,16H80A8,8,0,0,1,72,104Zm8,40h96a8,8,0,0,0,0-16H80a8,8,0,0,0,0,16ZM232,56V208a8,8,0,0,1-11.58,7.15L192,200.94l-28.42,14.21a8,8,0,0,1-7.16,0L128,200.94,99.58,215.15a8,8,0,0,1-7.16,0L64,200.94,35.58,215.15A8,8,0,0,1,24,208V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56Zm-16,0H40V195.06l20.42-10.22a8,8,0,0,1,7.16,0L96,199.06l28.42-14.22a8,8,0,0,1,7.16,0L160,199.06l28.42-14.22a8,8,0,0,1,7.16,0L216,195.06Z"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-[#171512] text-2xl font-bold mb-2">No orders found</h3>
+              <p class="text-[#837b67] text-lg mb-4">
+                {{ searchTerm || selectedStatus || startDate || endDate ? 'Try adjusting your search criteria or filters' : 'No orders have been placed yet' }}
+              </p>
+              <button 
+                *ngIf="searchTerm || selectedStatus || startDate || endDate"
+                (click)="clearFilters()" 
+                class="px-6 py-3 bg-[#e92932] hover:bg-[#994d51] text-white rounded-xl font-semibold transition-all duration-200"
+              >
+                Clear All Filters
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

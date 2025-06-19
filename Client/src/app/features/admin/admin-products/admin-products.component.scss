@@ -1,0 +1,90 @@
+// Admin Products Component Styles
+.admin-products {
+  font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;
+}
+
+// Custom scrollbar styling
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f4f3f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #837b67;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #171512;
+}
+
+// Transitions
+* {
+  transition: all 0.2s ease-in-out;
+}
+
+// Form input focus styles
+.form-input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+// Button hover effects
+button:hover {
+  transform: translateY(-1px);
+}
+
+// Table responsive styles
+.table-container {
+  overflow-x: auto;
+}
+
+// Loading spinner
+.loading-spinner {
+  border-color: #f4f3f1;
+  border-top-color: #171512;
+}
+
+// Navigation hover effects
+.nav-item:hover {
+  background-color: #f4f3f1;
+}
+
+// Table styling
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  text-align: left;
+  vertical-align: middle;
+}
+
+// Responsive breakpoints
+@media (max-width: 768px) {
+  .px-40 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .text-32px {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .flex-wrap {
+    flex-direction: column;
+  }
+  
+  .gap-3 {
+    gap: 0.5rem;
+  }
+} 
