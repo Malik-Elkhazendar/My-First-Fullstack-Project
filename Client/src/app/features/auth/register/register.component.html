@@ -1,11 +1,11 @@
 <!-- Register Page Content -->
 <div class="relative flex size-full min-h-screen flex-col bg-[#fcf8f8] overflow-x-hidden" 
      style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
-  
+
   <!-- Main Content Container -->
   <div class="flex flex-1 justify-center py-8 px-4 sm:px-6 lg:px-8">
     <div class="w-full max-w-md space-y-8">
-      
+
       <!-- Loading Progress Bar -->
       <div *ngIf="loading" class="w-full bg-[#f3e7e8] rounded-full h-2 mb-6">
         <div class="bg-[#f3c144] h-2 rounded-full animate-pulse transition-all duration-300" style="width: 100%"></div>
@@ -21,7 +21,7 @@
         </p>
       </div>
       
-      <!-- Register Error Alert -->
+        <!-- Register Error Alert -->
       <div *ngIf="registerError" class="p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3 text-red-700">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256" class="flex-shrink-0 mt-0.5">
           <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-8-80V80a8,8,0,0,1,16,0v56a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,172Z"></path>
@@ -30,9 +30,9 @@
           <p class="font-medium text-sm">Registration Error</p>
           <p class="text-sm mt-1">{{ registerError }}</p>
         </div>
-      </div>
+        </div>
 
-      <!-- Register Form -->
+        <!-- Register Form -->
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6">
         
         <!-- Name Fields Row -->
@@ -76,9 +76,9 @@
             <div *ngIf="hasError('lastName', 'required')" class="text-red-600 text-xs">Last name is required</div>
             <div *ngIf="hasError('lastName', 'minlength')" class="text-red-600 text-xs">Last name must be at least 2 characters</div>
           </div>
-        </div>
+          </div>
 
-        <!-- Email Field -->
+          <!-- Email Field -->
         <div class="space-y-2">
           <label class="text-[#1b0e0e] text-sm font-medium leading-normal block">
             Email
@@ -99,7 +99,7 @@
           <div *ngIf="hasError('email', 'email')" class="text-red-600 text-xs">Please enter a valid email address</div>
         </div>
 
-        <!-- Password Field -->
+          <!-- Password Field -->
         <div class="space-y-2">
           <label class="text-[#1b0e0e] text-sm font-medium leading-normal block">
             Password
@@ -136,7 +136,7 @@
           <div *ngIf="hasError('password', 'passwordStrength')" class="text-red-600 text-xs">Password must contain uppercase, lowercase letters and numbers</div>
         </div>
 
-        <!-- Confirm Password Field -->
+          <!-- Confirm Password Field -->
         <div class="space-y-2">
           <label class="text-[#1b0e0e] text-sm font-medium leading-normal block">
             Confirm Password
@@ -170,9 +170,9 @@
           </div>
           <div *ngIf="hasError('confirmPassword', 'required')" class="text-red-600 text-xs">Confirm password is required</div>
           <div *ngIf="hasPasswordMismatch()" class="text-red-600 text-xs">Passwords do not match</div>
-        </div>
+          </div>
 
-        <!-- Terms and Conditions -->
+          <!-- Terms and Conditions -->
         <div class="space-y-2">
           <label class="flex items-start gap-3 cursor-pointer">
             <input
@@ -189,13 +189,13 @@
                 <a routerLink="/privacy" target="_blank" class="text-[#f3c144] hover:text-[#e6b73d] font-medium hover:underline transition-colors">Privacy Policy</a>
               </p>
               <div *ngIf="submitted && f['agreeTerms'].errors" class="text-red-600 text-xs mt-1">
-                You must agree to the terms to continue
+              You must agree to the terms to continue
               </div>
             </div>
           </label>
-        </div>
+          </div>
 
-        <!-- Submit Button -->
+          <!-- Submit Button -->
         <button
           type="submit"
           [disabled]="loading"
@@ -206,7 +206,7 @@
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
           <span>{{ loading ? 'Creating Account...' : 'Sign Up' }}</span>
-        </button>
+          </button>
 
         <!-- Sign In Link -->
         <div class="text-center pt-4">
@@ -214,7 +214,7 @@
             Already have an account? 
             <a routerLink="/auth/login" class="text-[#f3c144] hover:text-[#e6b73d] font-medium hover:underline transition-colors ml-1">Sign In</a>
           </p>
-        </div>
+      </div>
       </form>
     </div>
   </div>

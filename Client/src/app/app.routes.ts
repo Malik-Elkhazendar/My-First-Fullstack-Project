@@ -3,9 +3,10 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { UserRole } from './core/models/user.model';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/products', pathMatch: 'full' },
+  { path: '', loadComponent: () => import('./features/homepage/homepage.component').then(c => c.HomepageComponent) },
   { path: 'products', loadChildren: () => import('./features/products/products.module').then(m => m.ProductsModule) },
   { path: 'cart', loadChildren: () => import('./features/cart/cart.module').then(m => m.CartModule) },
+  { path: 'wishlist', loadChildren: () => import('./features/wishlist/wishlist.module').then(m => m.WishlistModule) },
   { path: 'auth', loadChildren: () => import('./features/auth/auth.module').then(m => m.AuthModule) },
   { 
     path: 'orders', 

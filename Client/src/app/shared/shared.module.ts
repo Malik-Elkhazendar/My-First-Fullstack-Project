@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductCardComponent } from './components/product-card/product-card.component';
 import { ImageGuideComponent } from './components/image-guide/image-guide.component';
+import { UserMenuComponent } from './components/user-menu/user-menu.component';
 
 @NgModule({
   declarations: [
@@ -9,11 +10,13 @@ import { ImageGuideComponent } from './components/image-guide/image-guide.compon
     ImageGuideComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    UserMenuComponent
   ],
   exports: [
     ProductCardComponent,
-    ImageGuideComponent
+    ImageGuideComponent,
+    UserMenuComponent
   ]
 })
 export class SharedModule { }

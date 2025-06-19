@@ -116,11 +116,11 @@ export class RegisterComponent {
         this.showSuccess('Registration successful! Welcome to Fashion Forward!');
         this.router.navigate(['/']);
       },
-              error: error => {
-          this.registerError = error.message || 'Registration failed. Please try again.';
-          this.loading = false;
+      error: error => {
+        this.registerError = error.message || 'Registration failed. Please try again.';
+        this.loading = false;
           this.showError(this.registerError || 'Registration failed. Please try again.');
-        }
+      }
     });
   }
 

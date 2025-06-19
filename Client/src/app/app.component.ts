@@ -2,17 +2,13 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatDividerModule } from '@angular/material/divider';
 import { Subscription } from 'rxjs';
 
 import { AuthService } from './core/services/auth.service';
 import { CartService } from './core/services/cart.service';
+import { WishlistService } from './core/services/wishlist.service';
 import { User } from './core/models/user.model';
+import { UserMenuComponent } from './shared/components/user-menu/user-menu.component';
 
 @Component({
   selector: 'app-root',
@@ -21,12 +17,7 @@ import { User } from './core/models/user.model';
     CommonModule,
     RouterModule,
     FormsModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
-    MatMenuModule,
-    MatBadgeModule,
-    MatDividerModule
+    UserMenuComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
@@ -35,6 +26,7 @@ export class AppComponent implements OnInit, OnDestroy {
   title = 'Fashion Forward';
   currentUser: User | null = null;
   cartItemCount = 0;
+  wishlistItemCount = 0;
   mobileMenuOpen = false;
   searchTerm = '';
   
@@ -43,6 +35,7 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private cartService: CartService,
+    private wishlistService: WishlistService,
     private router: Router
   ) {}
 
@@ -58,6 +51,13 @@ export class AppComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.cartService.getCartItems().subscribe(items => {
         this.cartItemCount = items.reduce((total, item) => total + item.quantity, 0);
+      })
+    );
+
+    // Subscribe to wishlist changes
+    this.subscriptions.push(
+      this.wishlistService.getWishlistItems().subscribe(items => {
+        this.wishlistItemCount = items.length;
       })
     );
   }
@@ -99,6 +99,16 @@ export class AppComponent implements OnInit, OnDestroy {
 
   logout(): void {
     this.authService.logout();
+    this.closeMobileMenu();
+  }
+
+  // User menu event handlers
+  onUserMenuClosed(): void {
+    // Handle user menu closed event if needed
+  }
+
+  onLogoutClicked(): void {
+    // Handle logout from user menu
     this.closeMobileMenu();
   }
 }

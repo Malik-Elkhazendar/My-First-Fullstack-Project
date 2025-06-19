@@ -474,47 +474,10 @@ $desktop: 1200px;
   }
 }
 
-// User menu styling
-  .user-menu {
-  .mat-mdc-menu-panel {
-    min-width: 250px;
-  }
-    
-    .menu-header {
-    border-bottom: 1px solid #f3e7e8;
-    }
-    
-    .menu-user-details {
-    .menu-user-name {
-      color: #1b0e0e;
-      font-weight: 600;
-    }
-    
-    .menu-user-email {
-      color: #994d51;
-      font-size: 0.875rem;
-    }
-  }
-}
+// User menu styling (moved to user-menu component)
 
 // Material Design Overrides for the new theme
 ::ng-deep {
-  .mat-mdc-menu-panel {
-    background: #fcf8f8;
-    }
-    
-    .mat-mdc-menu-item {
-    color: #1b0e0e;
-      
-      &:hover {
-      background-color: #f3e7e8;
-      }
-      
-    .mat-icon {
-      color: #994d51;
-        margin-right: 12px;
-    }
-  }
 
   .mat-mdc-progress-spinner {
     --mdc-circular-progress-active-indicator-color: #e92932;

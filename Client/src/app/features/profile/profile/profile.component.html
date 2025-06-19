@@ -1,203 +1,488 @@
 <div class="profile-container">
-  <div class="profile-header">
-    <div class="profile-avatar">{{ getUserInitials() }}</div>
-    <h1>My Profile</h1>
-  </div>
-  
-  <mat-card class="profile-card">
-    <mat-tab-group [(selectedIndex)]="selectedTabIndex" class="profile-tabs">
-      <!-- Personal Information Tab -->
-      <mat-tab label="Personal Information">
-        <div class="tab-content">
-          <mat-card-content>
-            <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-              <div class="form-row">
-                <mat-form-field appearance="outline">
-                  <mat-label>First Name</mat-label>
-                  <input matInput formControlName="firstName" required>
-                  <mat-error *ngIf="profileForm.get('firstName')?.hasError('required')">
-                    First name is required
-                  </mat-error>
-                </mat-form-field>
-                
-                <mat-form-field appearance="outline">
-                  <mat-label>Last Name</mat-label>
-                  <input matInput formControlName="lastName" required>
-                  <mat-error *ngIf="profileForm.get('lastName')?.hasError('required')">
-                    Last name is required
-                  </mat-error>
-                </mat-form-field>
-              </div>
-              
-              <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Email</mat-label>
-                <input matInput formControlName="email" type="email" required>
-                <mat-error *ngIf="profileForm.get('email')?.hasError('required')">
-                  Email is required
-                </mat-error>
-                <mat-error *ngIf="profileForm.get('email')?.hasError('email')">
-                  Please enter a valid email address
-                </mat-error>
-              </mat-form-field>
-              
-              <div class="actions">
-                <button mat-raised-button color="primary" type="submit" [disabled]="profileForm.invalid || loading">
-                  <mat-icon>save</mat-icon>
-                  Save Changes
-                </button>
-              </div>
-            </form>
-          </mat-card-content>
+  <div class="profile-content">
+    <div class="profile-header">
+      <h1 class="profile-title">My Account</h1>
+    </div>
+    
+    <div class="profile-tabs">
+      <div class="tab-navigation">
+        <button 
+          class="tab-button" 
+          [class.active]="selectedTabIndex === 0"
+          (click)="selectedTabIndex = 0">
+          <div class="tab-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+              <path d="M230.93,220a8,8,0,0,1-6.93,4H32a8,8,0,0,1-6.92-12c15.23-26.33,38.7-45.21,66.09-54.16a72,72,0,1,1,73.66,0c27.39,8.95,50.86,27.83,66.09,54.16A8,8,0,0,1,230.93,220Z"></path>
+            </svg>
+          </div>
+          <p class="tab-label">Personal Information</p>
+        </button>
+        
+        <button 
+          class="tab-button" 
+          [class.active]="selectedTabIndex === 1"
+          (click)="selectedTabIndex = 1">
+          <div class="tab-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+              <path d="M247.42,117l-14-35A15.93,15.93,0,0,0,218.58,72H184V64a8,8,0,0,0-8-8H24A16,16,0,0,0,8,72V184a16,16,0,0,0,16,16H41a32,32,0,0,0,62,0h50a32,32,0,0,0,62,0h17a16,16,0,0,0,16-16V120A7.94,7.94,0,0,0,247.42,117ZM184,88h34.58l9.6,24H184ZM24,72H168v64H24ZM72,208a16,16,0,1,1,16-16A16,16,0,0,1,72,208Zm81-24H103a32,32,0,0,0-62,0H24V152H168v12.31A32.11,32.11,0,0,0,153,184Zm31,24a16,16,0,1,1,16-16A16,16,0,0,1,184,208Zm48-24H215a32.06,32.06,0,0,0-31-24V128h48Z"></path>
+            </svg>
+          </div>
+          <p class="tab-label">Shipping Addresses</p>
+        </button>
+        
+        <button 
+          class="tab-button" 
+          [class.active]="selectedTabIndex === 2"
+          (click)="selectedTabIndex = 2">
+          <div class="tab-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+              <path d="M208,40H48A16,16,0,0,0,32,56v58.77c0,89.61,75.82,119.34,91,124.39a15.53,15.53,0,0,0,10,0c15.2-5.05,91-34.78,91-124.39V56A16,16,0,0,0,208,40Zm0,74.79c0,78.42-66.35,104.62-80,109.18-13.53-4.51-80-30.69-80-109.18V56l160,0Z"></path>
+            </svg>
+          </div>
+          <p class="tab-label">Security</p>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Personal Information Tab Content -->
+    <div *ngIf="selectedTabIndex === 0" class="tab-content">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="#" class="breadcrumb-link">Account</a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="breadcrumb-current">Personal Information</span>
+      </div>
+      
+      <!-- Header Section -->
+      <div class="personal-info-header">
+        <div class="personal-info-header-content">
+          <h1 class="personal-info-title">Personal Information</h1>
+          <p class="personal-info-description">
+            Update your personal details and account information. Make sure your information is accurate and up to date.
+          </p>
         </div>
-      </mat-tab>
-
-      <!-- Address Management Tab -->
-      <mat-tab label="My Addresses">
-        <div class="tab-content">
-          <mat-card-content>
-            <div class="address-section">
-              <div class="section-header">
-                <h3>Shipping Addresses</h3>
-                <p class="section-description">Manage your shipping addresses for faster checkout</p>
-              </div>
-              
-              <div *ngIf="addressLoading$ | async" class="loading-container">
-                <mat-spinner diameter="30"></mat-spinner>
-                <p>Loading addresses...</p>
-              </div>
-              
-              <div *ngIf="!(addressLoading$ | async)" class="address-list">
-                <div *ngIf="getShippingAddresses().length === 0" class="no-addresses">
-                  <mat-icon class="no-addresses-icon">location_off</mat-icon>
-                  <h4>No shipping addresses</h4>
-                  <p>Add your first shipping address to make checkout faster</p>
-                </div>
-                
-                <div *ngFor="let address of getShippingAddresses()" class="address-item">
-                  <div class="address-content">
-                    <div class="address-header">
-                      <h4>{{ address.label }}</h4>
-                      <div class="address-badges">
-                        <span *ngIf="address.isDefault" class="default-badge">Default</span>
-                        <span class="type-badge">{{ address.type | titlecase }}</span>
-                      </div>
-                    </div>
-                    <p class="address-text">{{ formatAddress(address) }}</p>
-                    <div class="address-actions">
-                      <button mat-button color="primary" (click)="onSetDefaultAddress(address)" [disabled]="address.isDefault">
-                        <mat-icon>star</mat-icon>
-                        {{ address.isDefault ? 'Default' : 'Set as Default' }}
-                      </button>
-                      <button mat-button color="warn" (click)="onDeleteAddress(address)">
-                        <mat-icon>delete</mat-icon>
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <mat-divider class="section-divider"></mat-divider>
-              
-              <!-- Add New Shipping Address -->
-              <div class="add-address-section">
-                <h4>Add New Shipping Address</h4>
-                <p class="section-description">Click the button below to add a new shipping address</p>
-                <button mat-raised-button color="primary">
-                  <mat-icon>add</mat-icon>
-                  Add Shipping Address
-                </button>
-              </div>
-            </div>
-            
-            <mat-divider class="section-divider"></mat-divider>
-            
-            <div class="address-section">
-              <div class="section-header">
-                <h3>Billing Addresses</h3>
-                <p class="section-description">Manage your billing addresses for payment processing</p>
-              </div>
-              
-              <div *ngIf="!(addressLoading$ | async)" class="address-list">
-                <div *ngIf="getBillingAddresses().length === 0" class="no-addresses">
-                  <mat-icon class="no-addresses-icon">payment</mat-icon>
-                  <h4>No billing addresses</h4>
-                  <p>Add your billing address for payment processing</p>
-                </div>
-                
-                <div *ngFor="let address of getBillingAddresses()" class="address-item">
-                  <div class="address-content">
-                    <div class="address-header">
-                      <h4>{{ address.label }}</h4>
-                      <div class="address-badges">
-                        <span *ngIf="address.isDefault" class="default-badge">Default</span>
-                        <span class="type-badge">{{ address.type | titlecase }}</span>
-                      </div>
-                    </div>
-                    <p class="address-text">{{ formatAddress(address) }}</p>
-                    <div class="address-actions">
-                      <button mat-button color="primary" (click)="onSetDefaultAddress(address)" [disabled]="address.isDefault">
-                        <mat-icon>star</mat-icon>
-                        {{ address.isDefault ? 'Default' : 'Set as Default' }}
-                      </button>
-                      <button mat-button color="warn" (click)="onDeleteAddress(address)">
-                        <mat-icon>delete</mat-icon>
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Add New Billing Address -->
-              <div class="add-address-section">
-                <h4>Add New Billing Address</h4>
-                <p class="section-description">Click the button below to add a new billing address</p>
-                <button mat-raised-button color="primary">
-                  <mat-icon>add</mat-icon>
-                  Add Billing Address
-                </button>
-              </div>
-            </div>
-          </mat-card-content>
+        <div class="profile-avatar-section">
+          <div class="profile-avatar">
+            <div class="avatar-image">{{ getUserInitials() }}</div>
+            <button class="change-avatar-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="currentColor" viewBox="0 0 256 256">
+                <path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"></path>
+              </svg>
+            </button>
+          </div>
         </div>
-      </mat-tab>
-
-      <!-- Security Tab -->
-      <mat-tab label="Security">
-        <div class="tab-content">
-          <mat-card-content>
-            <div class="security-section">
-              <h3>Password & Security</h3>
-              <p class="section-description">Manage your account security settings</p>
-              
-              <div class="security-actions">
-                <button mat-stroked-button color="primary" class="security-button">
-                  <mat-icon>lock</mat-icon>
-                  Change Password
-                </button>
-                
-                <button mat-stroked-button color="primary" class="security-button">
-                  <mat-icon>security</mat-icon>
-                  Two-Factor Authentication
-                </button>
+      </div>
+      
+      <div class="personal-info-content">
+        <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">First Name</label>
+              <input 
+                type="text"
+                class="form-input"
+                formControlName="firstName"
+                [class.error]="profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched"
+                placeholder="Enter your first name">
+              <div *ngIf="profileForm.get('firstName')?.hasError('required') && profileForm.get('firstName')?.touched" 
+                   class="error-message">
+                First name is required
               </div>
             </div>
             
-            <mat-divider class="section-divider"></mat-divider>
+            <div class="form-group">
+              <label class="form-label">Last Name</label>
+              <input 
+                type="text"
+                class="form-input"
+                formControlName="lastName"
+                [class.error]="profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched"
+                placeholder="Enter your last name">
+              <div *ngIf="profileForm.get('lastName')?.hasError('required') && profileForm.get('lastName')?.touched" 
+                   class="error-message">
+                Last name is required
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input 
+              type="email"
+              class="form-input"
+              formControlName="email"
+              [class.error]="profileForm.get('email')?.invalid && profileForm.get('email')?.touched"
+              placeholder="Enter your email address">
+            <div *ngIf="profileForm.get('email')?.hasError('required') && profileForm.get('email')?.touched" 
+                 class="error-message">
+              Email is required
+            </div>
+            <div *ngIf="profileForm.get('email')?.hasError('email') && profileForm.get('email')?.touched" 
+                 class="error-message">
+              Please enter a valid email address
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              class="save-button"
+              [disabled]="profileForm.invalid || loading"
+              [class.loading]="loading">
+              <span *ngIf="!loading">Save Changes</span>
+              <span *ngIf="loading">Saving...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Shipping Addresses Tab Content -->
+    <div *ngIf="selectedTabIndex === 1" class="tab-content">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="#" class="breadcrumb-link">Account</a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="breadcrumb-current">Addresses</span>
+      </div>
+      
+      <!-- Header Section -->
+      <div class="addresses-header">
+        <div class="addresses-header-content">
+          <h1 class="addresses-title">Addresses</h1>
+          <p class="addresses-description">
+            Manage your shipping and billing addresses. You can add, edit, or delete addresses as needed. Set a default address for faster checkout.
+          </p>
+        </div>
+      </div>
+      
+      <div *ngIf="addressLoading$ | async" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p>Loading addresses...</p>
+      </div>
+      
+      <div *ngIf="!(addressLoading$ | async)" class="addresses-content">
+        <!-- Shipping Addresses Section -->
+        <h2 class="addresses-section-title">Shipping Addresses</h2>
+        
+        <div *ngIf="getShippingAddresses().length === 0" class="no-addresses">
+          <div class="no-addresses-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48px" height="48px" fill="currentColor" viewBox="0 0 256 256">
+              <path d="M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z"></path>
+            </svg>
+          </div>
+          <h4>No shipping addresses</h4>
+          <p>Add your first shipping address to make checkout faster</p>
+        </div>
+        
+        <div *ngFor="let address of getShippingAddresses(); let i = index" class="address-item">
+          <div class="address-content">
+            <div class="address-info">
+              <div *ngIf="address.isDefault" class="default-label">Default Shipping Address</div>
+              <h3 class="address-title">{{ address.label }}</h3>
+              <p class="address-text">{{ formatAddress(address) }}</p>
+              <button class="edit-button" (click)="onEditAddress(address)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" fill="currentColor" viewBox="0 0 256 256">
+                  <path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"></path>
+                </svg>
+                <span>Edit</span>
+              </button>
+            </div>
+            <div class="address-image">
+              <img 
+                [src]="getAddressImage(address, i)" 
+                [alt]="'Address image for ' + address.label"
+                class="address-responsive-image"
+                loading="lazy">
+            </div>
+          </div>
+          
+          <!-- Additional Actions -->
+          <div class="address-actions-extended">
+            <button 
+              class="action-button primary" 
+              (click)="onSetDefaultAddress(address)" 
+              [disabled]="address.isDefault">
+              {{ address.isDefault ? 'Default Address' : 'Set as Default' }}
+            </button>
+            <button 
+              class="action-button danger" 
+              (click)="onDeleteAddress(address)">
+              Delete Address
+            </button>
+          </div>
+        </div>
+        
+        <div class="add-address-section">
+          <button class="add-address-button-large">
+            <span>Add New Shipping Address</span>
+          </button>
+        </div>
+        
+        <!-- Billing Addresses Section -->
+        <h2 class="addresses-section-title">Billing Addresses</h2>
+        
+        <div *ngIf="getBillingAddresses().length === 0" class="no-addresses">
+          <div class="no-addresses-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48px" height="48px" fill="currentColor" viewBox="0 0 256 256">
+              <path d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm0,16V88H32V64Zm0,128H32V104H224v88Zm-16-24a8,8,0,0,1-8,8H176a8,8,0,0,1,0-16h24A8,8,0,0,1,208,168Zm-64,0a8,8,0,0,1-8,8H120a8,8,0,0,1,0-16h16A8,8,0,0,1,144,168Z"></path>
+            </svg>
+          </div>
+          <h4>No billing addresses</h4>
+          <p>Add your billing address for payment processing</p>
+        </div>
+        
+        <div *ngFor="let address of getBillingAddresses(); let i = index" class="address-item">
+          <div class="address-content">
+            <div class="address-info">
+              <div *ngIf="address.isDefault" class="default-label">Default Billing Address</div>
+              <h3 class="address-title">{{ address.label }}</h3>
+              <p class="address-text">{{ formatAddress(address) }}</p>
+              <button class="edit-button" (click)="onEditAddress(address)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" fill="currentColor" viewBox="0 0 256 256">
+                  <path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"></path>
+                </svg>
+                <span>Edit</span>
+              </button>
+            </div>
+            <div class="address-image">
+              <img 
+                [src]="getAddressImage(address, i + getShippingAddresses().length)" 
+                [alt]="'Address image for ' + address.label"
+                class="address-responsive-image"
+                loading="lazy">
+            </div>
+          </div>
+          
+          <!-- Additional Actions -->
+          <div class="address-actions-extended">
+            <button 
+              class="action-button primary" 
+              (click)="onSetDefaultAddress(address)" 
+              [disabled]="address.isDefault">
+              {{ address.isDefault ? 'Default Address' : 'Set as Default' }}
+            </button>
+            <button 
+              class="action-button danger" 
+              (click)="onDeleteAddress(address)">
+              Delete Address
+            </button>
+          </div>
+        </div>
+        
+        <div class="add-address-section">
+          <button class="add-address-button-large">
+            <span>Add New Billing Address</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Security Tab Content -->
+    <div *ngIf="selectedTabIndex === 2" class="tab-content">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="#" class="breadcrumb-link">Account</a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="breadcrumb-current">Security</span>
+      </div>
+      
+      <!-- Header Section -->
+      <div class="security-header">
+        <div class="security-header-content">
+          <h1 class="security-title">Security & Privacy</h1>
+          <p class="security-description">
+            Manage your account security settings, password, and privacy preferences. Keep your account safe and secure.
+          </p>
+        </div>
+        <div class="security-status">
+          <div class="security-score">
+            <div class="score-circle">
+              <div class="score-value">85%</div>
+              <div class="score-label">Secure</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="security-content">
+        <!-- Account Security Section -->
+        <div class="security-section-card">
+          <div class="security-section-header">
+            <div class="section-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                <path d="M208,80H176V56a48,48,0,0,0-96,0V80H48A16,16,0,0,0,32,96V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V96A16,16,0,0,0,208,80ZM96,56a32,32,0,0,1,64,0V80H96Zm112,152H48V96H208V208Zm-68-56a12,12,0,1,1-12-12A12,12,0,0,1,140,152Z"></path>
+              </svg>
+            </div>
+            <div class="section-title-group">
+              <h3>Account Security</h3>
+              <p>Manage your password and login security</p>
+            </div>
+          </div>
+          
+          <div class="security-items">
+            <div class="security-item-enhanced">
+              <div class="security-item-content">
+                <div class="security-item-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+                    <path d="M208,80H176V56a48,48,0,0,0-96,0V80H48A16,16,0,0,0,32,96V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V96A16,16,0,0,0,208,80ZM96,56a32,32,0,0,1,64,0V80H96Zm112,152H48V96H208V208Zm-68-56a12,12,0,1,1-12-12A12,12,0,0,1,140,152Z"></path>
+                  </svg>
+                </div>
+                <div class="security-item-info">
+                  <h4>Password</h4>
+                  <p>Last changed 3 months ago</p>
+                  <span class="security-status-badge warning">Needs Update</span>
+                </div>
+              </div>
+              <button class="security-action-button primary" (click)="onChangePassword()">
+                Change Password
+              </button>
+            </div>
             
-            <div class="danger-section">
+            <div class="security-item-enhanced">
+              <div class="security-item-content">
+                <div class="security-item-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+                    <path d="M208,40H48A16,16,0,0,0,32,56v58.77c0,89.61,75.82,119.34,91,124.39a15.53,15.53,0,0,0,10,0c15.2-5.05,91-34.78,91-124.39V56A16,16,0,0,0,208,40Zm0,74.79c0,78.42-66.35,104.62-80,109.18-13.53-4.51-80-30.69-80-109.18V56l160,0Z"></path>
+                  </svg>
+                </div>
+                <div class="security-item-info">
+                  <h4>Two-Factor Authentication</h4>
+                  <p>Add an extra layer of security to your account</p>
+                  <span class="security-status-badge disabled">Disabled</span>
+                </div>
+              </div>
+              <button class="security-action-button primary" (click)="onEnable2FA()">
+                Enable 2FA
+              </button>
+            </div>
+            
+            <div class="security-item-enhanced">
+              <div class="security-item-content">
+                <div class="security-item-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+                    <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z"></path>
+                  </svg>
+                </div>
+                <div class="security-item-info">
+                  <h4>Login Activity</h4>
+                  <p>Monitor recent login attempts and sessions</p>
+                  <span class="security-status-badge active">3 Active Sessions</span>
+                </div>
+              </div>
+              <button class="security-action-button secondary" (click)="onViewLoginActivity()">
+                View Activity
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Privacy Settings Section -->
+        <div class="security-section-card">
+          <div class="security-section-header">
+            <div class="section-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                <path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"></path>
+              </svg>
+            </div>
+            <div class="section-title-group">
+              <h3>Privacy Settings</h3>
+              <p>Control your privacy and data sharing preferences</p>
+            </div>
+          </div>
+          
+          <div class="security-items">
+            <div class="security-item-enhanced">
+              <div class="security-item-content">
+                <div class="security-item-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+                    <path d="M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.57,61.26,162.88,48,128,48S61.43,61.26,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.5c.35.79,8.82,19.57,27.65,38.4C61.43,194.74,93.12,208,128,208s66.57-13.26,91.66-38.34c18.83-18.83,27.3-37.61,27.65-38.4A8,8,0,0,0,247.31,124.76ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.47,133.47,0,0,1,25,128,133.33,133.33,0,0,1,48.07,97.25C70.33,75.19,97.22,64,128,64s57.67,11.19,79.93,33.25A133.46,133.46,0,0,1,231.05,128C223.84,141.46,192.43,192,128,192Zm0-112a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z"></path>
+                  </svg>
+                </div>
+                <div class="security-item-info">
+                  <h4>Profile Visibility</h4>
+                  <p>Control who can see your profile information</p>
+                  <span class="security-status-badge active">Public</span>
+                </div>
+              </div>
+              <button class="security-action-button secondary" (click)="onManagePrivacy()">
+                Manage
+              </button>
+            </div>
+            
+            <div class="security-item-enhanced">
+              <div class="security-item-content">
+                <div class="security-item-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+                    <path d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm0,144H32V64H224V192ZM98.34,146.08A8,8,0,0,1,96,152a8.13,8.13,0,0,1-2-.24l-32-8a8,8,0,0,1-6-7.75V120a8,8,0,0,1,6-7.75l32-8a8,8,0,0,1,10,7.75v24A8,8,0,0,1,98.34,146.08ZM136,112a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H144A8,8,0,0,1,136,112Zm0,32a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H144A8,8,0,0,1,136,144Z"></path>
+                  </svg>
+                </div>
+                <div class="security-item-info">
+                  <h4>Data Export</h4>
+                  <p>Download a copy of your account data</p>
+                  <span class="security-status-badge info">Available</span>
+                </div>
+              </div>
+              <button class="security-action-button secondary" (click)="onExportData()">
+                Export Data
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Danger Zone Section -->
+        <div class="security-section-card danger-zone-card">
+          <div class="security-section-header">
+            <div class="section-icon danger">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                <path d="M236.8,188.09,149.35,36.22h0a24.76,24.76,0,0,0-42.7,0L19.2,188.09a23.51,23.51,0,0,0,0,23.72A24.35,24.35,0,0,0,40.55,224h174.9a24.35,24.35,0,0,0,21.33-12.19A23.51,23.51,0,0,0,236.8,188.09ZM222.93,203.8a8.5,8.5,0,0,1-7.48,4.2H40.55a8.5,8.5,0,0,1-7.48-4.2,7.59,7.59,0,0,1,0-7.72L120.52,44.21a8.75,8.75,0,0,1,15,0l87.45,151.87A7.59,7.59,0,0,1,222.93,203.8ZM120,144V104a8,8,0,0,1,16,0v40a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,180Z"></path>
+              </svg>
+            </div>
+            <div class="section-title-group">
               <h3>Danger Zone</h3>
-              <p class="section-description">Irreversible and destructive actions</p>
-              
-              <button mat-stroked-button color="warn" class="danger-button">
-                <mat-icon>delete_forever</mat-icon>
+              <p>Irreversible and destructive actions</p>
+            </div>
+          </div>
+          
+          <div class="security-items">
+            <div class="security-item-enhanced danger">
+              <div class="security-item-content">
+                <div class="security-item-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+                    <path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"></path>
+                  </svg>
+                </div>
+                <div class="security-item-info">
+                  <h4>Delete Account</h4>
+                  <p>Permanently delete your account and all associated data. This action cannot be undone.</p>
+                  <span class="security-status-badge danger">Permanent</span>
+                </div>
+              </div>
+              <button class="security-action-button danger" (click)="onDeleteAccount()">
                 Delete Account
               </button>
             </div>
-          </mat-card-content>
+            
+            <div class="security-item-enhanced danger">
+              <div class="security-item-content">
+                <div class="security-item-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+                    <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm0-144a56,56,0,1,0,56,56A56.06,56.06,0,0,0,128,72Zm0,96a40,40,0,1,1,40-40A40,40,0,0,1,128,168Z"></path>
+                  </svg>
+                </div>
+                <div class="security-item-info">
+                  <h4>Deactivate Account</h4>
+                  <p>Temporarily deactivate your account. You can reactivate it later.</p>
+                  <span class="security-status-badge warning">Reversible</span>
+                </div>
+              </div>
+              <button class="security-action-button warning" (click)="onDeactivateAccount()">
+                Deactivate
+              </button>
+            </div>
+          </div>
         </div>
-      </mat-tab>
-    </mat-tab-group>
-  </mat-card>
+      </div>
+    </div>
+  </div>
 </div> 
