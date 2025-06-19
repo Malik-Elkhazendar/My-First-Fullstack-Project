@@ -111,12 +111,19 @@
           <!-- Wishlist Button -->
           <div class="flex py-2">
             <button
-              class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 bg-[#f4f3f1] text-[#171512] text-sm font-bold leading-normal tracking-[0.015em] hover:bg-[#e4e2dd] transition-colors gap-2"
-                    (click)="addToWishlist()">
+              class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 text-sm font-bold leading-normal tracking-[0.015em] transition-colors gap-2"
+              [class.bg-[#e92932]]="isInWishlist()"
+              [class.text-white]="isInWishlist()"
+              [class.hover:bg-[#d41e2a]]="isInWishlist()"
+              [class.bg-[#f4f3f1]]="!isInWishlist()"
+              [class.text-[#171512]]="!isInWishlist()"
+              [class.hover:bg-[#e4e2dd]]="!isInWishlist()"
+              (click)="addToWishlist()">
               <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="currentColor" viewBox="0 0 256 256">
-                <path d="M178,32c-20.65,0-38.73,8.88-50,23.89C116.73,40.88,98.65,32,78,32A62.07,62.07,0,0,0,16,94c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,220.66,240,164,240,94A62.07,62.07,0,0,0,178,32ZM128,206.8C109.74,196.16,32,147.69,32,94A46.06,46.06,0,0,1,78,48c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,147.61,146.24,196.15,128,206.8Z"></path>
+                <path *ngIf="!isInWishlist()" d="M178,32c-20.65,0-38.73,8.88-50,23.89C116.73,40.88,98.65,32,78,32A62.07,62.07,0,0,0,16,94c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,220.66,240,164,240,94A62.07,62.07,0,0,0,178,32ZM128,206.8C109.74,196.16,32,147.69,32,94A46.06,46.06,0,0,1,78,48c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,147.61,146.24,196.15,128,206.8Z"></path>
+                <path *ngIf="isInWishlist()" d="M178,32c-20.65,0-38.73,8.88-50,23.89C116.73,40.88,98.65,32,78,32A62.07,62.07,0,0,0,16,94c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,220.66,240,164,240,94A62.07,62.07,0,0,0,178,32Z"></path>
               </svg>
-              <span class="truncate">Add to Wishlist</span>
+              <span class="truncate">{{ isInWishlist() ? 'Remove from Wishlist' : 'Add to Wishlist' }}</span>
             </button>
           </div>
         </div>
@@ -126,6 +133,261 @@
           <span class="text-[#994d51] text-sm font-medium">Category: </span>
           <span class="text-[#1b0e0e] font-medium">{{ product.category }}</span>
         </div>
+      </div>
+    </div>
+
+    <!-- Product Information Tabs -->
+    <div class="mt-12 p-4">
+      <div class="bg-white rounded-xl border border-[#e4e2dd] overflow-hidden">
+        <!-- Tab Headers -->
+        <div class="flex border-b border-[#e4e2dd]">
+          <button
+            class="flex-1 py-4 px-6 text-center font-medium transition-colors"
+            [class.bg-[#f3e8cc]]="activeTab === 'description'"
+            [class.text-[#171512]]="activeTab === 'description'"
+            [class.text-[#837b67]]="activeTab !== 'description'"
+            [class.hover:bg-[#f8f6f4]]="activeTab !== 'description'"
+            (click)="activeTab = 'description'">
+            Description
+          </button>
+          <button
+            class="flex-1 py-4 px-6 text-center font-medium transition-colors"
+            [class.bg-[#f3e8cc]]="activeTab === 'specifications'"
+            [class.text-[#171512]]="activeTab === 'specifications'"
+            [class.text-[#837b67]]="activeTab !== 'specifications'"
+            [class.hover:bg-[#f8f6f4]]="activeTab !== 'specifications'"
+            (click)="activeTab = 'specifications'">
+            Specifications
+          </button>
+          <button
+            class="flex-1 py-4 px-6 text-center font-medium transition-colors"
+            [class.bg-[#f3e8cc]]="activeTab === 'reviews'"
+            [class.text-[#171512]]="activeTab === 'reviews'"
+            [class.text-[#837b67]]="activeTab !== 'reviews'"
+            [class.hover:bg-[#f8f6f4]]="activeTab !== 'reviews'"
+            (click)="activeTab = 'reviews'">
+            Reviews ({{ getReviewCount() }})
+          </button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="p-6">
+          <!-- Description Tab -->
+          <div *ngIf="activeTab === 'description'">
+                         <div class="prose max-w-none">
+               <p class="text-[#171512] text-base leading-relaxed mb-4">
+                 {{ product?.description }}
+               </p>
+               <p class="text-[#837b67] text-base leading-relaxed mb-4">
+                 This high-quality {{ product?.category?.toLowerCase() }} item is designed with attention to detail and built to last. 
+                 Perfect for everyday use, it combines functionality with style to meet your needs.
+               </p>
+              <h4 class="text-[#171512] text-lg font-semibold mb-3">Key Features:</h4>
+              <ul class="list-disc list-inside text-[#171512] space-y-2">
+                <li>Premium quality materials</li>
+                <li>Durable construction</li>
+                <li>Stylish design</li>
+                <li>Easy to use and maintain</li>
+                <li>Excellent value for money</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Specifications Tab -->
+          <div *ngIf="activeTab === 'specifications'">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h4 class="text-[#171512] text-lg font-semibold mb-4">Product Details</h4>
+                <div class="space-y-3">
+                  <div class="flex justify-between py-2 border-b border-[#f3e7e8]">
+                    <span class="text-[#837b67] font-medium">Brand:</span>
+                    <span class="text-[#171512]">Premium Brand</span>
+                  </div>
+                                     <div class="flex justify-between py-2 border-b border-[#f3e7e8]">
+                     <span class="text-[#837b67] font-medium">Category:</span>
+                     <span class="text-[#171512]">{{ product?.category }}</span>
+                   </div>
+                   <div class="flex justify-between py-2 border-b border-[#f3e7e8]">
+                     <span class="text-[#837b67] font-medium">SKU:</span>
+                     <span class="text-[#171512]">{{ product?.id | number:'3.0' }}-{{ product?.category?.substring(0,3)?.toUpperCase() }}</span>
+                   </div>
+                   <div class="flex justify-between py-2 border-b border-[#f3e7e8]">
+                     <span class="text-[#837b67] font-medium">Availability:</span>
+                     <span class="text-[#171512]" [class.text-green-600]="product?.inStock" [class.text-red-600]="!product?.inStock">
+                       {{ product?.inStock ? 'In Stock' : 'Out of Stock' }}
+                     </span>
+                   </div>
+                </div>
+              </div>
+              <div>
+                <h4 class="text-[#171512] text-lg font-semibold mb-4">Technical Specs</h4>
+                <div class="space-y-3">
+                                     <div class="flex justify-between py-2 border-b border-[#f3e7e8]">
+                     <span class="text-[#837b67] font-medium">Weight:</span>
+                     <span class="text-[#171512]">{{ (product?.price! * 0.1).toFixed(1) }} lbs</span>
+                   </div>
+                   <div class="flex justify-between py-2 border-b border-[#f3e7e8]">
+                     <span class="text-[#837b67] font-medium">Dimensions:</span>
+                     <span class="text-[#171512]">{{ (product?.price! * 0.05).toFixed(0) }}" x {{ (product?.price! * 0.03).toFixed(0) }}" x {{ (product?.price! * 0.02).toFixed(0) }}"</span>
+                   </div>
+                  <div class="flex justify-between py-2 border-b border-[#f3e7e8]">
+                    <span class="text-[#837b67] font-medium">Material:</span>
+                    <span class="text-[#171512]">Premium Quality</span>
+                  </div>
+                  <div class="flex justify-between py-2 border-b border-[#f3e7e8]">
+                    <span class="text-[#837b67] font-medium">Warranty:</span>
+                    <span class="text-[#171512]">1 Year Limited</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reviews Tab -->
+          <div *ngIf="activeTab === 'reviews'">
+            <div class="space-y-6">
+              <!-- Rating Summary -->
+              <div class="bg-[#f8f6f4] rounded-lg p-6">
+                <div class="flex items-center gap-6 mb-4">
+                                     <div class="text-center">
+                     <div class="text-4xl font-bold text-[#171512] mb-1">{{ product?.rating }}</div>
+                     <div class="flex items-center justify-center mb-1">
+                       <svg *ngFor="let star of [1,2,3,4,5]" 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            width="16px" height="16px" 
+                            [attr.fill]="star <= (product?.rating || 0) ? '#fbbf24' : '#e5e7eb'" 
+                            viewBox="0 0 256 256">
+                        <path d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0L165.93,81.17l59.46,5.15A16,16,0,0,1,234.5,114.38Z"></path>
+                      </svg>
+                    </div>
+                    <div class="text-sm text-[#837b67]">{{ getReviewCount() }} reviews</div>
+                  </div>
+                  <div class="flex-1">
+                    <div class="space-y-2">
+                      <div *ngFor="let rating of [5,4,3,2,1]" class="flex items-center gap-3">
+                        <span class="text-sm text-[#837b67] w-8">{{ rating }}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12px" height="12px" fill="#fbbf24" viewBox="0 0 256 256">
+                          <path d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0L165.93,81.17l59.46,5.15A16,16,0,0,1,234.5,114.38Z"></path>
+                        </svg>
+                        <div class="flex-1 bg-[#e4e2dd] rounded-full h-2">
+                          <div class="bg-[#fbbf24] h-2 rounded-full" [style.width.%]="getRatingPercentage(rating)"></div>
+                        </div>
+                        <span class="text-sm text-[#837b67] w-12">{{ getRatingCount(rating) }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sample Reviews -->
+              <div class="space-y-4">
+                <div *ngFor="let review of mockReviews" class="border border-[#e4e2dd] rounded-lg p-4">
+                  <div class="flex items-start justify-between mb-3">
+                    <div>
+                      <div class="flex items-center gap-2 mb-1">
+                        <span class="font-semibold text-[#171512]">{{ review.author }}</span>
+                        <div class="flex">
+                          <svg *ngFor="let star of [1,2,3,4,5]" 
+                               xmlns="http://www.w3.org/2000/svg" 
+                               width="12px" height="12px" 
+                               [attr.fill]="star <= review.rating ? '#fbbf24' : '#e5e7eb'" 
+                               viewBox="0 0 256 256">
+                            <path d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0L165.93,81.17l59.46,5.15A16,16,0,0,1,234.5,114.38Z"></path>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="text-sm text-[#837b67]">{{ review.date }}</div>
+                    </div>
+                  </div>
+                  <p class="text-[#171512] leading-relaxed">{{ review.comment }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Products Section -->
+    <div class="mt-12 p-4">
+      <h2 class="text-[#171512] text-2xl font-bold leading-tight mb-6">You might also like</h2>
+      
+      <!-- Loading Related Products -->
+      <div *ngIf="loadingRelated" class="flex justify-center items-center py-20">
+        <mat-progress-spinner diameter="30" mode="indeterminate"></mat-progress-spinner>
+      </div>
+
+      <!-- Related Products Grid -->
+      <div *ngIf="!loadingRelated && relatedProducts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        <div *ngFor="let relatedProduct of relatedProducts" 
+             class="bg-white rounded-xl border border-[#e4e2dd] overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer group"
+             (click)="viewProduct(relatedProduct)">
+          
+          <!-- Product Image -->
+          <div class="aspect-square bg-center bg-no-repeat bg-cover relative overflow-hidden"
+               [style.background-image]="'url(' + getImageUrl(relatedProduct.imageUrl) + ')'">
+            
+            <!-- Badges -->
+            <div *ngIf="relatedProduct.originalPrice && relatedProduct.originalPrice > relatedProduct.price" 
+                 class="absolute top-2 left-2 bg-[#e92932] text-white text-xs px-2 py-1 rounded">
+              SALE
+            </div>
+            <div *ngIf="!relatedProduct.inStock" 
+                 class="absolute top-2 right-2 bg-[#837b67] text-white text-xs px-2 py-1 rounded">
+              OUT OF STOCK
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex gap-2">
+              <button type="button"
+                class="p-2 rounded-full shadow-lg transition-colors bg-white/90 hover:bg-white text-[#171512]"
+                (click)="addRelatedToWishlist(relatedProduct); $event.stopPropagation()"
+                [attr.title]="'Add to Wishlist'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="currentColor" viewBox="0 0 256 256">
+                  <path d="M178,32c-20.65,0-38.73,8.88-50,23.89C116.73,40.88,98.65,32,78,32A62.07,62.07,0,0,0,16,94c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,220.66,240,164,240,94A62.07,62.07,0,0,0,178,32ZM128,206.8C109.74,196.16,32,147.69,32,94A46.06,46.06,0,0,1,78,48c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,147.61,146.24,196.15,128,206.8Z"></path>
+                </svg>
+              </button>
+              <button type="button"
+                class="bg-[#f3e8cc] hover:bg-[#f0e4c4] text-[#171512] p-2 rounded-full shadow-lg transition-colors"
+                [disabled]="!relatedProduct.inStock"
+                (click)="addRelatedToCart(relatedProduct); $event.stopPropagation()"
+                [attr.title]="'Add to Cart'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="currentColor" viewBox="0 0 256 256">
+                  <path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Product Info -->
+          <div class="p-4">
+            <h3 class="text-[#171512] font-semibold text-sm mb-2 line-clamp-2">{{ relatedProduct.name }}</h3>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-[#171512] font-bold">${{ formatPrice(relatedProduct.price) }}</span>
+              <span *ngIf="relatedProduct.originalPrice && relatedProduct.originalPrice > relatedProduct.price" 
+                    class="text-[#837b67] text-sm line-through">${{ formatPrice(relatedProduct.originalPrice) }}</span>
+            </div>
+            
+            <!-- Rating -->
+            <div class="flex items-center gap-1">
+              <div class="flex">
+                <svg *ngFor="let star of [1,2,3,4,5]" 
+                     xmlns="http://www.w3.org/2000/svg" 
+                     width="12px" height="12px" 
+                     [attr.fill]="star <= relatedProduct.rating ? '#fbbf24' : '#e5e7eb'" 
+                     viewBox="0 0 256 256">
+                  <path d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0L165.93,81.17l59.46,5.15A16,16,0,0,1,234.5,114.38Z"></path>
+                </svg>
+              </div>
+              <span class="text-[#837b67] text-xs">({{ relatedProduct.rating }})</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Related Products Message -->
+      <div *ngIf="!loadingRelated && relatedProducts.length === 0" class="text-center py-12">
+        <p class="text-[#837b67] text-base">No related products found.</p>
       </div>
     </div>
       </div>

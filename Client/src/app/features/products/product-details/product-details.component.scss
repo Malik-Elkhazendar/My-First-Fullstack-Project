@@ -1,6 +1,15 @@
 // Import the same color palette and variables
 @use 'sass:color';
 
+// Utility classes
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
 $primary-color: #6366f1;
 $secondary-color: #8b5cf6;
 $accent-color: #06b6d4;

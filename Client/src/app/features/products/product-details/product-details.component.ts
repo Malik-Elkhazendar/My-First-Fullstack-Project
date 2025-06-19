@@ -13,6 +13,7 @@ import { Product } from '../../../core/models/product.model';
 import { ProductService } from '../../../core/services/product.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { CartService } from '../../../core/services/cart.service';
+import { WishlistService } from '../../../core/services/wishlist.service';
 
 @Component({
   selector: 'app-product-details',
@@ -34,10 +35,33 @@ export class ProductDetailsComponent implements OnInit {
   product: Product | null = null;
   relatedProducts: Product[] = [];
   loading = true;
+  loadingRelated = false;
   error: string | null = null;
   quantity = 1;
   selectedQuantity = 1;
   isAddingToCart = false;
+  activeTab = 'description';
+  
+  mockReviews = [
+    {
+      author: 'John D.',
+      rating: 5,
+      date: '2 weeks ago',
+      comment: 'Excellent product! Great quality and fast shipping. Highly recommended!'
+    },
+    {
+      author: 'Sarah M.',
+      rating: 4,
+      date: '1 month ago',
+      comment: 'Very satisfied with this purchase. Good value for money and works as expected.'
+    },
+    {
+      author: 'Mike R.',
+      rating: 5,
+      date: '6 weeks ago',
+      comment: 'Outstanding quality and design. Exceeded my expectations in every way!'
+    }
+  ];
 
   constructor(
     private route: ActivatedRoute,
@@ -46,7 +70,8 @@ export class ProductDetailsComponent implements OnInit {
     private snackBar: MatSnackBar,
     private productService: ProductService,
     private authService: AuthService,
-    private cartService: CartService
+    private cartService: CartService,
+    private wishlistService: WishlistService
   ) {}
 
   ngOnInit(): void {
@@ -83,15 +108,19 @@ export class ProductDetailsComponent implements OnInit {
   private loadRelatedProducts(): void {
     if (!this.product) return;
     
+    this.loadingRelated = true;
+    
     this.productService.getProducts().subscribe({
       next: (products: Product[]) => {
         this.relatedProducts = products
           .filter(p => p.id !== this.product!.id && p.category === this.product!.category)
           .slice(0, 4);
+        this.loadingRelated = false;
       },
       error: (error: any) => {
         console.error('Error loading related products:', error);
         this.relatedProducts = [];
+        this.loadingRelated = false;
       }
     });
   }
@@ -164,15 +193,29 @@ export class ProductDetailsComponent implements OnInit {
   addToWishlist(): void {
     if (!this.product) return;
     
-    // Mock wishlist functionality
-    this.snackBar.open(
-      `${this.product.name} added to wishlist!`, 
-      'Close', 
-      {
-        duration: 2000,
-        panelClass: ['success-snackbar']
-      }
-    );
+    const wasAdded = this.wishlistService.toggleWishlist(this.product);
+    
+    if (wasAdded) {
+      this.snackBar.open(
+        `${this.product.name} added to wishlist!`, 
+        'View Wishlist', 
+        {
+          duration: 3000,
+          panelClass: ['success-snackbar']
+        }
+      ).onAction().subscribe(() => {
+        this.router.navigate(['/wishlist']);
+      });
+    } else {
+      this.snackBar.open(
+        `${this.product.name} removed from wishlist!`, 
+        'Close', 
+        {
+          duration: 2000,
+          panelClass: ['info-snackbar']
+        }
+      );
+    }
   }
 
   // Utility Methods
@@ -198,6 +241,10 @@ export class ProductDetailsComponent implements OnInit {
 
   isInStock(product: Product): boolean {
     return product.inStock;
+  }
+
+  isInWishlist(): boolean {
+    return this.product ? this.wishlistService.isInWishlist(this.product.id) : false;
   }
 
   getStockStatus(product: Product): string {
@@ -230,5 +277,74 @@ export class ProductDetailsComponent implements OnInit {
   getSavingsAmount(product: Product): number {
     if (!this.hasDiscount(product)) return 0;
     return product.originalPrice! - product.price;
+  }
+
+  // Tab and Review Methods
+  getReviewCount(): number {
+    // Simulate review count based on rating
+    return Math.floor((this.product?.rating || 4) * 25);
+  }
+
+  getRatingPercentage(rating: number): number {
+    if (!this.product) return 0;
+    const total = this.getReviewCount();
+    // Simulate distribution based on product rating
+    const distribution = {
+      5: this.product.rating >= 4.5 ? 60 : this.product.rating >= 4 ? 40 : 20,
+      4: this.product.rating >= 4 ? 25 : 30,
+      3: this.product.rating >= 3 ? 10 : 25,
+      2: this.product.rating >= 2 ? 3 : 15,
+      1: this.product.rating >= 2 ? 2 : 10
+    };
+    return distribution[rating as keyof typeof distribution] || 0;
+  }
+
+  getRatingCount(rating: number): number {
+    const total = this.getReviewCount();
+    const percentage = this.getRatingPercentage(rating);
+    return Math.floor((percentage / 100) * total);
+  }
+
+  // Related Products Methods
+  addRelatedToCart(product: Product): void {
+    if (!product.inStock) return;
+    
+    this.cartService.addToCart(product, 1);
+    this.snackBar.open(
+      `${product.name} added to cart!`, 
+      'View Cart', 
+      {
+        duration: 3000,
+        panelClass: ['success-snackbar']
+      }
+    ).onAction().subscribe(() => {
+      this.router.navigate(['/cart']);
+    });
+  }
+
+  addRelatedToWishlist(product: Product): void {
+    const wasAdded = this.wishlistService.toggleWishlist(product);
+    
+    if (wasAdded) {
+      this.snackBar.open(
+        `${product.name} added to wishlist!`, 
+        'View Wishlist', 
+        {
+          duration: 3000,
+          panelClass: ['success-snackbar']
+        }
+      ).onAction().subscribe(() => {
+        this.router.navigate(['/wishlist']);
+      });
+    } else {
+      this.snackBar.open(
+        `${product.name} removed from wishlist!`, 
+        'Close', 
+        {
+          duration: 2000,
+          panelClass: ['info-snackbar']
+        }
+      );
+    }
   }
 }
