@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -16,11 +16,13 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatBadgeModule } from '@angular/material/badge';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatChipsModule } from '@angular/material/chips';
+
 import { Product } from '../../../core/models/product.model';
 import { ProductService } from '../../../core/services/product.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { CartService } from '../../../core/services/cart.service';
+import { WishlistService } from '../../../core/services/wishlist.service';
 
 @Component({
   selector: 'app-product-list',
@@ -42,7 +44,7 @@ import { CartService } from '../../../core/services/cart.service';
     MatDividerModule,
     MatSnackBarModule,
     MatBadgeModule,
-    MatMenuModule
+    MatChipsModule
   ],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss']
@@ -56,10 +58,16 @@ export class ProductListComponent implements OnInit {
   loading = true;
   error: string | null = null;
   searchTerm = '';
+  searchQuery = ''; // For template binding
   selectedCategory = 'All';
+  selectedRating: number | null = null; // For rating filter
   viewMode: 'grid' | 'list' = 'grid';
   showAdvancedFilters = false;
   addingToCart: { [key: number]: boolean } = {};
+  isSortMenuOpen = false;
+  filterMode: 'basic' | 'advanced' = 'basic';
+  showInStockOnly = false;
+  showOutOfStockOnly = false;
 
   // Current category from route
   currentCategory = '';
@@ -67,7 +75,7 @@ export class ProductListComponent implements OnInit {
   // Advanced filter properties
   priceRange = {
     min: 0,
-    max: 1000
+    max: 2000
   };
   minRating = 0;
   stockFilter: 'all' | 'inStock' | 'outOfStock' = 'all';
@@ -80,8 +88,24 @@ export class ProductListComponent implements OnInit {
     private snackBar: MatSnackBar,
     private productService: ProductService,
     private authService: AuthService,
-    private cartService: CartService
+    private cartService: CartService,
+    private wishlistService: WishlistService
   ) {}
+
+  // Close dropdown when clicking outside
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.relative')) {
+      this.isSortMenuOpen = false;
+    }
+  }
+
+  // Handle escape key to close dropdown
+  @HostListener('document:keydown.escape')
+  onEscapePress(): void {
+    this.isSortMenuOpen = false;
+  }
 
   ngOnInit(): void {
     // Subscribe to route params to get category
@@ -131,7 +155,47 @@ export class ProductListComponent implements OnInit {
   setSortOption(sortBy: string, sortOrder: string): void {
     this.sortBy = sortBy as 'name' | 'price' | 'rating' | 'newest';
     this.sortOrder = sortOrder as 'asc' | 'desc';
+    this.isSortMenuOpen = false; // Close menu after selection
     this.applyFilters();
+  }
+
+  // Sort menu methods
+  toggleSortMenu(): void {
+    this.isSortMenuOpen = !this.isSortMenuOpen;
+  }
+
+  closeSortMenu(): void {
+    this.isSortMenuOpen = false;
+  }
+
+  getCurrentSortLabel(): string {
+    const sortLabels: { [key: string]: string } = {
+      'name-asc': 'Name A-Z',
+      'name-desc': 'Name Z-A',
+      'price-asc': 'Price Low to High',
+      'price-desc': 'Price High to Low',
+      'rating-desc': 'Highest Rated',
+      'newest-desc': 'Newest First'
+    };
+    
+    const key = `${this.sortBy}-${this.sortOrder}`;
+    return sortLabels[key] || 'Sort';
+  }
+
+  // Filter mode change handler
+  onFilterModeChange(): void {
+    this.applyFilters();
+  }
+
+  // Get active filters count for badge
+  getActiveFiltersCount(): number {
+    let count = 0;
+    if (this.searchTerm.trim()) count++;
+    if (this.selectedCategory !== 'All') count++;
+    if (this.priceRange.min > 0 || this.priceRange.max < 1000) count++;
+    if (this.minRating > 0) count++;
+    if (this.stockFilter !== 'all') count++;
+    return count;
   }
 
   // Admin role checking
@@ -158,6 +222,13 @@ export class ProductListComponent implements OnInit {
 
   // Advanced filter methods
   onPriceRangeChange(): void {
+    // Ensure min doesn't exceed max
+    if (this.priceRange.min > this.priceRange.max) {
+      this.priceRange.min = this.priceRange.max;
+    }
+    // Ensure values are within bounds
+    this.priceRange.min = Math.max(0, Math.min(2000, this.priceRange.min));
+    this.priceRange.max = Math.max(0, Math.min(2000, this.priceRange.max));
     this.applyFilters();
   }
 
@@ -166,6 +237,20 @@ export class ProductListComponent implements OnInit {
   }
 
   onStockFilterChange(): void {
+    // Update stock filter based on checkboxes
+    if (this.showInStockOnly && this.showOutOfStockOnly) {
+      // If both are selected, keep only the last one clicked
+      this.showOutOfStockOnly = false;
+    }
+    
+    if (this.showInStockOnly) {
+      this.stockFilter = 'inStock';
+    } else if (this.showOutOfStockOnly) {
+      this.stockFilter = 'outOfStock';
+    } else {
+      this.stockFilter = 'all';
+    }
+    
     this.applyFilters();
   }
 
@@ -207,8 +292,13 @@ export class ProductListComponent implements OnInit {
   }
 
   // Search and Filter Methods
+  private searchTimeout?: number;
   onSearchChange(): void {
-    this.applyFilters();
+    this.searchTerm = this.searchQuery; // Sync with internal search term
+    clearTimeout(this.searchTimeout);
+    this.searchTimeout = window.setTimeout(() => {
+      this.applyFilters();
+    }, 300);
   }
 
   filterByCategory(category: string): void {
@@ -216,7 +306,11 @@ export class ProductListComponent implements OnInit {
     this.applyFilters();
   }
 
-  private applyFilters(): void {
+  onCategoryChange(): void {
+    this.applyFilters();
+  }
+
+  applyFilters(): void {
     let filtered = [...this.products];
 
     // Apply search filter
@@ -244,8 +338,8 @@ export class ProductListComponent implements OnInit {
     );
 
     // Apply rating filter
-    if (this.minRating > 0) {
-      filtered = filtered.filter(product => product.rating >= this.minRating);
+    if (this.selectedRating && this.selectedRating > 0) {
+      filtered = filtered.filter(product => product.rating >= this.selectedRating!);
     }
 
     // Apply stock filter
@@ -283,10 +377,14 @@ export class ProductListComponent implements OnInit {
 
   clearFilters(): void {
     this.searchTerm = '';
+    this.searchQuery = '';
     this.selectedCategory = 'All';
-    this.priceRange = { min: 0, max: 1000 };
+    this.selectedRating = null;
+    this.priceRange = { min: 0, max: 2000 };
     this.minRating = 0;
     this.stockFilter = 'all';
+    this.showInStockOnly = false;
+    this.showOutOfStockOnly = false;
     this.sortBy = 'name';
     this.sortOrder = 'asc';
     this.applyFilters();
@@ -295,10 +393,13 @@ export class ProductListComponent implements OnInit {
   hasActiveFilters(): boolean {
     return this.searchTerm.trim() !== '' || 
            this.selectedCategory !== 'All' ||
+           this.selectedRating !== null ||
            this.priceRange.min > 0 ||
-           this.priceRange.max < 1000 ||
+           this.priceRange.max < 2000 ||
            this.minRating > 0 ||
-           this.stockFilter !== 'all';
+           this.stockFilter !== 'all' ||
+           this.showInStockOnly ||
+           this.showOutOfStockOnly;
   }
 
   setViewMode(mode: 'grid' | 'list'): void {
@@ -338,12 +439,26 @@ export class ProductListComponent implements OnInit {
     return !!this.addingToCart[productId];
   }
 
+  isInWishlist(productId: number): boolean {
+    return this.wishlistService.isInWishlist(productId);
+  }
+
   addToWishlist(product: Product): void {
-    // Mock wishlist functionality
-    this.snackBar.open(`${product.name} added to wishlist!`, 'Close', {
-      duration: 2000,
-      panelClass: ['success-snackbar']
-    });
+    const wasAdded = this.wishlistService.toggleWishlist(product);
+    
+    if (wasAdded) {
+      this.snackBar.open(`${product.name} added to wishlist!`, 'View Wishlist', {
+        duration: 3000,
+        panelClass: ['success-snackbar']
+      }).onAction().subscribe(() => {
+        this.router.navigate(['/wishlist']);
+      });
+    } else {
+      this.snackBar.open(`${product.name} removed from wishlist!`, 'Close', {
+        duration: 2000,
+        panelClass: ['info-snackbar']
+      });
+    }
   }
 
   trackByProductId(index: number, product: Product): number {
