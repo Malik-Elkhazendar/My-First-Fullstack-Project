@@ -1,0 +1,77 @@
+<div class="wishlist-item-card">
+  <div class="wishlist-item-image">
+    <img 
+      [src]="getImageUrl(wishlistItem.product.imageUrl)" 
+      [alt]="wishlistItem.product.name"
+      (error)="handleImageError($event)"
+      (click)="viewProduct()"
+      class="product-image">
+    
+    <!-- Sale Badge -->
+    <div *ngIf="isOnSale()" class="sale-badge">
+      -{{ getDiscountPercentage() }}%
+    </div>
+    
+    <!-- Stock Status -->
+    <div class="stock-status" [class.out-of-stock]="!wishlistItem.product.inStock">
+      {{ wishlistItem.product.inStock ? 'In Stock' : 'Out of Stock' }}
+    </div>
+  </div>
+  
+  <div class="wishlist-item-content">
+    <div class="wishlist-item-header">
+      <h3 class="product-name" (click)="viewProduct()">{{ wishlistItem.product.name }}</h3>
+      <button class="remove-button" (click)="removeFromWishlist()" title="Remove from wishlist">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+          <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="product-category">{{ wishlistItem.product.category }}</div>
+    
+    <div class="product-description">{{ wishlistItem.product.description }}</div>
+    
+    <div class="product-rating">
+      <div class="stars">
+        <span *ngFor="let star of [1,2,3,4,5]" 
+              class="star" 
+              [class.filled]="star <= wishlistItem.product.rating">
+          ★
+        </span>
+      </div>
+      <span class="rating-value">({{ wishlistItem.product.rating }})</span>
+    </div>
+    
+    <div class="price-section">
+      <div class="current-price">${{ wishlistItem.product.price.toFixed(2) }}</div>
+      <div *ngIf="wishlistItem.product.originalPrice && isOnSale()" 
+           class="original-price">
+        ${{ wishlistItem.product.originalPrice.toFixed(2) }}
+      </div>
+    </div>
+    
+    <div class="wishlist-item-meta">
+      <span class="date-added">{{ getFormattedDate() }}</span>
+    </div>
+    
+    <div class="wishlist-item-actions">
+      <button 
+        class="add-to-cart-button" 
+        (click)="addToCart()"
+        [disabled]="!wishlistItem.product.inStock">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" fill="currentColor" viewBox="0 0 256 256">
+          <path d="M222.14,58.87A8,8,0,0,0,216,56H54.68L49.79,29.14A16,16,0,0,0,34.05,16H16a8,8,0,0,0,0,16H34.05l5.81,29.06L59.13,166.86A24,24,0,0,0,83,192h24a8,8,0,0,0,0-16H83a8,8,0,0,1-7.87-6.57L73.28,152h116a24,24,0,0,0,23.61-19.71l12.16-66.86A8,8,0,0,0,222.14,58.87ZM96,204a12,12,0,1,1-12-12A12,12,0,0,1,96,204Zm96,0a12,12,0,1,1-12-12A12,12,0,0,1,192,204Z"></path>
+        </svg>
+        {{ wishlistItem.product.inStock ? 'Add to Cart' : 'Out of Stock' }}
+      </button>
+      
+      <button class="view-product-button" (click)="viewProduct()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" fill="currentColor" viewBox="0 0 256 256">
+          <path d="M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.57,61.26,162.88,48,128,48S61.43,61.26,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.5c.35.79,8.82,19.57,27.65,38.4C61.43,194.74,93.12,208,128,208s66.57-13.26,91.66-38.34c18.83-18.83,27.3-37.61,27.65-38.4A8,8,0,0,0,247.31,124.76ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.47,133.47,0,0,1,25,128,133.33,133.33,0,0,1,48.07,97.25C70.33,75.19,97.22,64,128,64s57.67,11.19,79.93,33.25A133.46,133.46,0,0,1,231.05,128C223.84,141.46,192.43,192,128,192Zm0-112a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z"></path>
+        </svg>
+        View Details
+      </button>
+    </div>
+  </div>
+</div> 

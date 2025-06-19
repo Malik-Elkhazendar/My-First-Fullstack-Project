@@ -1,0 +1,299 @@
+.wishlist-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  // Icon variant (default)
+  &--icon {
+    background: rgba(255, 255, 255, 0.9);
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
+    backdrop-filter: blur(10px);
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.95);
+      color: #ef4444;
+      border-color: #fecaca;
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+    }
+
+    &.wishlist-button--active {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: white;
+      border-color: #dc2626;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+
+      &:hover:not(:disabled) {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        transform: scale(1.05);
+        box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+      }
+    }
+  }
+
+  // Button variant
+  &--button {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    color: #374151;
+    border: 1px solid #d1d5db;
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    &.wishlist-button--active {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: white;
+      border-color: #dc2626;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+
+      &:hover:not(:disabled) {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+      }
+    }
+  }
+
+  // Size variants
+  &--small {
+    padding: 0.375rem;
+    font-size: 0.75rem;
+
+    .wishlist-button__icon svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    &.wishlist-button--button {
+      padding: 0.375rem 0.75rem;
+    }
+  }
+
+  &--medium {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+
+    .wishlist-button__icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    &.wishlist-button--button {
+      padding: 0.5rem 1rem;
+    }
+  }
+
+  &--large {
+    padding: 0.75rem;
+    font-size: 1rem;
+
+    .wishlist-button__icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    &.wishlist-button--button {
+      padding: 0.75rem 1.5rem;
+    }
+  }
+
+  // Loading state
+  &--loading {
+    pointer-events: none;
+
+    .wishlist-button__spinner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  // Icon styles
+  .wishlist-button__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+
+    svg {
+      transition: all 0.3s ease;
+    }
+  }
+
+  // Text styles
+  .wishlist-button__text {
+    white-space: nowrap;
+    transition: all 0.3s ease;
+  }
+
+  // Spinner animation
+  .wishlist-button__spinner {
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  // Active state animation
+  &.wishlist-button--active {
+    .wishlist-button__icon {
+      animation: heartBeat 0.6s ease-in-out;
+    }
+  }
+
+  // Hover effects
+  &:hover:not(:disabled) {
+    .wishlist-button__icon {
+      transform: scale(1.1);
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+}
+
+// Keyframe animations
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.2); }
+  50% { transform: scale(1); }
+  75% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .wishlist-button {
+    &--small {
+      padding: 0.25rem;
+
+      .wishlist-button__icon svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      &.wishlist-button--button {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.7rem;
+      }
+    }
+
+    &--medium {
+      padding: 0.375rem;
+
+      .wishlist-button__icon svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      &.wishlist-button--button {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.8rem;
+      }
+    }
+
+    &--large {
+      padding: 0.5rem;
+
+      .wishlist-button__icon svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      &.wishlist-button--button {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+      }
+    }
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .wishlist-button {
+    border-width: 2px;
+
+    &--icon {
+      background: white;
+      color: black;
+      border-color: black;
+
+      &.wishlist-button--active {
+        background: red;
+        color: white;
+        border-color: red;
+      }
+    }
+
+    &--button {
+      background: white;
+      color: black;
+      border-color: black;
+
+      &.wishlist-button--active {
+        background: red;
+        color: white;
+        border-color: red;
+      }
+    }
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .wishlist-button {
+    transition: none;
+
+    .wishlist-button__icon,
+    .wishlist-button__text {
+      transition: none;
+    }
+
+    &:hover:not(:disabled) {
+      transform: none;
+
+      .wishlist-button__icon {
+        transform: none;
+      }
+    }
+
+    &:active:not(:disabled) {
+      transform: none;
+    }
+
+    &.wishlist-button--active {
+      .wishlist-button__icon {
+        animation: none;
+      }
+    }
+  }
+
+  .wishlist-button__spinner {
+    .animate-spin {
+      animation: none;
+    }
+  }
+} 

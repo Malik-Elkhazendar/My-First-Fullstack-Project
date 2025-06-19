@@ -1,0 +1,138 @@
+// User Menu Component Styles
+
+.user-menu-container {
+  position: relative;
+  display: inline-block;
+}
+
+// Dropdown menu positioning and styling
+.user-menu-container .absolute {
+  border-radius: 16px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f3f4f6;
+  background: white;
+  animation: slideDown 0.15s ease-out;
+  backdrop-filter: blur(10px);
+}
+
+// Menu item hover effects
+.user-menu-container .hover\\:bg-gray-50:hover {
+  background-color: #f9fafb !important;
+}
+
+// Animation for dropdown
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// Icon container styling with proper background color
+.icon-bg {
+  background-color: #f5f3f0;
+  transition: all 0.2s ease;
+}
+
+// Menu item interaction
+.group:hover .icon-bg {
+  background-color: #ebe8e3;
+  transform: scale(1.05);
+}
+
+// Text styling
+.menu-text {
+  color: #181611;
+}
+
+// Hover states for menu items
+.group:hover .menu-text {
+  color: #0f0c0a;
+}
+
+// Special styling for logout item
+.group:hover .bg-red-100 {
+  background-color: #fecaca !important;
+  transform: scale(1.05);
+}
+
+.group:hover .text-red-600 {
+  color: #dc2626 !important;
+  font-weight: 600;
+}
+
+// Responsive design
+@media (max-width: 640px) {
+  .user-menu-container .absolute {
+    min-width: 180px;
+    width: 180px;
+    right: -10px;
+  }
+}
+
+// Focus states for accessibility
+.user-menu-container button:focus,
+.user-menu-container div:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+// Backdrop fade animation
+.fixed.inset-0 {
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Menu item active states
+.group:active {
+  transform: scale(0.98);
+}
+
+// Smooth transitions
+.transition-colors {
+  transition: all 0.15s ease;
+}
+
+// Z-index management
+.z-50 {
+  z-index: 50;
+}
+
+.z-40 {
+  z-index: 40;
+}
+
+// Divider styling
+.h-px {
+  height: 1px;
+}
+
+// Enhanced menu item padding and spacing
+.py-3 {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+// Icon size consistency
+.w-8.h-8 {
+  width: 32px;
+  height: 32px;
+}
+
+// Better text sizing
+.text-sm {
+  font-size: 14px;
+  line-height: 1.25;
+} 
