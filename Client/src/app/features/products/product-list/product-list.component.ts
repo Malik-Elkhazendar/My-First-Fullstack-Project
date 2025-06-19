@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -17,12 +17,21 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatChipsModule } from '@angular/material/chips';
+import { Subject, Subscription, Observable, debounceTime, distinctUntilChanged, switchMap, catchError, of, takeUntil } from 'rxjs';
 
 import { Product } from '../../../core/models/product.model';
-import { ProductService } from '../../../core/services/product.service';
+import { ProductService, ProductFilters } from '../../../core/services/product.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { CartService } from '../../../core/services/cart.service';
 import { WishlistService } from '../../../core/services/wishlist.service';
+import { ErrorHandlingService, AppError } from '../../../core/services/error-handling.service';
+import { LoadingService } from '../../../core/services/loading.service';
+
+interface LoadingStates {
+  products: boolean;
+  addingToCart: { [key: number]: boolean };
+  addingToWishlist: { [key: number]: boolean };
+}
 
 @Component({
   selector: 'app-product-list',
@@ -49,21 +58,28 @@ import { WishlistService } from '../../../core/services/wishlist.service';
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss']
 })
-export class ProductListComponent implements OnInit {
+export class ProductListComponent implements OnInit, OnDestroy {
   products: Product[] = [];
   filteredProducts: Product[] = [];
   categories: string[] = ['All', 'Electronics', 'Clothing', 'Books', 'Home & Garden'];
   
-  // UI State
-  loading = true;
-  error: string | null = null;
+  // UI State with proper typing
+  loading: LoadingStates = {
+    products: false,
+    addingToCart: {},
+    addingToWishlist: {}
+  };
+  error: AppError | null = null;
+  retryAttempts = 0;
+  readonly MAX_RETRY_ATTEMPTS = 3;
+  
+  // Search and filter state
   searchTerm = '';
   searchQuery = ''; // For template binding
   selectedCategory = 'All';
-  selectedRating: number | null = null; // For rating filter
+  selectedRating: number | null = null;
   viewMode: 'grid' | 'list' = 'grid';
   showAdvancedFilters = false;
-  addingToCart: { [key: number]: boolean } = {};
   isSortMenuOpen = false;
   filterMode: 'basic' | 'advanced' = 'basic';
   showInStockOnly = false;
@@ -72,8 +88,8 @@ export class ProductListComponent implements OnInit {
   // Current category from route
   currentCategory = '';
 
-  // Advanced filter properties
-  priceRange = {
+  // Advanced filter properties with type safety
+  priceRange: { min: number; max: number } = {
     min: 0,
     max: 2000
   };
@@ -82,6 +98,11 @@ export class ProductListComponent implements OnInit {
   sortBy: 'name' | 'price' | 'rating' | 'newest' = 'name';
   sortOrder: 'asc' | 'desc' = 'asc';
 
+  // Reactive programming
+  private destroy$ = new Subject<void>();
+  private searchSubject = new Subject<string>();
+  private subscriptions = new Subscription();
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -89,8 +110,12 @@ export class ProductListComponent implements OnInit {
     private productService: ProductService,
     private authService: AuthService,
     private cartService: CartService,
-    private wishlistService: WishlistService
-  ) {}
+    private wishlistService: WishlistService,
+    private errorHandler: ErrorHandlingService,
+    private loadingService: LoadingService
+  ) {
+    this.initializeSearchHandler();
+  }
 
   // Close dropdown when clicking outside
   @HostListener('document:click', ['$event'])
@@ -108,16 +133,59 @@ export class ProductListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Subscribe to route params to get category
-    this.route.queryParams.subscribe(params => {
-      this.currentCategory = params['category'] || '';
-      this.searchTerm = params['search'] || '';
-      this.selectedCategory = this.currentCategory ? this.capitalizeFirst(this.currentCategory) : 'All';
-    this.loadProducts();
+    this.subscribeToLoadingStates();
+    this.subscribeToRouteParams();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.subscriptions.unsubscribe();
+  }
+
+  private initializeSearchHandler(): void {
+    // Debounce search input to avoid excessive API calls
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$),
+      switchMap(query => {
+        if (query.length < 2 && query.length > 0) {
+          return of([]);
+        }
+        return this.performSearch(query);
+      })
+    ).subscribe({
+      next: (products) => {
+        this.filteredProducts = products;
+        this.error = null;
+      },
+      error: (error: AppError) => {
+        this.handleSearchError(error);
+      }
     });
   }
 
-  // Category display methods
+  private subscribeToLoadingStates(): void {
+    this.subscriptions.add(
+      this.loadingService.isLoading('getProducts').subscribe(
+        isLoading => this.loading.products = isLoading
+      )
+    );
+  }
+
+  private subscribeToRouteParams(): void {
+    this.subscriptions.add(
+      this.route.queryParams.subscribe(params => {
+        this.currentCategory = params['category'] || '';
+        this.searchTerm = params['search'] || '';
+        this.selectedCategory = this.currentCategory ? this.capitalizeFirst(this.currentCategory) : 'All';
+        this.loadProducts();
+      })
+    );
+  }
+
+  // Category display methods with null safety
   getCategoryDisplayName(): string {
     if (this.currentCategory) {
       return this.formatCategoryName(this.currentCategory);
@@ -126,7 +194,7 @@ export class ProductListComponent implements OnInit {
   }
 
   getCategoryDescription(): string {
-    const descriptions: { [key: string]: string } = {
+    const descriptions: Record<string, string> = {
       'clothing': 'Explore our latest collection of stylish and comfortable clothing for every occasion.',
       'shoes': 'Step out in style with our premium collection of footwear.',
       'accessories': 'Complete your look with our curated selection of accessories.',
@@ -141,6 +209,10 @@ export class ProductListComponent implements OnInit {
   }
 
   private formatCategoryName(category: string): string {
+    if (!category || typeof category !== 'string') {
+      return 'All Products';
+    }
+    
     return category
       .split('-')
       .map(word => this.capitalizeFirst(word))
@@ -148,15 +220,22 @@ export class ProductListComponent implements OnInit {
   }
 
   private capitalizeFirst(str: string): string {
+    if (!str || typeof str !== 'string') return '';
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  // Sort functionality
+  // Enhanced sort functionality with error handling
   setSortOption(sortBy: string, sortOrder: string): void {
-    this.sortBy = sortBy as 'name' | 'price' | 'rating' | 'newest';
-    this.sortOrder = sortOrder as 'asc' | 'desc';
-    this.isSortMenuOpen = false; // Close menu after selection
-    this.applyFilters();
+    try {
+      this.sortBy = sortBy as 'name' | 'price' | 'rating' | 'newest';
+      this.sortOrder = sortOrder as 'asc' | 'desc';
+      this.isSortMenuOpen = false;
+      this.applyFilters();
+      
+      this.errorHandler.showInfoNotification(`Sorted by ${this.getCurrentSortLabel()}`);
+    } catch (error) {
+      this.errorHandler.handleError(error, 'setSortOption');
+    }
   }
 
   // Sort menu methods
@@ -169,7 +248,7 @@ export class ProductListComponent implements OnInit {
   }
 
   getCurrentSortLabel(): string {
-    const sortLabels: { [key: string]: string } = {
+    const sortLabels: Record<string, string> = {
       'name-asc': 'Name A-Z',
       'name-desc': 'Name Z-A',
       'price-asc': 'Price Low to High',
@@ -182,123 +261,187 @@ export class ProductListComponent implements OnInit {
     return sortLabels[key] || 'Sort';
   }
 
-  // Filter mode change handler
+  // Enhanced filter handling
   onFilterModeChange(): void {
-    this.applyFilters();
-  }
-
-  // Get active filters count for badge
-  getActiveFiltersCount(): number {
-    let count = 0;
-    if (this.searchTerm.trim()) count++;
-    if (this.selectedCategory !== 'All') count++;
-    if (this.priceRange.min > 0 || this.priceRange.max < 1000) count++;
-    if (this.minRating > 0) count++;
-    if (this.stockFilter !== 'all') count++;
-    return count;
-  }
-
-  // Admin role checking
-  isAdmin(): boolean {
-    return this.authService.isAdmin;
-  }
-
-  // Navigate to add product page (admin only)
-  addProduct(): void {
-    if (this.isAdmin()) {
-      this.router.navigate(['/admin/products/add']);
-    } else {
-      this.snackBar.open('Access denied. Admin privileges required.', 'Close', {
-        duration: 3000,
-        panelClass: ['error-snackbar']
-      });
+    try {
+      this.applyFilters();
+      this.errorHandler.showInfoNotification(
+        `Switched to ${this.filterMode} filters`
+      );
+    } catch (error) {
+      this.errorHandler.handleError(error, 'onFilterModeChange');
     }
   }
 
-  // Toggle advanced filters panel
+  // Get active filters count for badge with validation
+  getActiveFiltersCount(): number {
+    try {
+      let count = 0;
+      if (this.searchTerm?.trim()) count++;
+      if (this.selectedCategory !== 'All') count++;
+      if (this.priceRange.min > 0 || this.priceRange.max < 2000) count++;
+      if (this.minRating > 0) count++;
+      if (this.stockFilter !== 'all') count++;
+      return count;
+    } catch (error) {
+      this.errorHandler.handleError(error, 'getActiveFiltersCount');
+      return 0;
+    }
+  }
+
+  // Admin check with error handling
+  isAdmin(): boolean {
+    try {
+      return this.authService.isAdmin;
+    } catch (error) {
+      this.errorHandler.handleError(error, 'isAdmin');
+      return false;
+    }
+  }
+
+  addProduct(): void {
+    try {
+      this.router.navigate(['/admin/products/add']);
+    } catch (error) {
+      this.errorHandler.handleError(error, 'addProduct');
+      this.errorHandler.showErrorNotification('Unable to navigate to add product page');
+    }
+  }
+
+  // Enhanced toggle methods
   toggleAdvancedFilters(): void {
     this.showAdvancedFilters = !this.showAdvancedFilters;
   }
 
-  // Advanced filter methods
   onPriceRangeChange(): void {
-    // Ensure min doesn't exceed max
-    if (this.priceRange.min > this.priceRange.max) {
-      this.priceRange.min = this.priceRange.max;
+    try {
+      // Validate price range
+      if (this.priceRange.min < 0) this.priceRange.min = 0;
+      if (this.priceRange.max > 2000) this.priceRange.max = 2000;
+      if (this.priceRange.min > this.priceRange.max) {
+        this.priceRange.min = this.priceRange.max;
+      }
+      
+      this.applyFilters();
+    } catch (error) {
+      this.errorHandler.handleError(error, 'onPriceRangeChange');
     }
-    // Ensure values are within bounds
-    this.priceRange.min = Math.max(0, Math.min(2000, this.priceRange.min));
-    this.priceRange.max = Math.max(0, Math.min(2000, this.priceRange.max));
-    this.applyFilters();
   }
 
   onRatingChange(): void {
-    this.applyFilters();
+    try {
+      this.selectedRating = this.minRating;
+      this.applyFilters();
+    } catch (error) {
+      this.errorHandler.handleError(error, 'onRatingChange');
+    }
   }
 
   onStockFilterChange(): void {
-    // Update stock filter based on checkboxes
-    if (this.showInStockOnly && this.showOutOfStockOnly) {
-      // If both are selected, keep only the last one clicked
-      this.showOutOfStockOnly = false;
+    try {
+      // Update individual stock filter flags based on stockFilter value
+      this.showInStockOnly = this.stockFilter === 'inStock';
+      this.showOutOfStockOnly = this.stockFilter === 'outOfStock';
+      this.applyFilters();
+    } catch (error) {
+      this.errorHandler.handleError(error, 'onStockFilterChange');
     }
-    
-    if (this.showInStockOnly) {
-      this.stockFilter = 'inStock';
-    } else if (this.showOutOfStockOnly) {
-      this.stockFilter = 'outOfStock';
-    } else {
-      this.stockFilter = 'all';
-    }
-    
-    this.applyFilters();
   }
 
   onSortChange(): void {
     this.applyFilters();
   }
 
-  // Data Loading
+  // Enhanced loading with retry logic
   private loadProducts(): void {
-    this.loading = true;
     this.error = null;
-
-    // Simulate loading delay for better UX
-    setTimeout(() => {
-      try {
-        this.productService.getProducts().subscribe({
-          next: (products) => {
-            this.products = products;
-            this.applyFilters();
-            this.loading = false;
-          },
-          error: (error) => {
-            console.error('Error loading products:', error);
-            this.error = 'Failed to load products. Please try again.';
-            this.loading = false;
-          }
-        });
-      } catch (error) {
-        console.error('Error loading products:', error);
-        this.error = 'Failed to load products. Please try again.';
-        this.loading = false;
-      }
-    }, 1000);
+    this.retryAttempts = 0;
+    
+    this.performLoadProducts();
   }
 
-  // Retry loading products
+  private performLoadProducts(): void {
+    const filters: ProductFilters = this.buildFilters();
+    
+    this.productService.getProducts({ 
+      query: this.searchTerm,
+      filters
+    }).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (products) => {
+        this.products = products;
+        this.applyFilters();
+        this.error = null;
+        this.retryAttempts = 0;
+      },
+      error: (error: AppError) => {
+        this.handleLoadError(error);
+      }
+    });
+  }
+
+  private buildFilters(): ProductFilters {
+    return {
+      category: this.selectedCategory !== 'All' ? this.selectedCategory : undefined,
+      minPrice: this.priceRange.min || undefined,
+      maxPrice: this.priceRange.max < 2000 ? this.priceRange.max : undefined,
+      inStock: this.stockFilter === 'inStock' ? true : 
+               this.stockFilter === 'outOfStock' ? false : undefined,
+      rating: this.minRating || undefined,
+      sortBy: this.sortBy,
+      sortOrder: this.sortOrder
+    };
+  }
+
+  private handleLoadError(error: AppError): void {
+    this.error = error;
+    
+    if (this.errorHandler.isRetryableError(error) && this.retryAttempts < this.MAX_RETRY_ATTEMPTS) {
+      this.retryAttempts++;
+      this.errorHandler.showErrorNotification(
+        `Failed to load products. Retrying... (${this.retryAttempts}/${this.MAX_RETRY_ATTEMPTS})`
+      );
+      
+      // Retry after a delay
+      setTimeout(() => {
+        this.performLoadProducts();
+      }, 2000 * this.retryAttempts);
+    } else {
+      this.errorHandler.showErrorNotification(
+        this.errorHandler.getUserFriendlyMessage(error)
+      );
+    }
+  }
+
   retryLoading(): void {
     this.loadProducts();
   }
 
-  // Search and Filter Methods
+  // Enhanced search with debouncing
   private searchTimeout?: number;
   onSearchChange(): void {
-    this.searchTerm = this.searchQuery; // Sync with internal search term
-    clearTimeout(this.searchTimeout);
-    this.searchTimeout = window.setTimeout(() => {
-      this.applyFilters();
-    }, 300);
+    this.searchSubject.next(this.searchQuery);
+  }
+
+  private performSearch(query: string): Observable<Product[]> {
+    if (!query.trim()) {
+      return of(this.products);
+    }
+    
+    return this.productService.searchProducts(query, this.buildFilters()).pipe(
+      catchError((error: AppError) => {
+        this.errorHandler.showErrorNotification('Search failed. Please try again.');
+        return of([]);
+      })
+    );
+  }
+
+  private handleSearchError(error: AppError): void {
+    this.error = error;
+    this.errorHandler.showErrorNotification(
+      'Search failed. Please check your input and try again.'
+    );
   }
 
   filterByCategory(category: string): void {
@@ -310,96 +453,113 @@ export class ProductListComponent implements OnInit {
     this.applyFilters();
   }
 
+  // Enhanced filter application with error handling
   applyFilters(): void {
-    let filtered = [...this.products];
+    try {
+      let filtered = [...this.products];
 
-    // Apply search filter
-    if (this.searchTerm.trim()) {
-      const searchLower = this.searchTerm.toLowerCase();
-      filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(searchLower) ||
-        product.description.toLowerCase().includes(searchLower) ||
-        product.category.toLowerCase().includes(searchLower)
-      );
-    }
-
-    // Apply category filter from route
-    if (this.currentCategory && this.currentCategory !== 'all') {
-      filtered = filtered.filter(product => 
-        product.category.toLowerCase() === this.currentCategory.toLowerCase() ||
-        (this.currentCategory === 'new-arrivals' && Math.random() > 0.5) || // Mock new arrivals
-        (this.currentCategory === 'sale' && product.originalPrice && product.originalPrice > product.price)
-      );
-    }
-
-    // Apply price range filter
-    filtered = filtered.filter(product => 
-      product.price >= this.priceRange.min && product.price <= this.priceRange.max
-    );
-
-    // Apply rating filter
-    if (this.selectedRating && this.selectedRating > 0) {
-      filtered = filtered.filter(product => product.rating >= this.selectedRating!);
-    }
-
-    // Apply stock filter
-    if (this.stockFilter === 'inStock') {
-      filtered = filtered.filter(product => product.inStock);
-    } else if (this.stockFilter === 'outOfStock') {
-      filtered = filtered.filter(product => !product.inStock);
-    }
-
-    // Apply sorting
-    filtered.sort((a, b) => {
-      let comparison = 0;
-      
-      switch (this.sortBy) {
-        case 'name':
-          comparison = a.name.localeCompare(b.name);
-          break;
-        case 'price':
-          comparison = a.price - b.price;
-          break;
-        case 'rating':
-          comparison = a.rating - b.rating;
-          break;
-        case 'newest':
-          // Mock newest sorting - in real app, would use creation date
-          comparison = Math.random() - 0.5;
-          break;
+      // Apply search filter
+      if (this.searchTerm?.trim()) {
+        const searchLower = this.searchTerm.toLowerCase();
+        filtered = filtered.filter(product => 
+          product?.name?.toLowerCase().includes(searchLower) ||
+          product?.description?.toLowerCase().includes(searchLower)
+        );
       }
-      
-      return this.sortOrder === 'asc' ? comparison : -comparison;
-    });
 
-    this.filteredProducts = filtered;
+      // Apply category filter
+      if (this.selectedCategory && this.selectedCategory !== 'All') {
+        filtered = filtered.filter(product => 
+          product?.category?.toLowerCase() === this.selectedCategory.toLowerCase()
+        );
+      }
+
+      // Apply price range filter
+      if (this.priceRange.min > 0 || this.priceRange.max < 2000) {
+        filtered = filtered.filter(product => 
+          product?.price >= this.priceRange.min && 
+          product?.price <= this.priceRange.max
+        );
+      }
+
+      // Apply rating filter
+      if (this.selectedRating && this.selectedRating > 0) {
+        filtered = filtered.filter(product => 
+          (product?.rating || 0) >= this.selectedRating!
+        );
+      }
+
+      // Apply stock filter
+      if (this.showInStockOnly) {
+        filtered = filtered.filter(product => product?.inStock === true);
+      }
+      if (this.showOutOfStockOnly) {
+        filtered = filtered.filter(product => product?.inStock === false);
+      }
+
+      // Apply sorting with null safety
+      filtered.sort((a, b) => {
+        let comparison = 0;
+        
+        switch (this.sortBy) {
+          case 'name':
+            comparison = (a?.name || '').localeCompare(b?.name || '');
+            break;
+          case 'price':
+            comparison = (a?.price || 0) - (b?.price || 0);
+            break;
+          case 'rating':
+            comparison = (a?.rating || 0) - (b?.rating || 0);
+            break;
+          case 'newest':
+            comparison = (a?.id || 0) - (b?.id || 0);
+            break;
+        }
+
+        return this.sortOrder === 'desc' ? -comparison : comparison;
+      });
+
+      this.filteredProducts = filtered;
+    } catch (error) {
+      this.errorHandler.handleError(error, 'applyFilters');
+      this.filteredProducts = this.products; // Fallback to unfiltered products
+    }
   }
 
+  // Enhanced clear filters with confirmation
   clearFilters(): void {
-    this.searchTerm = '';
-    this.searchQuery = '';
-    this.selectedCategory = 'All';
-    this.selectedRating = null;
-    this.priceRange = { min: 0, max: 2000 };
-    this.minRating = 0;
-    this.stockFilter = 'all';
-    this.showInStockOnly = false;
-    this.showOutOfStockOnly = false;
-    this.sortBy = 'name';
-    this.sortOrder = 'asc';
-    this.applyFilters();
+    try {
+      this.searchTerm = '';
+      this.searchQuery = '';
+      this.selectedCategory = 'All';
+      this.selectedRating = null;
+      this.priceRange = { min: 0, max: 2000 };
+      this.minRating = 0;
+      this.stockFilter = 'all';
+      this.showInStockOnly = false;
+      this.showOutOfStockOnly = false;
+      this.sortBy = 'name';
+      this.sortOrder = 'asc';
+      
+      this.applyFilters();
+      this.errorHandler.showSuccessNotification('Filters cleared');
+    } catch (error) {
+      this.errorHandler.handleError(error, 'clearFilters');
+    }
   }
 
   hasActiveFilters(): boolean {
-    return this.searchTerm.trim() !== '' || 
-           this.selectedCategory !== 'All' ||
-           this.selectedRating !== null ||
-           this.priceRange.min > 0 ||
-           this.priceRange.max < 2000 ||
-           this.minRating > 0 ||
-           this.stockFilter !== 'all' ||
-           this.showInStockOnly ||
-           this.showOutOfStockOnly;
+    try {
+      return this.searchTerm.trim() !== '' ||
+             this.selectedCategory !== 'All' ||
+             this.priceRange.min > 0 ||
+             this.priceRange.max < 2000 ||
+             this.selectedRating !== null ||
+             this.stockFilter !== 'all';
+    } catch (error) {
+      this.errorHandler.handleError(error, 'hasActiveFilters');
+      return false;
+    }
   }
 
   setViewMode(mode: 'grid' | 'list'): void {
@@ -407,95 +567,127 @@ export class ProductListComponent implements OnInit {
   }
 
   viewProduct(product: Product): void {
-    this.router.navigate(['/products', product.id]);
+    try {
+      if (!product?.id) {
+        throw new Error('Invalid product data');
+      }
+      this.router.navigate(['/products', product.id]);
+    } catch (error) {
+      this.errorHandler.handleError(error, 'viewProduct');
+      this.errorHandler.showErrorNotification('Unable to view product details');
+    }
   }
 
+  // Enhanced cart operations with loading states
   addToCart(product: Product): void {
-    if (!product.inStock) {
-      this.snackBar.open('This product is currently out of stock', 'Close', {
-        duration: 3000,
-        panelClass: ['warning-snackbar']
-      });
+    if (!product?.id) {
+      this.errorHandler.showErrorNotification('Invalid product data');
       return;
     }
 
-    this.addingToCart[product.id] = true;
+    if (this.loading.addingToCart[product.id]) {
+      return; // Prevent duplicate operations
+    }
 
-    // Simulate API call delay
-    setTimeout(() => {
-        this.cartService.addToCart(product, 1);
-      this.addingToCart[product.id] = false;
-      
-      this.snackBar.open(`${product.name} added to cart!`, 'View Cart', {
-          duration: 3000,
-          panelClass: ['success-snackbar']
-        }).onAction().subscribe(() => {
-          this.router.navigate(['/cart']);
-        });
-    }, 800);
+    this.loading.addingToCart[product.id] = true;
+
+    try {
+      this.cartService.addToCart(product, 1);
+      this.loading.addingToCart[product.id] = false;
+      this.errorHandler.showSuccessNotification(`${product.name} added to cart!`);
+    } catch (error: any) {
+      this.loading.addingToCart[product.id] = false;
+      this.errorHandler.handleError(error, 'addToCart');
+      this.errorHandler.showErrorNotification('Failed to add product to cart');
+    }
   }
 
   isAddingToCart(productId: number): boolean {
-    return !!this.addingToCart[productId];
+    return !!this.loading.addingToCart[productId];
   }
 
   isInWishlist(productId: number): boolean {
-    return this.wishlistService.isInWishlist(productId);
-  }
-
-  addToWishlist(product: Product): void {
-    const wasAdded = this.wishlistService.toggleWishlist(product);
-    
-    if (wasAdded) {
-      this.snackBar.open(`${product.name} added to wishlist!`, 'View Wishlist', {
-        duration: 3000,
-        panelClass: ['success-snackbar']
-      }).onAction().subscribe(() => {
-        this.router.navigate(['/wishlist']);
-      });
-    } else {
-      this.snackBar.open(`${product.name} removed from wishlist!`, 'Close', {
-        duration: 2000,
-        panelClass: ['info-snackbar']
-      });
+    try {
+      return this.wishlistService.isInWishlist(productId);
+    } catch (error) {
+      this.errorHandler.handleError(error, 'isInWishlist');
+      return false;
     }
   }
 
+  // Enhanced wishlist operations
+  addToWishlist(product: Product): void {
+    if (!product?.id) {
+      this.errorHandler.showErrorNotification('Invalid product data');
+      return;
+    }
+
+    if (this.loading.addingToWishlist[product.id]) {
+      return;
+    }
+
+    this.loading.addingToWishlist[product.id] = true;
+
+    try {
+      this.wishlistService.addToWishlist(product);
+      this.loading.addingToWishlist[product.id] = false;
+      this.errorHandler.showSuccessNotification(`${product.name} added to wishlist!`);
+    } catch (error: any) {
+      this.loading.addingToWishlist[product.id] = false;
+      this.errorHandler.handleError(error, 'addToWishlist');
+      this.errorHandler.showErrorNotification('Failed to add product to wishlist');
+    }
+  }
+
+  // Utility methods with enhanced error handling
   trackByProductId(index: number, product: Product): number {
-    return product.id;
+    return product?.id || index;
   }
 
   getImageUrl(imageUrl: string): string {
-    // In a real application, this would handle image URL resolution
-    // For now, return the URL as-is or provide a fallback
-    if (imageUrl && imageUrl.startsWith('http')) {
-      return imageUrl;
+    try {
+      if (!imageUrl) {
+        return '/assets/images/products/placeholder.jpg';
+      }
+      
+      if (imageUrl.startsWith('http')) {
+        return imageUrl;
+      }
+      
+      return `/assets/images/products/${imageUrl}`;
+    } catch (error) {
+      this.errorHandler.handleError(error, 'getImageUrl');
+      return '/assets/images/products/placeholder.jpg';
     }
-    
-    // Return placeholder or default image
-    return '/assets/images/placeholder.jpg';
   }
 
   handleImageError(event: any): void {
-    event.target.src = '/assets/images/placeholder.jpg';
+    try {
+      if (event?.target) {
+        event.target.src = '/assets/images/products/placeholder.jpg';
+      }
+    } catch (error) {
+      this.errorHandler.handleError(error, 'handleImageError');
+    }
   }
 
-  formatPrice(price: number): string {
-    return price.toFixed(2);
+  formatPrice(price: number | undefined | null): string {
+    return this.productService.formatPrice(price);
   }
 
-  isInStock(product: Product): boolean {
-    return product.inStock;
+  isInStock(product: Product | null | undefined): boolean {
+    return this.productService.isInStock(product);
   }
 
-  getStockStatus(product: Product): string {
-    return product.inStock ? 'In Stock' : 'Out of Stock';
+  getStockStatus(product: Product | null | undefined): string {
+    return this.productService.getStockStatus(product);
   }
 
-  getStockIcon(product: Product): string {
-    return product.inStock ? 'check_circle' : 'cancel';
+  getStockIcon(product: Product | null | undefined): string {
+    return this.isInStock(product) ? 'check_circle' : 'cancel';
   }
 
+  // Accessibility methods
   onProductKeydown(event: KeyboardEvent, product: Product): void {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
@@ -504,8 +696,22 @@ export class ProductListComponent implements OnInit {
   }
 
   onFilterKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Escape') {
-      this.toggleAdvancedFilters();
+    if (event.key === 'Enter') {
+      this.applyFilters();
     }
   }
+
+  // Error state helpers
+  get hasError(): boolean {
+    return !!this.error;
+  }
+
+  get isRetryable(): boolean {
+    return this.error ? this.errorHandler.isRetryableError(this.error) : false;
+  }
+
+  get errorMessage(): string {
+    return this.error ? this.errorHandler.getUserFriendlyMessage(this.error) : '';
+  }
 }
+

@@ -91,9 +91,13 @@ export class ProductDetailsComponent implements OnInit {
     // Simulate API call
     setTimeout(() => {
       this.productService.getProductById(id).subscribe({
-        next: (product: Product) => {
+        next: (product: Product | null) => {
           this.product = product;
-          this.loadRelatedProducts();
+          if (product) {
+            this.loadRelatedProducts();
+          } else {
+            this.error = 'Product not found';
+          }
           this.loading = false;
         },
         error: (error: any) => {
