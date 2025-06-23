@@ -1,27 +1,203 @@
-<div class="product-card">
-  <div class="product-image">
+<!-- Accessible Product Card -->
+<article class="product-card bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-md hover:scale-105 focus-within:ring-2 focus-within:ring-primary focus-within:ring-opacity-50"
+         role="article"
+         [attr.aria-labelledby]="'product-name-' + product.id"
+         [attr.aria-describedby]="'product-details-' + product.id">
+  
+  <!-- Product Image Container -->
+  <div class="product-image relative aspect-square overflow-hidden bg-gray-100">
     <img 
       [src]="getImageUrl(product.imageUrl)" 
-      [alt]="product.name"
+      [alt]="'Product image of ' + product.name"
       loading="lazy"
-      (error)="handleImageError($event)">
+      class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-110"
+      (error)="handleImageError($event)"
+      (load)="onImageLoad($event)">
+    
+    <!-- Loading placeholder -->
+    <div *ngIf="imageLoading" 
+         class="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center"
+         aria-hidden="true">
+      <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
+      </svg>
+    </div>
+
+    <!-- Stock Status Badge -->
+    <div class="absolute top-2 left-2">
+      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+            [class.bg-green-100]="product.inStock"
+            [class.text-green-800]="product.inStock"
+            [class.bg-red-100]="!product.inStock"
+            [class.text-red-800]="!product.inStock"
+            [attr.aria-label]="product.inStock ? 'In stock' : 'Out of stock'">
+        <span class="w-1.5 h-1.5 rounded-full mr-1"
+              [class.bg-green-400]="product.inStock"
+              [class.bg-red-400]="!product.inStock"
+              aria-hidden="true"></span>
+        {{ product.inStock ? 'In Stock' : 'Out of Stock' }}
+      </span>
+    </div>
+
+    <!-- Discount Badge -->
+    <div *ngIf="discountPercentage > 0" class="absolute top-2 right-2">
+      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
+            [attr.aria-label]="discountPercentage + '% discount'">
+        -{{ discountPercentage }}%
+      </span>
+    </div>
     
     <!-- Wishlist Button -->
     <button 
-      class="wishlist-btn"
-      [class.active]="isInWishlist()"
-      (click)="toggleWishlist()"
-      [attr.aria-label]="isInWishlist() ? 'Remove from wishlist' : 'Add to wishlist'">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256">
+      type="button"
+      class="wishlist-btn absolute bottom-2 right-2 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-sm hover:bg-white hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-all duration-200"
+      [class.text-red-500]="isInWishlist()"
+      [class.text-gray-400]="!isInWishlist()"
+      (click)="toggleWishlist($event)"
+      (keydown)="onWishlistKeydown($event)"
+      [attr.aria-label]="isInWishlist() ? 'Remove ' + product.name + ' from wishlist' : 'Add ' + product.name + ' to wishlist'"
+      [attr.aria-pressed]="isInWishlist()">
+      
+      <!-- Heart Icon - Filled when in wishlist -->
+      <svg xmlns="http://www.w3.org/2000/svg" 
+           width="20" 
+           height="20" 
+           fill="currentColor" 
+           viewBox="0 0 256 256"
+           aria-hidden="true">
         <path *ngIf="!isInWishlist()" d="M178,32c-20.65,0-38.73,8.88-50,23.89C116.73,40.88,98.65,32,78,32A62.07,62.07,0,0,0,16,94c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,220.66,240,164,240,94A62.07,62.07,0,0,0,178,32ZM128,206.8C109.74,196.16,32,147.69,32,94A46.06,46.06,0,0,1,78,48c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,147.61,146.24,196.15,128,206.8Z"></path>
         <path *ngIf="isInWishlist()" d="M178,32c-20.65,0-38.73,8.88-50,23.89C116.73,40.88,98.65,32,78,32A62.07,62.07,0,0,0,16,94c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,220.66,240,164,240,94A62.07,62.07,0,0,0,178,32Z"></path>
       </svg>
+      
+      <!-- Screen reader feedback -->
+      <span class="sr-only">
+        {{ isInWishlist() ? 'Remove from wishlist' : 'Add to wishlist' }}
+      </span>
     </button>
   </div>
-  <div class="product-details">
-    <h3 class="product-name">{{product.name}}</h3>
-    <p class="product-price">{{product.price | currency}}</p>
-    <p class="product-rating">★ {{product.rating}}</p>
-    <button class="add-to-cart-btn" (click)="addToCart(product)">Add to Cart</button>
+  
+  <!-- Product Details -->
+  <div class="product-details p-4 space-y-3" [id]="'product-details-' + product.id">
+    
+    <!-- Product Name -->
+    <h3 class="product-name text-lg font-semibold text-gray-900 line-clamp-2 hover:text-primary transition-colors"
+        [id]="'product-name-' + product.id">
+      <a [routerLink]="['/products', product.id]" 
+         class="focus:outline-none focus:underline"
+         [attr.aria-label]="'View details for ' + product.name">
+        {{ product.name }}
+      </a>
+    </h3>
+    
+    <!-- Product Rating -->
+    <div class="flex items-center space-x-2" 
+         [attr.aria-label]="'Rating: ' + product.rating + ' out of 5 stars'">
+      <div class="flex items-center" aria-hidden="true">
+        <span *ngFor="let star of getStarArray(product.rating); let i = index"
+              class="text-yellow-400"
+              [class.text-gray-300]="i >= product.rating">
+          ★
+        </span>
+      </div>
+      <span class="text-sm text-gray-600">
+        ({{ product.rating }})
+      </span>
+    </div>
+    
+    <!-- Product Price -->
+    <div class="product-price space-y-1">
+      <div class="flex items-center space-x-2">
+        <span class="text-xl font-bold text-gray-900"
+              [attr.aria-label]="'Current price: ' + (product.price | currency)">
+          {{ product.price | currency }}
+        </span>
+        <span *ngIf="product.originalPrice && product.originalPrice > product.price" 
+              class="text-sm text-gray-500 line-through"
+              [attr.aria-label]="'Original price: ' + (product.originalPrice | currency)">
+          {{ product.originalPrice | currency }}
+        </span>
+      </div>
+      <div *ngIf="discountPercentage > 0" class="text-sm text-green-600 font-medium">
+        You save {{ ((product.originalPrice || 0) - product.price) | currency }}
+      </div>
+    </div>
+    
+    <!-- Product Category -->
+    <div class="text-sm text-gray-500">
+      <a [routerLink]="['/products']" 
+         [queryParams]="{ category: product.category }"
+         class="hover:text-primary hover:underline focus:outline-none focus:underline transition-colors"
+         [attr.aria-label]="'View all products in ' + product.category + ' category'">
+        {{ product.category }}
+      </a>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="flex space-x-2 pt-2">
+      
+      <!-- Add to Cart Button -->
+      <button 
+        type="button"
+        class="flex-1 bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 active:scale-95"
+        [disabled]="!product.inStock || addingToCart"
+        (click)="addToCart($event)"
+        (keydown)="onAddToCartKeydown($event)"
+        [attr.aria-label]="product.inStock ? 'Add ' + product.name + ' to cart' : 'Product out of stock'">
+        
+        <!-- Loading spinner -->
+        <svg *ngIf="addingToCart" 
+             class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" 
+             xmlns="http://www.w3.org/2000/svg" 
+             fill="none" 
+             viewBox="0 0 24 24"
+             aria-hidden="true">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        
+        <!-- Cart icon -->
+        <svg *ngIf="!addingToCart" 
+             class="w-4 h-4 mr-2 inline" 
+             fill="none" 
+             viewBox="0 0 24 24" 
+             stroke="currentColor"
+             aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5H21M7 13v6a2 2 0 002 2h6a2 2 0 002-2v-6" />
+        </svg>
+        
+        <span>
+          {{ addingToCart ? 'Adding...' : (product.inStock ? 'Add to Cart' : 'Out of Stock') }}
+        </span>
+      </button>
+      
+      <!-- Quick View Button -->
+      <button 
+        type="button"
+        class="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors"
+        (click)="quickView($event)"
+        (keydown)="onQuickViewKeydown($event)"
+        [attr.aria-label]="'Quick view of ' + product.name">
+        
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+        
+        <span class="sr-only">Quick view</span>
+      </button>
+    </div>
   </div>
-</div> 
+  
+  <!-- Loading overlay -->
+  <div *ngIf="addingToCart" 
+       class="absolute inset-0 bg-white/75 flex items-center justify-center"
+       aria-hidden="true">
+    <div class="flex items-center space-x-2 text-primary">
+      <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <span class="text-sm font-medium">Adding to cart...</span>
+    </div>
+  </div>
+</article> 

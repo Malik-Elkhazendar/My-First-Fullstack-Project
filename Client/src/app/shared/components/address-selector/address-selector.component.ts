@@ -11,10 +11,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil, startWith, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { AddressService } from '../../../core/services/address.service';
+import { ConfirmationDialogComponent, ConfirmationDialogData } from '../confirmation-dialog/confirmation-dialog.component';
 import {
   AddressResponse,
   AddressType,
@@ -77,7 +79,8 @@ export class AddressSelectorComponent implements OnInit, OnDestroy {
   constructor(
     private addressService: AddressService,
     private fb: FormBuilder,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {
     this.loading$ = this.addressService.loading$;
     this.initializeForms();
@@ -322,22 +325,39 @@ export class AddressSelectorComponent implements OnInit, OnDestroy {
   }
 
   onDeleteAddress(address: AddressResponse): void {
-    if (confirm(`Are you sure you want to delete the address "${address.label}"?`)) {
-      this.addressService.deleteAddress(address.id!).subscribe({
-        next: () => {
-          this.addresses = this.addresses.filter(a => a.id !== address.id);
-          this.showSuccess('Address deleted successfully');
-          
-          // If deleted address was selected, clear selection
-          if (this.selectionForm.value.selectedAddressId === address.id) {
-            this.selectionForm.patchValue({ selectedAddressId: '' });
+    const dialogData: ConfirmationDialogData = {
+      title: 'Delete Address',
+      message: `Are you sure you want to delete the address "${address.label}"?`,
+      details: 'This action cannot be undone.',
+      type: 'danger',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      icon: 'delete'
+    };
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: dialogData,
+      width: '400px'
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.addressService.deleteAddress(address.id!).subscribe({
+          next: () => {
+            this.addresses = this.addresses.filter(a => a.id !== address.id);
+            this.showSuccess('Address deleted successfully');
+            
+            // If deleted address was selected, clear selection
+            if (this.selectionForm.value.selectedAddressId === address.id) {
+              this.selectionForm.patchValue({ selectedAddressId: '' });
+            }
+          },
+          error: (error) => {
+            this.showError('Failed to delete address: ' + error.message);
           }
-        },
-        error: (error) => {
-          this.showError('Failed to delete address: ' + error.message);
-        }
-      });
-    }
+        });
+      }
+    });
   }
 
   private showSuccess(message: string): void {

@@ -1,349 +1,176 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
-import { AppError } from '../../../core/services/error-handling.service';
+import { MatButtonModule } from '@angular/material/button';
+import { RouterModule } from '@angular/router';
+
+export interface ErrorDisplayConfig {
+  type: 'network' | 'not-found' | 'server' | 'validation' | 'unknown';
+  title?: string;
+  message?: string;
+  showRetryButton?: boolean;
+  showHomeButton?: boolean;
+  customActions?: Array<{
+    label: string;
+    action: string;
+    color?: 'primary' | 'accent' | 'warn';
+  }>;
+}
 
 @Component({
   selector: 'app-error-display',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatCardModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, RouterModule],
   template: `
-    <div 
-      class="error-container"
-      [class.compact]="compact"
-      [class.inline]="inline"
-      role="alert"
-      [attr.aria-label]="'Error: ' + displayMessage"
-    >
-      <mat-card class="error-card">
-        <div class="error-content">
-          <mat-icon 
-            class="error-icon"
-            [style.font-size.px]="iconSize"
-          >
-            {{ getErrorIcon() }}
-          </mat-icon>
-          
-          <div class="error-details">
-            <h3 class="error-title" *ngIf="!compact">
-              {{ getErrorTitle() }}
-            </h3>
-            
-            <p class="error-message">
-              {{ displayMessage }}
-            </p>
-            
-            <div 
-              *ngIf="showDetails && error?.details" 
-              class="error-additional-details"
-            >
-              <details>
-                <summary>Technical Details</summary>
-                <pre>{{ error.details | json }}</pre>
-              </details>
-            </div>
-          </div>
-        </div>
+    <div class="error-display-container" [class]="'error-type-' + config.type">
+      <div class="error-content">
+        <mat-icon class="error-icon">{{ getErrorIcon() }}</mat-icon>
+        <h2 class="error-title">{{ config.title || getDefaultTitle() }}</h2>
+        <p class="error-message">{{ config.message || getDefaultMessage() }}</p>
         
-        <div class="error-actions" *ngIf="showActions">
+        <div class="error-actions" *ngIf="hasActions()">
           <button 
+            *ngIf="config.showRetryButton"
             mat-raised-button 
             color="primary"
-            *ngIf="retryable"
             (click)="onRetry()"
-            [disabled]="retrying"
-            aria-label="Retry the failed operation"
-          >
-            <mat-icon *ngIf="retrying">refresh</mat-icon>
-            <span>{{ retrying ? 'Retrying...' : 'Try Again' }}</span>
+            class="action-button">
+            <mat-icon>refresh</mat-icon>
+            Try Again
           </button>
           
           <button 
+            *ngIf="config.showHomeButton"
             mat-stroked-button
-            *ngIf="showHome"
-            (click)="onGoHome()"
-            aria-label="Go to home page"
-          >
+            routerLink="/"
+            class="action-button">
             <mat-icon>home</mat-icon>
-            <span>Go Home</span>
+            Go Home
           </button>
           
           <button 
-            mat-stroked-button
-            *ngIf="showSupport"
-            (click)="onContactSupport()"
-            aria-label="Contact customer support"
-          >
-            <mat-icon>support</mat-icon>
-            <span>Contact Support</span>
-          </button>
-          
-          <button 
+            *ngFor="let action of config.customActions"
             mat-button
-            *ngIf="dismissible"
-            (click)="onDismiss()"
-            aria-label="Dismiss this error"
-          >
-            <mat-icon>close</mat-icon>
-            <span>Dismiss</span>
+            [color]="action.color || 'primary'"
+            (click)="onCustomAction(action.action)"
+            class="action-button">
+            {{ action.label }}
           </button>
         </div>
-      </mat-card>
+      </div>
     </div>
   `,
   styles: [`
-    .error-container {
+    .error-display-container {
       display: flex;
-      justify-content: center;
       align-items: center;
-      padding: 24px;
-      min-height: 200px;
-      
-      &.compact {
-        padding: 12px;
-        min-height: auto;
-      }
-      
-      &.inline {
-        min-height: auto;
-      }
+      justify-content: center;
+      min-height: 300px;
+      padding: 2rem;
+      text-align: center;
     }
-    
-    .error-card {
-      max-width: 600px;
-      width: 100%;
-      background: #fff;
-      border-left: 4px solid #f44336;
-    }
-    
+
     .error-content {
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
-      margin-bottom: 20px;
+      max-width: 500px;
     }
-    
+
     .error-icon {
-      color: #f44336;
-      margin-top: 4px;
-      font-size: 32px !important;
-      height: 32px !important;
-      width: 32px !important;
+      font-size: 4rem;
+      width: 4rem;
+      height: 4rem;
+      margin-bottom: 1rem;
+      color: #ef4444;
     }
-    
-    .error-details {
-      flex: 1;
-    }
-    
+
+    .error-type-network .error-icon { color: #f59e0b; }
+    .error-type-not-found .error-icon { color: #6b7280; }
+    .error-type-server .error-icon { color: #ef4444; }
+    .error-type-validation .error-icon { color: #f59e0b; }
+
     .error-title {
-      margin: 0 0 8px 0;
-      font-size: 20px;
+      font-size: 1.5rem;
       font-weight: 600;
-      color: #333;
+      margin-bottom: 0.5rem;
+      color: #1f2937;
     }
-    
+
     .error-message {
-      margin: 0 0 12px 0;
-      color: #666;
-      line-height: 1.5;
-      font-size: 16px;
+      color: #6b7280;
+      margin-bottom: 2rem;
+      line-height: 1.6;
     }
-    
-    .error-additional-details {
-      margin-top: 16px;
-      
-      details {
-        cursor: pointer;
-        
-        summary {
-          font-weight: 500;
-          color: #666;
-          padding: 8px 0;
-          outline: none;
-          
-          &:hover {
-            color: #333;
-          }
-        }
-        
-        pre {
-          background: #f5f5f5;
-          padding: 12px;
-          border-radius: 4px;
-          font-size: 12px;
-          overflow-x: auto;
-          margin-top: 8px;
-          color: #333;
-        }
-      }
-    }
-    
+
     .error-actions {
       display: flex;
-      gap: 12px;
+      gap: 1rem;
+      justify-content: center;
       flex-wrap: wrap;
-      justify-content: flex-start;
-      
-      button {
-        min-width: 120px;
-        
-        mat-icon {
-          margin-right: 8px;
-          font-size: 20px;
-          
-          &.mat-icon {
-            height: 20px;
-            width: 20px;
-          }
-        }
-      }
     }
-    
-    .compact {
-      .error-container {
-        padding: 8px;
-      }
-      
-      .error-content {
-        margin-bottom: 12px;
-      }
-      
-      .error-icon {
-        font-size: 24px !important;
-        height: 24px !important;
-        width: 24px !important;
-      }
-      
-      .error-message {
-        font-size: 14px;
-      }
-      
-      .error-actions button {
-        min-width: 100px;
-        
-        mat-icon {
-          font-size: 18px;
-          height: 18px;
-          width: 18px;
-        }
-      }
+
+    .action-button {
+      min-width: 120px;
     }
-    
+
     @media (max-width: 768px) {
-      .error-container {
-        padding: 16px;
-      }
-      
-      .error-content {
-        flex-direction: column;
-        text-align: center;
-      }
-      
       .error-actions {
-        justify-content: center;
-        
-        button {
-          flex: 1;
-          min-width: auto;
-        }
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .action-button {
+        width: 100%;
+        max-width: 200px;
       }
     }
   `]
 })
 export class ErrorDisplayComponent {
-  @Input() error: AppError | null = null;
-  @Input() message = '';
-  @Input() retryable = false;
-  @Input() retrying = false;
-  @Input() compact = false;
-  @Input() inline = false;
-  @Input() showActions = true;
-  @Input() showHome = false;
-  @Input() showSupport = false;
-  @Input() showDetails = false;
-  @Input() dismissible = false;
-  @Input() iconSize = 32;
-
+  @Input() config: ErrorDisplayConfig = { type: 'unknown' };
   @Output() retry = new EventEmitter<void>();
-  @Output() goHome = new EventEmitter<void>();
-  @Output() contactSupport = new EventEmitter<void>();
-  @Output() dismiss = new EventEmitter<void>();
-
-  get displayMessage(): string {
-    if (this.message) {
-      return this.message;
-    }
-    
-    if (this.error) {
-      return this.error.message || 'An unexpected error occurred';
-    }
-    
-    return 'Something went wrong. Please try again.';
-  }
+  @Output() customAction = new EventEmitter<string>();
 
   getErrorIcon(): string {
-    if (this.error?.code) {
-      switch (this.error.code) {
-        case 'NETWORK_ERROR':
-          return 'wifi_off';
-        case 'TIMEOUT':
-          return 'schedule';
-        case 'UNAUTHORIZED':
-          return 'lock';
-        case 'FORBIDDEN':
-          return 'block';
-        case 'NOT_FOUND':
-          return 'search_off';
-        case 'SERVER_ERROR':
-          return 'dns';
-        case 'VALIDATION_ERROR':
-          return 'error_outline';
-        default:
-          return 'error';
-      }
-    }
-    return 'error';
+    const icons = {
+      network: 'wifi_off',
+      'not-found': 'search_off',
+      server: 'error_outline',
+      validation: 'warning',
+      unknown: 'help_outline'
+    };
+    return icons[this.config.type] || icons.unknown;
   }
 
-  getErrorTitle(): string {
-    if (this.error?.code) {
-      switch (this.error.code) {
-        case 'NETWORK_ERROR':
-          return 'Connection Problem';
-        case 'TIMEOUT':
-          return 'Request Timeout';
-        case 'UNAUTHORIZED':
-          return 'Authentication Required';
-        case 'FORBIDDEN':
-          return 'Access Denied';
-        case 'NOT_FOUND':
-          return 'Not Found';
-        case 'SERVER_ERROR':
-          return 'Server Error';
-        case 'VALIDATION_ERROR':
-          return 'Invalid Data';
-        default:
-          return 'Error';
-      }
-    }
-    return 'Something Went Wrong';
+  getDefaultTitle(): string {
+    const titles = {
+      network: 'Connection Problem',
+      'not-found': 'Not Found',
+      server: 'Server Error',
+      validation: 'Invalid Data',
+      unknown: 'Something Went Wrong'
+    };
+    return titles[this.config.type] || titles.unknown;
+  }
+
+  getDefaultMessage(): string {
+    const messages = {
+      network: 'Please check your internet connection and try again.',
+      'not-found': 'The page or resource you\'re looking for doesn\'t exist.',
+      server: 'We\'re experiencing technical difficulties. Please try again later.',
+      validation: 'Please check your input and try again.',
+      unknown: 'An unexpected error occurred. Please try again.'
+    };
+    return messages[this.config.type] || messages.unknown;
+  }
+
+  hasActions(): boolean {
+    return !!(this.config.showRetryButton || this.config.showHomeButton || this.config.customActions?.length);
   }
 
   onRetry(): void {
     this.retry.emit();
   }
 
-  onGoHome(): void {
-    this.goHome.emit();
-  }
-
-  onContactSupport(): void {
-    this.contactSupport.emit();
-  }
-
-  onDismiss(): void {
-    this.dismiss.emit();
+  onCustomAction(action: string): void {
+    this.customAction.emit(action);
   }
 } 

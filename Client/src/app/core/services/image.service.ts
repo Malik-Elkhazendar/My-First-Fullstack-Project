@@ -5,12 +5,13 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class ImageService {
-  private readonly placeholderImage = environment.defaultPlaceholderImage;
+  private readonly placeholderImage = environment.media.defaultPlaceholderImage;
   
   // Common colors for product category placeholders
   private readonly categoryColors = {
-    electronics: '#3498db',
-    clothing: '#9b59b6',
+    clothing: '#e74c3c',
+    shoes: '#8b4513',
+    accessories: '#9b59b6',
     books: '#1abc9c',
     home: '#e67e22',
     beauty: '#e84393',
@@ -38,7 +39,7 @@ export class ImageService {
     }
     
     // Otherwise, assume it's a product image in the assets folder
-    return `${environment.imageStorageUrl}/${imagePath}`;
+    return `${environment.media.imageStorageUrl}/${imagePath}`;
   }
   
   /**

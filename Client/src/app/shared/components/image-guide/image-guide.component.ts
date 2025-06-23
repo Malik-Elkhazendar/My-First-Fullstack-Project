@@ -1,32 +1,35 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ImageService } from '../../../core/services/image.service';
 
 @Component({
   selector: 'app-image-guide',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './image-guide.component.html',
   styleUrls: ['./image-guide.component.scss']
 })
 export class ImageGuideComponent {
   examples = [
     {
-      title: 'Smartphone X',
-      description: 'High-quality smartphone image from Unsplash',
-      path: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?q=80&w=1000&auto=format&fit=crop'
+      title: 'Elegant Summer Dress',
+      description: 'Flowing midi dress perfect for summer occasions',
+      path: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?q=80&w=1000&auto=format&fit=crop'
     },
     {
-      title: 'Laptop Pro',
-      description: 'Professional laptop for work and gaming',
-      path: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=1000&auto=format&fit=crop'
+      title: 'Designer Handbag',
+      description: 'Elegant leather handbag with gold-tone hardware',
+      path: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1000&auto=format&fit=crop'
     },
     {
-      title: 'Wireless Headphones',
-      description: 'Premium sound quality with noise cancellation',
-      path: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?q=80&w=1000&auto=format&fit=crop'
+      title: 'Classic Leather Heels',
+      description: 'Elegant pointed-toe heels in genuine leather',
+      path: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=1000&auto=format&fit=crop'
     },
     {
-      title: 'Smartwatch',
-      description: 'Track your fitness and stay connected',
-      path: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1000&auto=format&fit=crop'
+      title: 'Tailored Suit Jacket',
+      description: 'Modern fit suit jacket in premium wool blend',
+      path: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=1000&auto=format&fit=crop'
     }
   ];
 
@@ -39,7 +42,7 @@ export class ImageGuideComponent {
     },
     {
       title: 'Generated Placeholder',
-      description: 'SVG placeholder for Electronics',
+      description: 'SVG placeholder for Fashion',
       path: ''
     }
   ];

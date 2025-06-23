@@ -27,8 +27,12 @@
     <!-- Product Details -->
     <div *ngIf="product && !loading && !error" class="grid grid-cols-1 md:grid-cols-2 gap-8 p-4">
       <!-- Product Image -->
-      <div class="aspect-square bg-center bg-no-repeat bg-cover rounded-lg"
-           [style.background-image]="'url(' + getImageUrl(product.imageUrl) + ')'">
+      <div class="w-full h-96 md:h-[500px] rounded-lg relative overflow-hidden bg-gray-100">
+        <img [src]="getImageUrl(product.imageUrl)" 
+             [alt]="'Product image of ' + product.name"
+             class="w-full h-full object-contain rounded-lg"
+             (error)="handleImageError($event)"
+             loading="lazy">
       </div>
 
       <!-- Product Info -->
@@ -324,8 +328,12 @@
              (click)="viewProduct(relatedProduct)">
           
           <!-- Product Image -->
-          <div class="aspect-square bg-center bg-no-repeat bg-cover relative overflow-hidden"
-               [style.background-image]="'url(' + getImageUrl(relatedProduct.imageUrl) + ')'">
+          <div class="aspect-square relative overflow-hidden bg-gray-100">
+            <img [src]="getImageUrl(relatedProduct.imageUrl)" 
+                 [alt]="'Product image of ' + relatedProduct.name"
+                 class="w-full h-full object-cover"
+                 (error)="handleImageError($event)"
+                 loading="lazy">
             
             <!-- Badges -->
             <div *ngIf="relatedProduct.originalPrice && relatedProduct.originalPrice > relatedProduct.price" 

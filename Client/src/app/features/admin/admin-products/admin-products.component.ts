@@ -2,11 +2,40 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Subject, takeUntil } from 'rxjs';
+import { PageEvent } from '@angular/material/paginator';
 
-import { AdminService, AdminProduct } from '../../../core/services/admin.service';
-import { AdminNavItem } from '../../../core/models/admin.model';
+// Core imports using barrel exports
+import { AdminService, AdminProduct, AdminNavItem } from '../../../core';
 
+// Shared imports using barrel exports
+import { 
+  TableColumn, 
+  TableAction, 
+  PaginationConfig,
+  ConfirmationDialogComponent,
+  ConfirmationDialogData
+} from '../../../shared';
+
+// Constants
+import { APP_CONSTANTS, SUCCESS_MESSAGES, ERROR_MESSAGES } from '../../../shared/constants/app.constants';
+
+/**
+ * Admin products management component
+ * 
+ * Provides comprehensive product management functionality for administrators
+ * including viewing, searching, filtering, adding, editing, and deleting products.
+ * Uses the reusable DataTableComponent for consistent UI and functionality.
+ * 
+ * @example
+ * ```html
+ * <app-admin-products></app-admin-products>
+ * ```
+ * 
+ * @since 1.0.0
+ * @author Fashion Forward Team
+ */
 @Component({
   selector: 'app-admin-products',
   standalone: true,
@@ -19,17 +48,120 @@ import { AdminNavItem } from '../../../core/models/admin.model';
   styleUrls: ['./admin-products.component.scss']
 })
 export class AdminProductsComponent implements OnInit, OnDestroy {
-  private destroy$ = new Subject<void>();
+  /** Destruction subject for cleanup */
+  private readonly destroy$ = new Subject<void>();
   
+  /** All products data */
   products: AdminProduct[] = [];
-  filteredProducts: AdminProduct[] = [];
-  searchTerm = '';
-  selectedCategory = '';
-  categories: string[] = [];
-  navigationItems: AdminNavItem[] = [];
-  loading = false;
   
-  constructor(private adminService: AdminService) {}
+  /** Filtered products for display */
+  filteredProducts: AdminProduct[] = [];
+  
+  /** Search term for product filtering */
+  searchTerm = '';
+  
+  /** Selected category filter */
+  selectedCategory = '';
+  
+  /** Selected status filter */
+  selectedStatus = '';
+  
+  /** Available product categories */
+  categories: string[] = [];
+  
+  /** Navigation items for admin sidebar */
+  navigationItems: AdminNavItem[] = [];
+  
+  /** Loading state */
+  loading = false;
+
+  /** Table column configuration */
+  tableColumns: TableColumn<AdminProduct>[] = [
+    {
+      key: 'name',
+      header: 'Product Name',
+      sortable: true,
+      cellTemplate: 'nameCell'
+    },
+    {
+      key: 'category',
+      header: 'Category',
+      sortable: true
+    },
+    {
+      key: 'price',
+      header: 'Price',
+      sortable: true,
+      type: 'currency',
+      align: 'right'
+    },
+    {
+      key: 'stock',
+      header: 'Stock',
+      sortable: true,
+      align: 'center',
+      cellTemplate: 'stockCell'
+    },
+    {
+      key: 'isActive',
+      header: 'Status',
+      sortable: true,
+      align: 'center',
+      cellTemplate: 'statusCell'
+    },
+    {
+      key: 'createdAt',
+      header: 'Created',
+      sortable: true,
+      type: 'date'
+    }
+  ];
+
+  /** Table actions configuration */
+  tableActions: TableAction<AdminProduct>[] = [
+    {
+      id: 'edit',
+      label: 'Edit Product',
+      icon: 'edit',
+      color: 'primary',
+      tooltip: 'Edit product details'
+    },
+    {
+      id: 'toggle-status',
+      label: 'Toggle Status',
+      icon: 'power_settings_new',
+      color: 'accent',
+      tooltip: 'Activate/Deactivate product'
+    },
+    {
+      id: 'delete',
+      label: 'Delete Product',
+      icon: 'delete',
+      color: 'warn',
+      tooltip: 'Delete product permanently',
+      visible: (product) => !product.isActive
+    }
+  ];
+
+  /** Pagination configuration */
+  paginationConfig: PaginationConfig = {
+    pageIndex: 0,
+    pageSize: APP_CONSTANTS.UI_CONFIG.PAGINATION.DEFAULT_PAGE_SIZE,
+    totalItems: 0,
+    pageSizeOptions: [...APP_CONSTANTS.UI_CONFIG.PAGINATION.PAGE_SIZE_OPTIONS],
+    showFirstLastButtons: true
+  };
+  
+  /**
+   * Initialize the admin products component
+   * 
+   * @param adminService - Service for admin operations
+   * @param dialog - Material dialog service for confirmations
+   */
+  constructor(
+    private readonly adminService: AdminService,
+    private readonly dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -69,8 +201,65 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
     this.categories = Array.from(categorySet).sort();
   }
 
+  /**
+   * Handle page change events from data table
+   * 
+   * @param event - Page change event
+   */
+  onPageChange(event: PageEvent): void {
+    this.paginationConfig.pageIndex = event.pageIndex;
+    this.paginationConfig.pageSize = event.pageSize;
+    this.loadProducts();
+  }
+
+  /**
+   * Enhanced search with debouncing
+   */
   onSearch(): void {
+    // Reset to first page when searching
+    this.paginationConfig.pageIndex = 0;
     this.applyFilters();
+  }
+
+  /**
+   * Load products with pagination and filtering
+   */
+  private loadProducts(): void {
+    this.loading = true;
+    
+    // Simulate API call with pagination
+    setTimeout(() => {
+      const filteredProducts = this.applyProductFilters();
+      
+      // Apply pagination
+      const startIndex = this.paginationConfig.pageIndex * this.paginationConfig.pageSize;
+      const endIndex = startIndex + this.paginationConfig.pageSize;
+      
+      this.filteredProducts = filteredProducts.slice(startIndex, endIndex);
+      this.paginationConfig.totalItems = filteredProducts.length;
+      
+      this.loading = false;
+    }, 500);
+  }
+
+  /**
+   * Apply filters to products
+   */
+  private applyProductFilters(): AdminProduct[] {
+    return this.products.filter(product => {
+      const matchesSearch = !this.searchTerm || 
+        product.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        product.category.toLowerCase().includes(this.searchTerm.toLowerCase());
+      
+      const matchesCategory = !this.selectedCategory || 
+        product.category === this.selectedCategory;
+      
+      const matchesStatus = !this.selectedStatus || 
+        (this.selectedStatus === 'active' && product.isActive) ||
+        (this.selectedStatus === 'inactive' && !product.isActive);
+      
+      return matchesSearch && matchesCategory && matchesStatus;
+    });
   }
 
   onCategoryChange(category?: string): void {
@@ -97,24 +286,152 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Handle table action clicks
+   * 
+   * @param event - Action click event with action and row data
+   */
+  onTableAction(event: { action: TableAction<AdminProduct>; row: AdminProduct; event: Event }): void {
+    const { action, row } = event;
+    
+    switch (action.id) {
+      case 'edit':
+        this.editProduct(row);
+        break;
+      case 'toggle-status':
+        this.toggleProductStatus(row);
+        break;
+      case 'delete':
+        this.deleteProduct(row);
+        break;
+      default:
+        console.warn('Unknown action:', action.id);
+    }
+  }
+
+  /**
+   * Add new product
+   * 
+   * Opens the product creation dialog/form
+   */
   onAddProduct(): void {
     // TODO: Implement add product functionality
     console.log('Add product clicked');
   }
 
+  /**
+   * Edit product - public method for template
+   * 
+   * @param product - Product to edit
+   */
   onEditProduct(product: AdminProduct): void {
+    this.editProduct(product);
+  }
+
+  /**
+   * Toggle product status - public method for template
+   * 
+   * @param product - Product to toggle
+   */
+  onToggleStatus(product: AdminProduct): void {
+    this.toggleProductStatus(product);
+  }
+
+  /**
+   * Edit existing product
+   * 
+   * @param product - Product to edit
+   */
+  private editProduct(product: AdminProduct): void {
     // TODO: Implement edit product functionality
     console.log('Edit product:', product);
   }
 
-  onDeleteProduct(product: AdminProduct): void {
-    // TODO: Implement delete product functionality
-    console.log('Delete product:', product);
+  /**
+   * Delete product with confirmation
+   * 
+   * @param product - Product to delete
+   */
+  private deleteProduct(product: AdminProduct): void {
+    const dialogData: ConfirmationDialogData = {
+      title: 'Delete Product',
+      message: `Are you sure you want to delete "${product.name}"?`,
+      details: 'This action cannot be undone.',
+      type: 'danger',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      icon: 'delete'
+    };
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: dialogData,
+      width: '400px',
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.performDelete(product);
+      }
+    });
   }
 
-  onToggleStatus(product: AdminProduct): void {
-    // TODO: Implement toggle status functionality
-    console.log('Toggle status for product:', product);
+  /**
+   * Perform the actual product deletion
+   * 
+   * @param product - Product to delete
+   */
+  private performDelete(product: AdminProduct): void {
+    // TODO: Implement actual deletion with API call
+    console.log('Deleting product:', product);
+    
+    // Remove from local array for demo
+    const index = this.products.findIndex(p => p.id === product.id);
+    if (index > -1) {
+      this.products.splice(index, 1);
+      this.applyFilters();
+      
+      // Show success message (would use notification service in real app)
+      console.log(SUCCESS_MESSAGES.PROFILE.UPDATED); // Replace with proper success message
+    }
+  }
+
+  /**
+   * Toggle product active status
+   * 
+   * @param product - Product to toggle
+   */
+  private toggleProductStatus(product: AdminProduct): void {
+    const action = product.isActive ? 'deactivate' : 'activate';
+    const dialogData: ConfirmationDialogData = {
+      title: `${action.charAt(0).toUpperCase() + action.slice(1)} Product`,
+      message: `Are you sure you want to ${action} "${product.name}"?`,
+      type: 'warning',
+      confirmText: action.charAt(0).toUpperCase() + action.slice(1),
+      cancelText: 'Cancel'
+    };
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: dialogData,
+      width: '400px'
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.performStatusToggle(product);
+      }
+    });
+  }
+
+  /**
+   * Perform the actual status toggle
+   * 
+   * @param product - Product to toggle
+   */
+  private performStatusToggle(product: AdminProduct): void {
+    // TODO: Implement actual status toggle with API call
+    product.isActive = !product.isActive;
+    console.log(`Product ${product.name} ${product.isActive ? 'activated' : 'deactivated'}`);
   }
 
   formatPrice(price: number): string {

@@ -23,7 +23,7 @@ import {
   providedIn: 'root'
 })
 export class AddressService {
-  private readonly apiUrl = `${environment.apiUrl}/addresses`;
+  private readonly apiUrl = `${environment.api.baseUrl}/addresses`;
   private loadingSubject = new BehaviorSubject<boolean>(false);
   private addressesSubject = new BehaviorSubject<AddressResponse[]>([]);
 
@@ -356,7 +356,7 @@ export class AddressService {
 
     // Future HTTP implementation:
     /*
-    return this.http.get<Country[]>(`${environment.apiUrl}/countries`).pipe(
+    return this.http.get<Country[]>(`${environment.api.baseUrl}/countries`).pipe(
       catchError(this.handleError.bind(this))
     );
     */
@@ -368,7 +368,7 @@ export class AddressService {
 
     // Future HTTP implementation:
     /*
-    return this.http.get<State[]>(`${environment.apiUrl}/countries/${countryCode}/states`).pipe(
+    return this.http.get<State[]>(`${environment.api.baseUrl}/countries/${countryCode}/states`).pipe(
       catchError(this.handleError.bind(this))
     );
     */

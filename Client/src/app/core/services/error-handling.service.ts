@@ -58,11 +58,11 @@ export class ErrorHandlingService {
   /**
    * Show error notification to user
    */
-  showErrorNotification(message: string, duration: number = 5000): void {
+  showErrorNotification(message: string, duration: number = 6000): void {
     this.snackBar.open(message, 'Close', {
       duration,
       panelClass: ['error-snackbar'],
-      horizontalPosition: 'right',
+      horizontalPosition: 'center',
       verticalPosition: 'top'
     });
   }
@@ -70,11 +70,23 @@ export class ErrorHandlingService {
   /**
    * Show success notification to user
    */
-  showSuccessNotification(message: string, duration: number = 3000): void {
+  showSuccessNotification(message: string, duration: number = 4000): void {
     this.snackBar.open(message, 'Close', {
       duration,
       panelClass: ['success-snackbar'],
-      horizontalPosition: 'right',
+      horizontalPosition: 'center',
+      verticalPosition: 'top'
+    });
+  }
+
+  /**
+   * Show warning notification to user
+   */
+  showWarningNotification(message: string, duration: number = 5000): void {
+    this.snackBar.open(message, 'Close', {
+      duration,
+      panelClass: ['warning-snackbar'],
+      horizontalPosition: 'center',
       verticalPosition: 'top'
     });
   }
@@ -82,13 +94,40 @@ export class ErrorHandlingService {
   /**
    * Show info notification to user
    */
-  showInfoNotification(message: string, duration: number = 4000): void {
+  showInfoNotification(message: string, duration: number = 3000): void {
     this.snackBar.open(message, 'Close', {
       duration,
       panelClass: ['info-snackbar'],
-      horizontalPosition: 'right',
+      horizontalPosition: 'center',
       verticalPosition: 'top'
     });
+  }
+
+  /**
+   * Show form validation error notification
+   */
+  showFormValidationError(errorCount: number): void {
+    const message = `Please fix ${errorCount} validation error${errorCount > 1 ? 's' : ''} before submitting.`;
+    this.showErrorNotification(message);
+  }
+
+  /**
+   * Show network error notification with retry option
+   */
+  showNetworkError(retryCallback?: () => void): void {
+    const message = 'Network error. Please check your connection and try again.';
+    const snackBarRef = this.snackBar.open(message, retryCallback ? 'Retry' : 'Close', {
+      duration: 8000,
+      panelClass: ['error-snackbar'],
+      horizontalPosition: 'center',
+      verticalPosition: 'top'
+    });
+
+    if (retryCallback) {
+      snackBarRef.onAction().subscribe(() => {
+        retryCallback();
+      });
+    }
   }
 
   /**

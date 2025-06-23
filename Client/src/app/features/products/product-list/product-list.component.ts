@@ -26,6 +26,7 @@ import { CartService } from '../../../core/services/cart.service';
 import { WishlistService } from '../../../core/services/wishlist.service';
 import { ErrorHandlingService, AppError } from '../../../core/services/error-handling.service';
 import { LoadingService } from '../../../core/services/loading.service';
+import { APP_CONSTANTS } from '../../../shared/constants/app.constants';
 
 interface LoadingStates {
   products: boolean;
@@ -61,7 +62,7 @@ interface LoadingStates {
 export class ProductListComponent implements OnInit, OnDestroy {
   products: Product[] = [];
   filteredProducts: Product[] = [];
-  categories: string[] = ['All', 'Electronics', 'Clothing', 'Books', 'Home & Garden'];
+  categories: string[] = ['All', 'Clothing', 'Shoes', 'Accessories'];
   
   // UI State with proper typing
   loading: LoadingStates = {
@@ -144,13 +145,17 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   private initializeSearchHandler(): void {
-    // Debounce search input to avoid excessive API calls
+    // Enhanced debounce search input to avoid excessive API calls
     this.searchSubject.pipe(
-      debounceTime(300),
+      debounceTime(APP_CONSTANTS.UI_CONFIG.SEARCH.DEBOUNCE_TIME), // Use configurable debounce time
       distinctUntilChanged(),
       takeUntil(this.destroy$),
       switchMap(query => {
-        if (query.length < 2 && query.length > 0) {
+        // Show loading state
+        this.loading.products = true;
+        
+        if (query.length > 0 && query.length < APP_CONSTANTS.UI_CONFIG.SEARCH.MIN_QUERY_LENGTH) {
+          this.loading.products = false;
           return of([]);
         }
         return this.performSearch(query);
@@ -159,9 +164,11 @@ export class ProductListComponent implements OnInit, OnDestroy {
       next: (products) => {
         this.filteredProducts = products;
         this.error = null;
+        this.loading.products = false;
       },
       error: (error: AppError) => {
         this.handleSearchError(error);
+        this.loading.products = false;
       }
     });
   }
@@ -195,17 +202,15 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   getCategoryDescription(): string {
     const descriptions: Record<string, string> = {
-      'clothing': 'Explore our latest collection of stylish and comfortable clothing for every occasion.',
-      'shoes': 'Step out in style with our premium collection of footwear.',
-      'accessories': 'Complete your look with our curated selection of accessories.',
+      'clothing': 'Discover our curated collection of premium clothing for modern fashion enthusiasts.',
+      'shoes': 'Step into luxury with our handpicked selection of designer footwear.',
+      'accessories': 'Complete your style with our exclusive range of fashion accessories.',
+      'all': 'Browse our complete collection of high-quality fashion items.',
       'new-arrivals': 'Discover the latest additions to our collection.',
-      'sale': 'Don\'t miss out on these amazing deals and discounts.',
-      'electronics': 'Cutting-edge technology and gadgets for modern living.',
-      'books': 'Expand your knowledge with our diverse book collection.',
-      'home-garden': 'Transform your living space with our home and garden essentials.'
+      'sale': 'Don\'t miss out on these amazing deals and discounts.'
     };
     
-    return descriptions[this.currentCategory] || 'Browse our complete collection of high-quality products.';
+    return descriptions[this.currentCategory.toLowerCase()] || 'Browse our complete collection of high-quality products.';
   }
 
   private formatCategoryName(category: string): string {

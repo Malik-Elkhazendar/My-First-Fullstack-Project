@@ -117,7 +117,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
               description: 'High-quality wireless headphones with noise cancellation',
               price: 199.99,
               imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop',
-              category: 'Electronics',
+              category: 'Clothing',
               inStock: true,
               rating: 4.5
             },

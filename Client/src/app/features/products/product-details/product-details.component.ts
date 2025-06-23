@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Subject, takeUntil } from 'rxjs';
 import { Product } from '../../../core/models/product.model';
 import { ProductService } from '../../../core/services/product.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -31,7 +32,7 @@ import { WishlistService } from '../../../core/services/wishlist.service';
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.scss']
 })
-export class ProductDetailsComponent implements OnInit {
+export class ProductDetailsComponent implements OnInit, OnDestroy {
   product: Product | null = null;
   relatedProducts: Product[] = [];
   loading = true;
@@ -41,6 +42,8 @@ export class ProductDetailsComponent implements OnInit {
   selectedQuantity = 1;
   isAddingToCart = false;
   activeTab = 'description';
+  
+  private destroy$ = new Subject<void>();
   
   mockReviews = [
     {
@@ -75,12 +78,28 @@ export class ProductDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
+    this.route.params.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(params => {
       const productId = +params['id'];
       if (productId) {
+        // Reset component state when navigating to a new product
+        this.product = null;
+        this.relatedProducts = [];
+        this.loading = true;
+        this.loadingRelated = false;
+        this.error = null;
+        this.activeTab = 'description';
+        this.selectedQuantity = 1;
+        
         this.loadProduct(productId);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   // Data Loading
@@ -90,7 +109,9 @@ export class ProductDetailsComponent implements OnInit {
 
     // Simulate API call
     setTimeout(() => {
-      this.productService.getProductById(id).subscribe({
+      this.productService.getProductById(id).pipe(
+        takeUntil(this.destroy$)
+      ).subscribe({
         next: (product: Product | null) => {
           this.product = product;
           if (product) {
@@ -114,7 +135,9 @@ export class ProductDetailsComponent implements OnInit {
     
     this.loadingRelated = true;
     
-    this.productService.getProducts().subscribe({
+    this.productService.getProducts().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
       next: (products: Product[]) => {
         this.relatedProducts = products
           .filter(p => p.id !== this.product!.id && p.category === this.product!.category)
@@ -225,18 +248,20 @@ export class ProductDetailsComponent implements OnInit {
   // Utility Methods
   getImageUrl(imageUrl: string): string {
     if (!imageUrl || imageUrl.trim() === '') {
-      return 'assets/images/placeholder-product.jpg';
+      return '/assets/images/products/placeholder.jpg';
     }
     
     if (imageUrl.startsWith('http')) {
       return imageUrl;
     }
     
-    return `assets/images/${imageUrl}`;
+    return `/assets/images/products/${imageUrl}`;
   }
 
   handleImageError(event: any): void {
-    event.target.src = 'assets/images/placeholder-product.jpg';
+    if (event?.target) {
+      event.target.src = '/assets/images/products/placeholder.jpg';
+    }
   }
 
   formatPrice(price: number): string {

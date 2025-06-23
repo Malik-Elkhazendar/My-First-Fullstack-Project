@@ -1,1 +1,280 @@
-<p>header works!</p>
+<!-- Main Header with Navigation -->
+<header class="bg-white shadow-sm border-b border-gray-200" role="banner">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      
+      <!-- Logo and Brand -->
+      <div class="flex items-center">
+        <a routerLink="/" 
+           class="flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 rounded-lg p-2"
+           aria-label="Fashion Forward - Go to homepage">
+          <img src="/favicon.ico" 
+               alt="Fashion Forward Logo" 
+               class="h-8 w-8"
+               width="32" 
+               height="32">
+          <span class="text-xl font-bold text-primary hidden sm:block">Fashion Forward</span>
+        </a>
+      </div>
+
+      <!-- Main Navigation -->
+      <nav class="hidden md:flex space-x-8" role="navigation" aria-label="Main navigation">
+        <a routerLink="/products" 
+           routerLinkActive="text-primary font-semibold"
+           class="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+           [attr.aria-current]="isActiveRoute('/products') ? 'page' : null">
+          Products
+        </a>
+        <a routerLink="/categories" 
+           routerLinkActive="text-primary font-semibold"
+           class="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+           [attr.aria-current]="isActiveRoute('/categories') ? 'page' : null">
+          Categories
+        </a>
+        <a routerLink="/about" 
+           routerLinkActive="text-primary font-semibold"
+           class="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+           [attr.aria-current]="isActiveRoute('/about') ? 'page' : null">
+          About
+        </a>
+      </nav>
+
+      <!-- Search Bar -->
+      <div class="flex-1 max-w-lg mx-8 hidden lg:block">
+        <div class="relative">
+          <label for="search" class="sr-only">Search products</label>
+          <input
+            id="search"
+            type="search"
+            placeholder="Search products..."
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            [(ngModel)]="searchQuery"
+            (keyup.enter)="performSearch()"
+            (input)="onSearchInput($event)"
+            autocomplete="off"
+            aria-describedby="search-help">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
+            <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <div id="search-help" class="sr-only">
+            Press Enter to search or type to see suggestions
+          </div>
+        </div>
+        
+        <!-- Search Suggestions -->
+        <div *ngIf="searchSuggestions.length > 0" 
+             class="absolute z-50 mt-1 w-full bg-white shadow-lg rounded-md border border-gray-200"
+             role="listbox"
+             aria-label="Search suggestions">
+          <ul class="max-h-60 overflow-auto">
+            <li *ngFor="let suggestion of searchSuggestions; let i = index"
+                class="px-4 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                role="option"
+                [attr.aria-selected]="selectedSuggestionIndex === i"
+                (click)="selectSuggestion(suggestion)"
+                (keydown)="onSuggestionKeydown($event, suggestion, i)">
+              <span class="text-sm text-gray-900">{{ suggestion.name }}</span>
+              <span class="text-xs text-gray-500 ml-2">{{ suggestion.category }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center space-x-4">
+        
+        <!-- Wishlist Button -->
+        <a routerLink="/wishlist" 
+           class="relative p-2 text-gray-700 hover:text-primary rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors"
+           [attr.aria-label]="'Wishlist' + (wishlistCount > 0 ? ' (' + wishlistCount + ' items)' : ' (empty)')">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+          <span *ngIf="wishlistCount > 0" 
+                class="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+                aria-hidden="true">
+            {{ wishlistCount }}
+          </span>
+        </a>
+
+        <!-- Cart Button -->
+        <a routerLink="/cart" 
+           class="relative p-2 text-gray-700 hover:text-primary rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors"
+           [attr.aria-label]="'Shopping cart' + (cartCount > 0 ? ' (' + cartCount + ' items)' : ' (empty)')">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5H21M7 13v6a2 2 0 002 2h6a2 2 0 002-2v-6" />
+          </svg>
+          <span *ngIf="cartCount > 0" 
+                class="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+                aria-hidden="true">
+            {{ cartCount }}
+          </span>
+        </a>
+
+        <!-- User Menu -->
+        <div class="relative" *ngIf="isAuthenticated; else loginButton">
+          <button
+            type="button"
+            class="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+            [attr.aria-expanded]="isUserMenuOpen"
+            aria-haspopup="true"
+            (click)="toggleUserMenu()"
+            [attr.aria-label]="'User menu for ' + currentUser?.firstName">
+            <img class="h-8 w-8 rounded-full object-cover" 
+                 [src]="currentUser?.avatar || '/assets/images/default-avatar.svg'" 
+                 [alt]="'Profile picture of ' + currentUser?.firstName">
+          </button>
+
+          <!-- User Dropdown Menu -->
+          <div *ngIf="isUserMenuOpen"
+               class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+               role="menu"
+               aria-orientation="vertical"
+               [attr.aria-labelledby]="'user-menu-button'">
+            <div class="py-1">
+              <a routerLink="/profile" 
+                 role="menuitem"
+                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition-colors"
+                 (click)="closeUserMenu()">
+                Your Profile
+              </a>
+              <a routerLink="/orders" 
+                 role="menuitem"
+                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition-colors"
+                 (click)="closeUserMenu()">
+                Your Orders
+              </a>
+              <a routerLink="/settings" 
+                 role="menuitem"
+                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition-colors"
+                 (click)="closeUserMenu()">
+                Settings
+              </a>
+              <hr class="border-gray-200">
+              <button
+                type="button"
+                role="menuitem"
+                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition-colors"
+                (click)="logout()">
+                Sign out
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Login Button -->
+        <ng-template #loginButton>
+          <a routerLink="/auth/login" 
+             class="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors">
+            Sign In
+          </a>
+        </ng-template>
+
+        <!-- Mobile Menu Button -->
+        <button
+          type="button"
+          class="md:hidden p-2 rounded-md text-gray-700 hover:text-primary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+          [attr.aria-expanded]="isMobileMenuOpen"
+          aria-controls="mobile-menu"
+          aria-label="Toggle navigation menu"
+          (click)="toggleMobileMenu()">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path *ngIf="!isMobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            <path *ngIf="isMobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div *ngIf="isMobileMenuOpen" 
+         class="md:hidden border-t border-gray-200 pt-4 pb-3"
+         id="mobile-menu"
+         role="navigation"
+         aria-label="Mobile navigation">
+      
+      <!-- Mobile Search -->
+      <div class="px-4 pb-4 lg:hidden">
+        <label for="mobile-search" class="sr-only">Search products</label>
+        <div class="relative">
+          <input
+            id="mobile-search"
+            type="search"
+            placeholder="Search products..."
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+            [(ngModel)]="searchQuery"
+            (keyup.enter)="performSearch()"
+            autocomplete="off">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
+            <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Navigation Links -->
+      <div class="space-y-1 px-4">
+        <a routerLink="/products" 
+           routerLinkActive="bg-primary-light text-primary font-semibold"
+           class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+           (click)="closeMobileMenu()">
+          Products
+        </a>
+        <a routerLink="/categories" 
+           routerLinkActive="bg-primary-light text-primary font-semibold"
+           class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+           (click)="closeMobileMenu()">
+          Categories
+        </a>
+        <a routerLink="/about" 
+           routerLinkActive="bg-primary-light text-primary font-semibold"
+           class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+           (click)="closeMobileMenu()">
+          About
+        </a>
+      </div>
+
+      <!-- Mobile User Section -->
+      <div *ngIf="isAuthenticated" class="pt-4 pb-3 border-t border-gray-200 mt-4">
+        <div class="flex items-center px-4">
+          <div class="flex-shrink-0">
+            <img class="h-10 w-10 rounded-full" 
+                 [src]="currentUser?.avatar || '/assets/images/default-avatar.svg'" 
+                 [alt]="'Profile picture of ' + currentUser?.firstName">
+          </div>
+          <div class="ml-3">
+            <div class="text-base font-medium text-gray-800">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</div>
+            <div class="text-sm font-medium text-gray-500">{{ currentUser?.email }}</div>
+          </div>
+        </div>
+        <div class="mt-3 space-y-1 px-4">
+          <a routerLink="/profile" 
+             class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+             (click)="closeMobileMenu()">
+            Your Profile
+          </a>
+          <a routerLink="/orders" 
+             class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+             (click)="closeMobileMenu()">
+            Your Orders
+          </a>
+          <button
+            type="button"
+            class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+            (click)="logout()">
+            Sign out
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Skip to main content link for screen readers -->
+<a href="#main-content" 
+   class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-white px-4 py-2 rounded-md z-50 focus:outline-none focus:ring-2 focus:ring-white">
+  Skip to main content
+</a>

@@ -299,12 +299,12 @@
         </div>
 
         <!-- Loading State -->
-        <div *ngIf="loading" class="flex justify-center items-center py-20">
+        <div *ngIf="loading.products" class="flex justify-center items-center py-20">
           <mat-progress-spinner diameter="50" mode="indeterminate"></mat-progress-spinner>
         </div>
 
         <!-- Error State -->
-        <div *ngIf="error && !loading" class="flex flex-col items-center justify-center py-20 text-center">
+        <div *ngIf="error && !loading.products" class="flex flex-col items-center justify-center py-20 text-center">
           <mat-icon class="text-[#886364] mb-4" style="font-size: 48px; width: 48px; height: 48px;">error_outline</mat-icon>
           <h3 class="text-[#181111] text-xl font-semibold mb-2">Oops! Something went wrong</h3>
           <p class="text-[#886364] mb-4">{{ error }}</p>
@@ -314,7 +314,7 @@
         </div>
 
         <!-- Products Grid -->
-        <div *ngIf="!loading && !error && viewMode === 'grid'" class="grid grid-cols-[repeat(auto-fit,minmax(158px,1fr))] gap-3 p-4">
+        <div *ngIf="!loading.products && !error && viewMode === 'grid'" class="grid grid-cols-[repeat(auto-fit,minmax(158px,1fr))] gap-3 p-4">
           <div *ngFor="let product of filteredProducts; trackBy: trackByProductId" 
                class="flex flex-col gap-3 pb-3 cursor-pointer group hover:transform hover:-translate-y-1 transition-all duration-200"
                (click)="viewProduct(product)"
@@ -388,7 +388,7 @@
         </div>
 
         <!-- Products List View -->
-        <div *ngIf="!loading && !error && viewMode === 'list'" class="flex flex-col gap-4 p-4">
+        <div *ngIf="!loading.products && !error && viewMode === 'list'" class="flex flex-col gap-4 p-4">
           <div *ngFor="let product of filteredProducts; trackBy: trackByProductId" 
                class="flex gap-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-[#e5dcdc]"
                (click)="viewProduct(product)">
@@ -443,7 +443,7 @@
         </div>
 
         <!-- Empty State -->
-        <div *ngIf="!loading && !error && filteredProducts.length === 0" class="flex flex-col items-center justify-center py-20 text-center">
+        <div *ngIf="!loading.products && !error && filteredProducts.length === 0" class="flex flex-col items-center justify-center py-20 text-center">
           <svg xmlns="http://www.w3.org/2000/svg" width="64px" height="64px" fill="#886364" viewBox="0 0 256 256" class="mb-4">
             <path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z"></path>
           </svg>

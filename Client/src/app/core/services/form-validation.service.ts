@@ -331,9 +331,27 @@ export class FormValidationService {
             messages.push('Please enter a valid email address');
           }
           break;
+        case 'name':
+          if (errorValue.reason === 'too_short') {
+            messages.push(`Name must be at least ${errorValue.minLength} characters long`);
+          } else if (errorValue.reason === 'too_long') {
+            messages.push(`Name must not exceed ${errorValue.maxLength} characters`);
+          } else if (errorValue.reason === 'invalid_characters') {
+            messages.push('Name can only contain letters, spaces, hyphens, and apostrophes');
+          } else if (errorValue.reason === 'consecutive_special_chars') {
+            messages.push('Name cannot have consecutive spaces or special characters');
+          } else if (errorValue.reason === 'invalid_start_end') {
+            messages.push('Name cannot start or end with spaces or special characters');
+          } else {
+            messages.push('Please enter a valid name');
+          }
+          break;
         case 'passwordStrength':
           if (errorValue.minLength) {
             messages.push('Password must be at least 8 characters long');
+          }
+          if (errorValue.maxLength) {
+            messages.push('Password must not exceed 128 characters');
           }
           if (errorValue.lowercase) {
             messages.push('Password must contain at least one lowercase letter');
@@ -346,6 +364,9 @@ export class FormValidationService {
           }
           if (errorValue.specialChar) {
             messages.push('Password must contain at least one special character');
+          }
+          if (errorValue.commonPattern) {
+            messages.push('Password contains common patterns and is too weak');
           }
           break;
         case 'passwordMismatch':
@@ -466,6 +487,141 @@ export class FormValidationService {
         }
       }
     });
+  }
+
+  /**
+   * Name validator - validates names with proper format
+   */
+  nameValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) {
+        return null;
+      }
+
+      const name = control.value.trim();
+      
+      // Check for minimum length
+      if (name.length < 2) {
+        return { name: { reason: 'too_short', minLength: 2 } };
+      }
+
+      // Check for maximum length
+      if (name.length > 50) {
+        return { name: { reason: 'too_long', maxLength: 50 } };
+      }
+
+      // Check for valid characters (letters, spaces, hyphens, apostrophes)
+      const namePattern = /^[a-zA-Z\s\-']+$/;
+      if (!namePattern.test(name)) {
+        return { name: { reason: 'invalid_characters' } };
+      }
+
+      // Check for consecutive spaces or special characters
+      if (/[\s\-']{2,}/.test(name)) {
+        return { name: { reason: 'consecutive_special_chars' } };
+      }
+
+      // Check that it doesn't start or end with special characters
+      if (/^[\s\-']|[\s\-']$/.test(name)) {
+        return { name: { reason: 'invalid_start_end' } };
+      }
+
+      return null;
+    };
+  }
+
+  /**
+   * Enhanced password validator with comprehensive rules
+   */
+  passwordValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) {
+        return null;
+      }
+
+      const password = control.value;
+      const errors: any = {};
+
+      // Check minimum length
+      if (password.length < 8) {
+        errors.minLength = true;
+      }
+
+      // Check maximum length
+      if (password.length > 128) {
+        errors.maxLength = true;
+      }
+
+      // Check for lowercase letter
+      if (!/[a-z]/.test(password)) {
+        errors.lowercase = true;
+      }
+
+      // Check for uppercase letter
+      if (!/[A-Z]/.test(password)) {
+        errors.uppercase = true;
+      }
+
+      // Check for number
+      if (!/\d/.test(password)) {
+        errors.number = true;
+      }
+
+      // Check for special character
+      if (!/[@$!%*?&]/.test(password)) {
+        errors.specialChar = true;
+      }
+
+      // Check for common weak patterns
+      const commonPatterns = [
+        /123456/,
+        /password/i,
+        /qwerty/i,
+        /abc123/i,
+        /(.)\1{2,}/, // Repeated characters
+      ];
+
+      if (commonPatterns.some(pattern => pattern.test(password))) {
+        errors.commonPattern = true;
+      }
+
+      return Object.keys(errors).length > 0 ? { passwordStrength: errors } : null;
+    };
+  }
+
+  /**
+   * Calculate password strength score (0-100)
+   */
+  calculatePasswordStrength(password: string): number {
+    if (!password) return 0;
+
+    let score = 0;
+    const checks = {
+      length: password.length >= 8,
+      lowercase: /[a-z]/.test(password),
+      uppercase: /[A-Z]/.test(password),
+      numbers: /\d/.test(password),
+      symbols: /[@$!%*?&]/.test(password),
+      longLength: password.length >= 12,
+      veryLongLength: password.length >= 16,
+      noCommonPatterns: !/123456|password|qwerty|abc123/i.test(password),
+      noRepeatedChars: !/(.)\1{2,}/.test(password)
+    };
+
+    // Base scoring
+    if (checks.length) score += 15;
+    if (checks.lowercase) score += 10;
+    if (checks.uppercase) score += 10;
+    if (checks.numbers) score += 10;
+    if (checks.symbols) score += 15;
+
+    // Bonus scoring
+    if (checks.longLength) score += 10;
+    if (checks.veryLongLength) score += 10;
+    if (checks.noCommonPatterns) score += 10;
+    if (checks.noRepeatedChars) score += 10;
+
+    return Math.min(score, 100);
   }
 
   /**

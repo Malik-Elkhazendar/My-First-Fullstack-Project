@@ -36,7 +36,7 @@ export interface ProductResponse {
   providedIn: 'root'
 })
 export class ProductService {
-  private readonly apiUrl = `${environment.apiUrl}/products`;
+  private readonly apiUrl = `${environment.api.baseUrl}${environment.api.endpoints.products}`;
   private readonly RETRY_COUNT = 3;
   private readonly RETRY_DELAY = 1000;
   private readonly CACHE_TIME = 5 * 60 * 1000; // 5 minutes
@@ -463,89 +463,221 @@ export class ProductService {
   }
 
   private initializeMockData(): void {
-    // Initialize with Fashion Forward products - single source of truth
+    // Initialize with Fashion Forward products - focused on fashion and style
     this.mockProducts = [
+      // Women's Clothing
       {
         id: 1,
-        name: 'Summer Dress',
-        description: 'Light and breezy summer dress perfect for warm weather. Made from high-quality cotton blend fabric that feels soft against your skin.',
-        price: 79.99,
-        originalPrice: 99.99,
-        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDReOW2s-w9Y0z9VzKDH7r0HnBHs1SkCfbN-eXdgNDOveTLnx3F-Z93GwkAmgzl0fmrZ6hzJUh6D_U1TSTfW2M6bzW5UF2CXQ-NT-tUXv1_VJzO8aVOEGKi9498EbFkVhlMlopjhCGFDbZNIZUOgzHMRljL542scyHoF3Cit5dQN7quYAG7sd-qIHmh2ovNVFcZAkQunEu0FCGpc_JfEiGCE0Ij4CLFQvUMjwkHILX8OeMxaQatGbhuBGqCjaEsKxRkW-OGo6N0TDA',
+        name: 'Elegant Summer Dress',
+        description: 'Flowing midi dress perfect for summer occasions. Features a flattering A-line silhouette with delicate floral print and comfortable cotton blend fabric.',
+        price: 89.99,
+        originalPrice: 119.99,
+        imageUrl: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&h=600&fit=crop',
         category: 'Clothing',
         inStock: true,
-        rating: 4.5
+        rating: 4.8
       },
       {
         id: 2,
-        name: 'Casual T-Shirt',
-        description: 'Comfortable cotton t-shirt for everyday wear. Features a relaxed fit and classic design that goes with everything.',
-        price: 24.99,
-        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDQ0l3bN4SYvgoUgpK03V7e0bPPdPO5ndEMBaxo1GJCMc6NgIFYFVU09n-GJRedwmHmWEhz3fQBzTpOMybWUTQVcLoikwLRArbZ0hZ93a46dVSA6ydAXVDWsxxIDY5q5n0kY6nTjrIsYxzytV41NLU4nZ9k-gMIwkHjWmP7gQde2bpWNINyNZLdwWuiON4NbTMyhQxUL1SFyVQrOxmxssE_q4KTWQeI6Do-VuhQfRWv2cN-gcElm-tPpPSGfCJ8sBwpdA-AGEDYu20',
+        name: 'Chic Blazer Jacket',
+        description: 'Sophisticated blazer that transitions from office to evening. Tailored fit with premium fabric and classic lapels for a polished look.',
+        price: 159.99,
+        originalPrice: 199.99,
+        imageUrl: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=600&fit=crop',
         category: 'Clothing',
         inStock: true,
-        rating: 4.2
+        rating: 4.6
       },
       {
         id: 3,
-        name: 'Denim Jeans',
-        description: 'Classic blue denim jeans with a modern fit. Crafted from premium denim with just the right amount of stretch for comfort.',
-        price: 89.99,
-        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBWt5DsDzAiz5BPQD3M98RuLyVxGkpKYcsT9KyKtkPR5V-91Jh66duP3hhA8C_EZFau0g5eKCfrTXcjfHovh664GaOuLgg0luJiy46lOByLqjjaDlo-pIvCs5vEW71P7HnO-WOACragDBla_LZ-cYIopXQGk3qwQh6UOXM0e45TYiwfh7lSpOiDOK99KJK25SAbPtKvA2PUumQ_qiXNTBQLdg-6xR_6cqRdVYSZ6RqBsYcxvylNAICLdx4ZC9F-Bv94UgrRKGWS57g',
+        name: 'High-Waisted Skinny Jeans',
+        description: 'Premium denim jeans with a flattering high-waisted cut. Made from stretch denim for comfort and movement while maintaining shape.',
+        price: 79.99,
+        imageUrl: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=600&fit=crop',
         category: 'Clothing',
         inStock: true,
         rating: 4.7
       },
       {
         id: 4,
-        name: 'Formal Blazer',
-        description: 'Professional blazer perfect for business meetings. Tailored fit with premium fabric that maintains its shape all day.',
-        price: 149.99,
-        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAaW4F0dZfUkBeT6Kn87flSLeqXc0kUWV0Tq88otYyVd9OGrNVGpp066rzzNSqQ8ulLoMEpUnxDnzcV9LfHWb8fJbLpP09wtjC-oO7D8beaMkbgW5CjSmCaElccdns4LaXvBDMczOdTrNxdfM9s7gKjt9rKJhdnrvLQ8nDKey657WrAgazZk86-PxkNRHBCsQOCUpS3HdJWhWsfn7YVOPEg42CQuBxNkuue_C31XaCb-CQaC7S_A48SBYu1YIyxBznXE314dtAphvk',
+        name: 'Silk Blouse',
+        description: 'Luxurious silk blouse with elegant draping. Perfect for professional settings or special occasions. Available in classic colors.',
+        price: 129.99,
+        imageUrl: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=600&fit=crop',
         category: 'Clothing',
-        inStock: false,
-        rating: 4.3
+        inStock: true,
+        rating: 4.9
       },
       {
         id: 5,
-        name: 'Sports Leggings',
-        description: 'High-performance leggings for your workout routine. Moisture-wicking fabric with four-way stretch for maximum comfort.',
-        price: 59.99,
-        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCjk0vgQz2AU7KN43zuzAanTNwAfld5p7q9uLiRPD5ek1OqU3USUw3FPp87-XODyXyGiiaL1hntbSwf--7P8rHmN8tydWvzcjbcGMQgwCQKuu4ehelCfs0q4cleeFqYtdBO1UuS0PTGLuoOlUAnLhQ65mCRct-GaXdjU0V3oZmusjVFmKp9v9JjPwJi238YWEol8s3pEiEpJN68YfG2K9fPN_grT1o410AAXY6U2ZeHCgSa478oL-yJ8_kgU7Qo9LNwemghiKyxtbY',
+        name: 'Cashmere Sweater',
+        description: 'Ultra-soft cashmere sweater in a relaxed fit. Perfect for layering or wearing alone. Timeless design that never goes out of style.',
+        price: 189.99,
+        originalPrice: 249.99,
+        imageUrl: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&h=600&fit=crop',
         category: 'Clothing',
-        inStock: true,
-        rating: 4.6
+        inStock: false,
+        rating: 4.8
       },
       {
         id: 6,
-        name: 'Winter Coat',
-        description: 'Warm and stylish coat for cold weather. Insulated with premium down fill and water-resistant outer shell.',
-        price: 199.99,
-        originalPrice: 249.99,
-        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCOuVXNMwCFR_cE5720wDXZ-3K2_eZN6tXlQt3kWmsZM2s4kRT5wiADwoNl55ts0r7zbjX3qFKN4p_WhfUFOWMpk1eJNAo4pCYeg47-vv5wdUumJVZDAy3ZIW1HFDVVRg5mZc-IOXLfYtO0ZsCbjReIYgjf703nteOMLJSj4w4LGz3bZeNOYNIE1Gt_iHMmnD4jdHLDqzRM_2srpNUxgdKEdCeHPEYa1i7t7rVVVxuC-NedZh6KcNe3ie77XVJnahLdgSitjRpsSrY',
+        name: 'Little Black Dress',
+        description: 'The perfect LBD for any occasion. Classic fit-and-flare silhouette with subtle details. A wardrobe essential every woman needs.',
+        price: 119.99,
+        imageUrl: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=600&fit=crop',
+        category: 'Clothing',
+        inStock: true,
+        rating: 4.7
+      },
+      
+      // Men's Clothing
+      {
+        id: 7,
+        name: 'Classic Oxford Shirt',
+        description: 'Timeless button-down shirt in premium cotton. Perfect for business or casual wear. Crisp collar and tailored fit for a sharp look.',
+        price: 69.99,
+        imageUrl: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=400&h=600&fit=crop',
+        category: 'Clothing',
+        inStock: true,
+        rating: 4.5
+      },
+      {
+        id: 8,
+        name: 'Tailored Suit Jacket',
+        description: 'Modern fit suit jacket in premium wool blend. Perfect for business meetings or formal events. Classic navy color with subtle texture.',
+        price: 299.99,
+        originalPrice: 399.99,
+        imageUrl: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&h=600&fit=crop',
         category: 'Clothing',
         inStock: true,
         rating: 4.8
       },
       {
-        id: 7,
-        name: 'Party Skirt',
-        description: 'Elegant skirt perfect for special occasions. Flowing design with beautiful drape that flatters every figure.',
-        price: 69.99,
-        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCHsAF2OVjHP1bexPDAf32exewaki_e2mc94ql69sasGrZrSjRPWUkhLJ8ui30iDEIXgkGRXCNvSj0tVfLOzAd8MDB9Z0j9fl8_h-iAeJZx4NC77sH3fwqr4gn974pfmXwJZT1-4ACBxKlsO-d6nZTvODNhsSJGaYzudJX5hRCyLNLdU8IEDzRoAFXUULHBDJH_A2qfuw1EngXIdJoNc_A17HLxSJVnjN1WhrtaFQAZlhXV4wQOPNr3TPeS_S_BEJj7ebOTRmpa0gs',
+        id: 9,
+        name: 'Casual Chinos',
+        description: 'Versatile chino pants in a modern slim fit. Made from premium cotton twill for comfort and durability. Perfect for weekend or smart-casual looks.',
+        price: 59.99,
+        imageUrl: 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=400&h=600&fit=crop',
         category: 'Clothing',
         inStock: true,
         rating: 4.4
       },
       {
-        id: 8,
-        name: 'Comfortable Sweater',
-        description: 'Cozy sweater for relaxed days. Soft knit fabric that keeps you warm while looking effortlessly stylish.',
-        price: 79.99,
-        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBLNsIuPcZ165Nm9HdgyFfayULSS0gHg4-MYOcv83cf7apaf8R7l-ue69sxzmEDLqOY_4d8JMwb8tlR1dRaa-Jw5cV3NV2I4DVm0UbdjYEN27UPF-o8QAQNfmMK3fowJM0T2XPZrOuxhearvDi_FQOLO_5mFhUm7Zly0QP7tehsPJbiD4CLgab6949iezqXDy_Mx-3YC20o8HGN3-jSNMl_zXoWx1gX3kBQxNFMKF_s5xwGQi27QFtlppNjnbr8r83A_31n_UACOPo',
+        id: 10,
+        name: 'Merino Wool Sweater',
+        description: 'Premium merino wool pullover with a contemporary fit. Soft, breathable, and naturally odor-resistant. Perfect for layering.',
+        price: 149.99,
+        imageUrl: 'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=400&h=600&fit=crop',
         category: 'Clothing',
         inStock: true,
-        rating: 4.1
+        rating: 4.6
+      },
+      
+      // Shoes
+      {
+        id: 11,
+        name: 'Classic Leather Heels',
+        description: 'Elegant pointed-toe heels in genuine leather. 3-inch heel height perfect for all-day comfort. Essential for professional and formal wear.',
+        price: 139.99,
+        imageUrl: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&h=600&fit=crop',
+        category: 'Shoes',
+        inStock: true,
+        rating: 4.5
+      },
+      {
+        id: 12,
+        name: 'Luxury Sneakers',
+        description: 'Premium white leather sneakers with minimalist design. Comfortable for all-day wear while maintaining a sophisticated look.',
+        price: 189.99,
+        originalPrice: 229.99,
+        imageUrl: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=600&fit=crop',
+        category: 'Shoes',
+        inStock: true,
+        rating: 4.7
+      },
+      {
+        id: 13,
+        name: 'Oxford Dress Shoes',
+        description: 'Classic men\'s oxford shoes in premium leather. Traditional craftsmanship meets modern comfort. Perfect for business and formal occasions.',
+        price: 199.99,
+        imageUrl: 'https://images.unsplash.com/photo-1614252369475-531eba835eb1?w=400&h=600&fit=crop',
+        category: 'Shoes',
+        inStock: false,
+        rating: 4.8
+      },
+      {
+        id: 14,
+        name: 'Ankle Boots',
+        description: 'Stylish ankle boots with a block heel. Versatile design that pairs well with jeans, dresses, or skirts. Premium leather construction.',
+        price: 159.99,
+        imageUrl: 'https://images.unsplash.com/photo-1608256246200-53e8b6d13bc0?w=400&h=600&fit=crop',
+        category: 'Shoes',
+        inStock: true,
+        rating: 4.6
+      },
+      
+      // Accessories
+      {
+        id: 15,
+        name: 'Designer Handbag',
+        description: 'Elegant leather handbag with gold-tone hardware. Spacious interior with multiple compartments. Perfect for work or special occasions.',
+        price: 249.99,
+        originalPrice: 319.99,
+        imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=600&fit=crop',
+        category: 'Accessories',
+        inStock: true,
+        rating: 4.9
+      },
+      {
+        id: 16,
+        name: 'Silk Scarf',
+        description: 'Luxurious silk scarf with artistic print. Can be worn around the neck, as a headband, or tied to a handbag for a pop of color.',
+        price: 79.99,
+        imageUrl: 'https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?w=400&h=600&fit=crop',
+        category: 'Accessories',
+        inStock: true,
+        rating: 4.4
+      },
+      {
+        id: 17,
+        name: 'Statement Necklace',
+        description: 'Bold statement necklace with geometric design. Gold-plated finish that adds instant glamour to any outfit. Perfect for evening wear.',
+        price: 89.99,
+        imageUrl: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=600&fit=crop',
+        category: 'Accessories',
+        inStock: true,
+        rating: 4.5
+      },
+      {
+        id: 18,
+        name: 'Leather Watch',
+        description: 'Classic timepiece with leather strap and minimalist face. Precision movement with water resistance. Suitable for both casual and formal wear.',
+        price: 199.99,
+        imageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=600&fit=crop',
+        category: 'Accessories',
+        inStock: true,
+        rating: 4.7
+      },
+      {
+        id: 19,
+        name: 'Designer Sunglasses',
+        description: 'Trendy oversized sunglasses with UV protection. Classic frame design that complements any face shape. Comes with protective case.',
+        price: 129.99,
+        originalPrice: 159.99,
+        imageUrl: 'https://images.unsplash.com/photo-1508296695146-257a814070b4?w=400&h=600&fit=crop',
+        category: 'Accessories',
+        inStock: true,
+        rating: 4.6
+      },
+      {
+        id: 20,
+        name: 'Leather Belt',
+        description: 'Premium leather belt with polished buckle. Versatile design that works with both casual and formal outfits. Available in multiple colors.',
+        price: 59.99,
+        imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=600&fit=crop',
+        category: 'Accessories',
+        inStock: true,
+        rating: 4.3
       }
     ];
   }

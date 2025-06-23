@@ -34,7 +34,7 @@ import { ProductService } from './product.service';
   providedIn: 'root'
 })
 export class OrderService {
-  private readonly apiUrl = `${environment.apiUrl}/orders`;
+  private readonly apiUrl = `${environment.api.baseUrl}${environment.api.endpoints.orders}`;
   private loadingSubject = new BehaviorSubject<boolean>(false);
   private ordersSubject = new BehaviorSubject<Order[]>([]);
 

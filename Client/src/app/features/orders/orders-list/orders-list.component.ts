@@ -11,6 +11,7 @@ import { takeUntil, debounceTime, distinctUntilChanged, startWith, takeWhile } f
 import { OrderService } from '../../../core/services/order.service';
 import { ImageService } from '../../../core/services/image.service';
 import { CartService } from '../../../core/services/cart.service';
+import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { 
   Order, 
   OrderStatus, 
@@ -284,14 +285,30 @@ export class OrdersListComponent implements OnInit, OnDestroy {
   cancelOrder(orderId: number): void {
     const order = this.orders.find(o => o.id === orderId);
     if (order) {
-      const confirmMessage = `Are you sure you want to cancel order ${order.orderNumber}?`;
+      const dialogData: ConfirmationDialogData = {
+        title: 'Cancel Order',
+        message: `Are you sure you want to cancel order ${order.orderNumber}?`,
+        details: 'This action cannot be undone and you may be charged a cancellation fee.',
+        type: 'warning',
+        confirmText: 'Cancel Order',
+        cancelText: 'Keep Order',
+        icon: 'cancel'
+      };
       
-      if (confirm(confirmMessage)) {
-        // Update order status
-        order.status = OrderStatus.Cancelled;
-        this.showSuccess('Order cancelled successfully');
-        this.applyFiltersAndPagination();
-      }
+      const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+        data: dialogData,
+        width: '400px',
+        disableClose: true
+      });
+
+      dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          // Update order status
+          order.status = OrderStatus.Cancelled;
+          this.showSuccess('Order cancelled successfully');
+          this.applyFiltersAndPagination();
+        }
+      });
     }
   }
 

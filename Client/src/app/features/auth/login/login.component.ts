@@ -1,16 +1,39 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { Subject, takeUntil } from 'rxjs';
+
 import { AuthService } from '../../../core/services/auth.service';
+import { ErrorHandlingService, AppError } from '../../../core/services/error-handling.service';
+import { LoadingService } from '../../../core/services/loading.service';
+import { FormValidationService } from '../../../core/services/form-validation.service';
+
+interface LoginFormData {
+  email: string;
+  password: string;
+  rememberMe: boolean;
+}
+
+interface ValidationState {
+  [key: string]: {
+    touched: boolean;
+    errors: string[];
+    showErrors: boolean;
+  };
+}
 
 /**
- * Login Component
+ * Enhanced Login Component with comprehensive validation and user feedback
  * 
- * Handles user authentication with email and password.
- * Provides demo login options for testing purposes.
- * Follows Fashion Forward design system and repository patterns.
+ * Features:
+ * - Advanced form validation with custom validators
+ * - Real-time validation feedback
+ * - Loading states and error handling
+ * - Success/error toast notifications
+ * - Accessibility improvements
+ * - Type-safe form handling
  */
 @Component({
   selector: 'app-login',
@@ -24,36 +47,139 @@ import { AuthService } from '../../../core/services/auth.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
-  loginForm: FormGroup;
+export class LoginComponent implements OnInit, OnDestroy {
+  loginForm!: FormGroup;
   loading = false;
   submitted = false;
   returnUrl: string = '/';
   hidePassword = true;
-  loginError: string | null = null;
+  loginError: AppError | null = null;
+  validationState: ValidationState = {};
+  
+  // Form interaction tracking
+  formInteracted = false;
+  lastSubmitAttempt: Date | null = null;
+  
+  private destroy$ = new Subject<void>();
+  private readonly LOADING_KEY = 'login';
 
   constructor(
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private errorHandler: ErrorHandlingService,
+    private loadingService: LoadingService,
+    private formValidation: FormValidationService
   ) {
     // Redirect to home if already logged in
     if (this.authService.isAuthenticated) {
       this.router.navigate(['/']);
     }
 
-    this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      rememberMe: [false]
-    });
+    this.initializeForm();
+    this.setupFormValidation();
   }
 
   ngOnInit(): void {
     // Get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    
+    // Subscribe to loading state
+    this.loadingService.isLoading(this.LOADING_KEY)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(isLoading => {
+        this.loading = isLoading;
+      });
+
+    // Track form interactions for better UX
+    this.loginForm.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.formInteracted = true;
+        this.updateValidationState();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  /**
+   * Initialize the login form with enhanced validation
+   */
+  private initializeForm(): void {
+    this.loginForm = this.formBuilder.group({
+      email: ['', [
+        Validators.required,
+        this.formValidation.emailValidator()
+      ]],
+      password: ['', [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(128)
+      ]],
+      rememberMe: [false]
+    });
+  }
+
+  /**
+   * Setup advanced form validation and real-time feedback
+   */
+  private setupFormValidation(): void {
+    // Initialize validation state for each field
+    Object.keys(this.loginForm.controls).forEach(fieldName => {
+      this.validationState[fieldName] = {
+        touched: false,
+        errors: [],
+        showErrors: false
+      };
+
+      // Subscribe to field changes for real-time validation
+      const control = this.loginForm.get(fieldName);
+      if (control) {
+        control.valueChanges
+          .pipe(takeUntil(this.destroy$))
+          .subscribe(() => {
+            this.updateFieldValidation(fieldName);
+          });
+
+        // Track when field is touched
+        control.statusChanges
+          .pipe(takeUntil(this.destroy$))
+          .subscribe(() => {
+            if (control.touched && !this.validationState[fieldName].touched) {
+              this.validationState[fieldName].touched = true;
+              this.updateFieldValidation(fieldName);
+            }
+          });
+      }
+    });
+  }
+
+  /**
+   * Update validation state for all fields
+   */
+  private updateValidationState(): void {
+    Object.keys(this.loginForm.controls).forEach(fieldName => {
+      this.updateFieldValidation(fieldName);
+    });
+  }
+
+  /**
+   * Update validation state for a specific field
+   */
+  private updateFieldValidation(fieldName: string): void {
+    const control = this.loginForm.get(fieldName);
+    if (!control) return;
+
+    const state = this.validationState[fieldName];
+    state.errors = control.errors ? this.formValidation.getErrorMessages(control.errors) : [];
+    
+    // Show errors if field is touched, form is submitted, or user has interacted with form
+    state.showErrors = (control.touched || this.submitted || this.formInteracted) && state.errors.length > 0;
   }
 
   /**
@@ -64,54 +190,182 @@ export class LoginComponent implements OnInit {
   }
 
   /**
-   * Check if a specific form field has a specific error
-   * @param fieldName - The name of the form field
-   * @param errorType - The type of error to check for
-   * @returns boolean indicating if the field has the specified error
+   * Check if a specific form field has errors to display
    */
-  hasError(fieldName: string, errorType: string): boolean {
-    const field = this.loginForm.get(fieldName);
-    return !!(field && field.errors?.[errorType] && (field.dirty || field.touched || this.submitted));
+  hasFieldErrors(fieldName: string): boolean {
+    return this.validationState[fieldName]?.showErrors || false;
   }
 
   /**
-   * Handle form submission
+   * Get error messages for a specific field
+   */
+  getFieldErrors(fieldName: string): string[] {
+    return this.validationState[fieldName]?.errors || [];
+  }
+
+  /**
+   * Get the first error message for a field (for primary display)
+   */
+  getFieldErrorMessage(fieldName: string): string | null {
+    const errors = this.getFieldErrors(fieldName);
+    return errors.length > 0 ? errors[0] : null;
+  }
+
+  /**
+   * Check if the form is valid and ready to submit
+   */
+  get isFormValid(): boolean {
+    return this.loginForm.valid && !this.loading;
+  }
+
+  /**
+   * Get form validation summary for accessibility
+   */
+  get validationSummary(): string {
+    const errors = this.formValidation.getFormErrors(this.loginForm);
+    const errorCount = Object.keys(errors).length;
+    
+    if (errorCount === 0) {
+      return 'Form is valid';
+    }
+    
+    return `Form has ${errorCount} error${errorCount > 1 ? 's' : ''}`;
+  }
+
+  /**
+   * Enhanced form submission with comprehensive error handling
    */
   onSubmit(): void {
     this.submitted = true;
     this.loginError = null;
+    this.lastSubmitAttempt = new Date();
 
-    // Stop here if form is invalid
+    // Validate form
     if (this.loginForm.invalid) {
-      this.markFormGroupTouched();
+      this.handleFormValidationErrors();
       return;
     }
 
-    this.loading = true;
-    this.authService.login({
-      email: this.f['email'].value,
-      password: this.f['password'].value
-    }).subscribe({
-      next: () => {
-        this.snackBar.open('Welcome back! Login successful.', 'Close', { 
-          duration: 3000,
-          panelClass: ['success-snackbar']
-        });
-        this.router.navigate([this.returnUrl]);
+    // Prepare login data
+    const loginData: LoginFormData = {
+      email: this.f['email'].value.trim().toLowerCase(),
+      password: this.f['password'].value,
+      rememberMe: this.f['rememberMe'].value
+    };
+
+    // Perform login with loading state management
+    this.loadingService.withLoading(
+      this.LOADING_KEY,
+      this.authService.login(loginData)
+    ).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (response) => {
+        this.handleLoginSuccess(loginData.email);
       },
-      error: error => {
-        this.loginError = error.message || 'Invalid email or password. Please try again.';
-        this.loading = false;
-        this.snackBar.open(this.loginError || 'Login failed', 'Close', { 
-          duration: 5000,
-          panelClass: ['error-snackbar']
-        });
+      error: (error: AppError) => {
+        this.handleLoginError(error);
       }
     });
   }
 
   /**
-   * Demo account login for testing
+   * Handle form validation errors
+   */
+  private handleFormValidationErrors(): void {
+    // Mark all fields as touched to show validation errors
+    this.formValidation.markAllFieldsAsTouched(this.loginForm);
+    this.updateValidationState();
+
+    // Show validation summary
+    const errors = this.formValidation.getFormErrors(this.loginForm);
+    const errorCount = Object.keys(errors).length;
+    
+    this.errorHandler.showErrorNotification(
+      `Please fix ${errorCount} validation error${errorCount > 1 ? 's' : ''} before submitting.`
+    );
+
+    // Focus on first invalid field for accessibility
+    this.focusFirstInvalidField();
+  }
+
+  /**
+   * Handle successful login
+   */
+  private handleLoginSuccess(email: string): void {
+    this.loginError = null;
+    
+    // Show success notification
+    this.errorHandler.showSuccessNotification(
+      `Welcome back! Successfully signed in as ${email}`
+    );
+
+    // Navigate to return URL or dashboard
+    setTimeout(() => {
+      this.router.navigate([this.returnUrl]);
+    }, 500);
+  }
+
+  /**
+   * Handle login errors with enhanced feedback
+   */
+  private handleLoginError(error: AppError): void {
+    this.loginError = error;
+
+    // Show appropriate error message based on error type
+    let userMessage = 'Login failed. Please try again.';
+    
+    switch (error.code) {
+      case 'UNAUTHORIZED':
+        userMessage = 'Invalid email or password. Please check your credentials.';
+        break;
+      case 'NETWORK_ERROR':
+        userMessage = 'Network error. Please check your connection and try again.';
+        break;
+      case 'RATE_LIMIT':
+        userMessage = 'Too many login attempts. Please wait a moment before trying again.';
+        break;
+      case 'VALIDATION_ERROR':
+        userMessage = 'Please check your input and try again.';
+        break;
+      default:
+        userMessage = this.errorHandler.getUserFriendlyMessage(error);
+    }
+
+    this.errorHandler.showErrorNotification(userMessage);
+
+    // Focus on email field for retry
+    setTimeout(() => {
+      const emailField = document.querySelector('input[formControlName="email"]') as HTMLInputElement;
+      if (emailField) {
+        emailField.focus();
+        emailField.select();
+      }
+    }, 100);
+  }
+
+  /**
+   * Focus on the first invalid form field
+   */
+  private focusFirstInvalidField(): void {
+    const firstInvalidField = Object.keys(this.loginForm.controls)
+      .find(fieldName => {
+        const control = this.loginForm.get(fieldName);
+        return control && control.invalid;
+      });
+
+    if (firstInvalidField) {
+      setTimeout(() => {
+        const element = document.querySelector(`input[formControlName="${firstInvalidField}"]`) as HTMLElement;
+        if (element) {
+          element.focus();
+        }
+      }, 100);
+    }
+  }
+
+  /**
+   * Demo account login for testing with enhanced feedback
    */
   loginAsDemo(): void {
     this.loginForm.patchValue({
@@ -119,11 +373,16 @@ export class LoginComponent implements OnInit {
       password: 'password123',
       rememberMe: true
     });
-    this.onSubmit();
+    
+    this.errorHandler.showInfoNotification('Logging in with demo account...');
+    
+    setTimeout(() => {
+      this.onSubmit();
+    }, 500);
   }
 
   /**
-   * Admin account login for testing
+   * Admin account login for testing with enhanced feedback
    */
   loginAsAdmin(): void {
     this.loginForm.patchValue({
@@ -131,18 +390,66 @@ export class LoginComponent implements OnInit {
       password: 'admin123',
       rememberMe: true
     });
-    this.onSubmit();
+    
+    this.errorHandler.showInfoNotification('Logging in with admin account...');
+    
+    setTimeout(() => {
+      this.onSubmit();
+    }, 500);
   }
 
   /**
-   * Mark all form fields as touched to trigger validation display
+   * Toggle password visibility with accessibility
    */
-  private markFormGroupTouched(): void {
-    Object.keys(this.loginForm.controls).forEach(key => {
-      const control = this.loginForm.get(key);
-      if (control) {
-        control.markAsTouched();
-      }
+  togglePasswordVisibility(): void {
+    this.hidePassword = !this.hidePassword;
+    
+    // Announce to screen readers
+    const announcement = this.hidePassword ? 'Password hidden' : 'Password visible';
+    this.errorHandler.showInfoNotification(announcement, 1000);
+  }
+
+  /**
+   * Handle input focus for better UX
+   */
+  onFieldFocus(fieldName: string): void {
+    // Clear field-specific errors when user starts typing
+    if (this.validationState[fieldName]?.showErrors) {
+      this.validationState[fieldName].showErrors = false;
+    }
+  }
+
+  /**
+   * Handle input blur for validation
+   */
+  onFieldBlur(fieldName: string): void {
+    const control = this.loginForm.get(fieldName);
+    if (control) {
+      control.markAsTouched();
+      this.updateFieldValidation(fieldName);
+    }
+  }
+
+  /**
+   * Clear all form errors and reset validation state
+   */
+  clearErrors(): void {
+    this.loginError = null;
+    this.submitted = false;
+    
+    Object.keys(this.validationState).forEach(fieldName => {
+      this.validationState[fieldName].showErrors = false;
     });
+  }
+
+  /**
+   * Reset the form to initial state
+   */
+  resetForm(): void {
+    this.loginForm.reset();
+    this.formValidation.resetValidationState(this.loginForm);
+    this.clearErrors();
+    this.formInteracted = false;
+    this.lastSubmitAttempt = null;
   }
 } 

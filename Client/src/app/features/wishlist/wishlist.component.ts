@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { WishlistService } from '../../core/services/wishlist.service';
-import { CartService } from '../../core/services/cart.service';
-import { WishlistItem } from '../../core/models/wishlist.model';
-import { Product } from '../../core/models/product.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
+import { WishlistService, CartService, WishlistItem, Product } from '../../core';
 import { WishlistItemComponent } from '../../shared/components/wishlist-item/wishlist-item.component';
+import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-wishlist',
@@ -39,7 +40,9 @@ export class WishlistComponent implements OnInit, OnDestroy {
   constructor(
     private wishlistService: WishlistService,
     private cartService: CartService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -189,13 +192,42 @@ export class WishlistComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Clear entire wishlist
+   * Clear all items from wishlist with confirmation
    */
   clearWishlist(): void {
-    if (confirm('Are you sure you want to clear your entire wishlist?')) {
-      this.wishlistService.clearWishlist();
-      console.log('Wishlist cleared');
+    if (this.wishlistItems.length === 0) {
+      return;
     }
+
+    const dialogData: ConfirmationDialogData = {
+      title: 'Clear Wishlist',
+      message: `Are you sure you want to remove all ${this.wishlistItems.length} items from your wishlist?`,
+      details: 'This action cannot be undone.',
+      type: 'warning',
+      confirmText: 'Clear All',
+      cancelText: 'Cancel',
+      icon: 'delete_sweep'
+    };
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: dialogData,
+      width: '400px',
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.performClearWishlist();
+      }
+    });
+  }
+
+  /**
+   * Perform the actual wishlist clearing
+   */
+  private performClearWishlist(): void {
+    this.wishlistService.clearWishlist();
+    this.showSuccess('Wishlist cleared successfully');
   }
 
   /**
@@ -245,5 +277,15 @@ export class WishlistComponent implements OnInit, OnDestroy {
    */
   trackByItemId(index: number, item: WishlistItem): string {
     return item.id;
+  }
+
+  /**
+   * Show success message
+   */
+  private showSuccess(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      panelClass: ['success-snackbar']
+    });
   }
 }
