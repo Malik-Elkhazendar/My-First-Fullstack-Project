@@ -115,33 +115,74 @@
     </section>
 
     <div class="main-content">
-      <div class="container mx-auto px-4 py-12 space-y-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-16">
         
-        <!-- Hero Section -->
-        <div class="hero-section">
-          <div class="hero-container">
+        <!-- Enhanced Hero Section -->
+        <div class="hero-section relative overflow-hidden rounded-2xl">
+          <div class="hero-container relative">
             <div
-              class="hero-content flex min-h-[480px] flex-col gap-6 bg-cover bg-center bg-no-repeat md:gap-8 md:rounded-xl items-center justify-center p-4"
-              style='background-image: linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCQ6fVjjBFaj4JlufPSN_Hu6j7AEXCdhGvqWYro_rCVsK_eUHxg0vatGVFKGzmC6-j06pganyCgb4L-Fo-7ugYtWXEBibyGC1KEmym0G5u9n8coJkcjnUGMs3X-5dFe3W4-CYCfGv_CdA_v61qSTKLhkOU2YSezlAX16K-DCLzb_9Hw3QGNAqcjy6KG2x3SLpGY6xrx0MLoFPc44WAp9bDsT-HM-CStoDWZc4UCSatlxtmvY5hHP43D-emBFdcuzeo87UPRMhLCSFE");'
+              class="hero-content flex min-h-[500px] lg:min-h-[600px] flex-col gap-8 bg-cover bg-center bg-no-repeat items-center justify-center p-8 lg:p-16"
+              style='background-image: linear-gradient(135deg, rgba(24, 17, 17, 0.7) 0%, rgba(233, 41, 50, 0.8) 50%, rgba(24, 17, 17, 0.7) 100%), url("https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80");'
             >
-              <h1 class="hero-title text-white text-4xl font-black leading-tight tracking-[-0.033em] md:text-5xl md:font-black md:leading-tight md:tracking-[-0.033em] text-center">
-                Discover Your Style
+              <!-- Hero Badge -->
+              <div class="hero-badge inline-flex items-center px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm font-medium mb-4">
+                <span class="w-2 h-2 bg-[#e92932] rounded-full mr-3 animate-pulse"></span>
+                New Collection Available
+              </div>
+              
+              <h1 class="hero-title text-white text-4xl lg:text-6xl xl:text-7xl font-black leading-tight text-center max-w-4xl">
+                Discover Your 
+                <span class="relative inline-block">
+                  <span class="text-[#e92932]">Style</span>
+                  <div class="absolute -bottom-2 left-0 right-0 h-1 bg-[#e92932] rounded-full transform scale-x-0 animate-[scaleIn_1s_ease-out_0.5s_forwards]"></div>
+                </span>
               </h1>
-              <div class="hero-buttons flex-wrap gap-3 flex justify-center">
+              
+              <p class="hero-subtitle text-white/90 text-lg lg:text-xl text-center max-w-2xl leading-relaxed">
+                Explore our curated collection of premium fashion items designed to elevate your personal style and confidence.
+              </p>
+              
+              <div class="hero-buttons flex flex-col sm:flex-row gap-4 mt-8">
                 <button
-                  class="btn-primary flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 md:h-12 md:px-5 bg-[#e92932] text-white text-sm font-bold leading-normal tracking-[0.015em] md:text-base md:font-bold md:leading-normal md:tracking-[0.015em] hover:bg-[#d11e28] transition-colors"
+                  class="btn-primary group relative overflow-hidden px-8 py-4 bg-[#e92932] text-white font-bold text-lg rounded-full hover:bg-[#d11e28] transition-all duration-300 hover:scale-105 hover:shadow-xl transform"
                   [routerLink]="['/products']"
                 >
-                  <span class="truncate">Shop Now</span>
+                  <span class="relative z-10">Shop Collection</span>
+                  <div class="absolute inset-0 bg-gradient-to-r from-[#e92932] to-[#ff4757] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </button>
                 <button
-                  class="btn-secondary flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 md:h-12 md:px-5 bg-[#f4f0f0] text-[#181111] text-sm font-bold leading-normal tracking-[0.015em] md:text-base md:font-bold md:leading-normal md:tracking-[0.015em] hover:bg-[#e8e4e4] transition-colors"
-                  [routerLink]="['/products']"
-                  [queryParams]="{ category: 'featured' }"
+                  class="btn-secondary group px-8 py-4 border-2 border-white/30 text-white font-bold text-lg rounded-full hover:bg-white hover:text-[#181111] transition-all duration-300 backdrop-blur-sm"
+                  (click)="scrollToSection('featured-categories')"
                 >
-                  <span class="truncate">View Collections</span>
+                  Explore Categories
+                  <svg class="inline-block ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                  </svg>
                 </button>
               </div>
+              
+              <!-- Hero Stats -->
+              <div class="hero-stats grid grid-cols-3 gap-8 mt-12 text-center">
+                <div class="stat-item">
+                  <div class="stat-number text-2xl lg:text-3xl font-bold text-white">500+</div>
+                  <div class="stat-label text-sm text-white/80">Products</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-number text-2xl lg:text-3xl font-bold text-white">50K+</div>
+                  <div class="stat-label text-sm text-white/80">Happy Customers</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-number text-2xl lg:text-3xl font-bold text-white">24/7</div>
+                  <div class="stat-label text-sm text-white/80">Support</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Scroll Indicator -->
+            <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+              </svg>
             </div>
           </div>
         </div>
@@ -218,18 +259,55 @@
             </p>
           </div>
           
-          <!-- Loading State -->
-          <div *ngIf="loading" class="loading-container-modern flex justify-center items-center py-20">
-            <div class="loading-spinner relative">
+          <!-- Enhanced Loading State -->
+          <div *ngIf="loading" class="loading-container-modern flex flex-col justify-center items-center py-20">
+            <div class="loading-spinner-wrapper relative mb-6">
               <div class="animate-spin rounded-full h-16 w-16 border-4 border-[#e92932]/20 border-t-[#e92932]"></div>
               <div class="absolute inset-0 flex items-center justify-center">
                 <div class="w-8 h-8 bg-[#e92932] rounded-full animate-pulse"></div>
               </div>
             </div>
+            <div class="loading-content text-center">
+              <h3 class="text-lg font-semibold text-[#181111] mb-2">{{ getLoadingMessage() }}</h3>
+              <p class="text-[#886364] text-sm">Please wait while we curate the perfect selection for you...</p>
+              <div *ngIf="retryCount > 0" class="mt-4 text-sm text-[#e92932]">
+                Attempt {{ retryCount }} of {{ maxRetries }}...
+              </div>
+            </div>
+          </div>
+
+          <!-- Error State -->
+          <div *ngIf="error && !loading" class="error-container-modern flex flex-col justify-center items-center py-20 bg-red-50 rounded-2xl border border-red-100">
+            <div class="error-icon mb-6">
+              <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="error-content text-center max-w-md">
+              <h3 class="text-lg font-semibold text-red-800 mb-2">Oops! Something went wrong</h3>
+              <p class="text-red-600 text-sm mb-6">{{ error }}</p>
+              <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <button 
+                  *ngIf="retryCount < maxRetries"
+                  class="px-6 py-2 bg-[#e92932] text-white font-semibold rounded-lg hover:bg-[#d11e28] transition-colors duration-200"
+                  (click)="retryLoadProducts()"
+                >
+                  Try Again ({{ maxRetries - retryCount }} attempts left)
+                </button>
+                <button 
+                  class="px-6 py-2 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition-colors duration-200"
+                  (click)="clearError()"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- Products Grid -->
-          <div *ngIf="!loading" class="products-grid-modern grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div *ngIf="!loading && !error && hasProductData()" class="products-grid-modern grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div 
               *ngFor="let product of trendingProducts; trackBy: trackByProductId; let i = index"
               class="product-card-modern group cursor-pointer"
@@ -321,7 +399,7 @@
           </div>
 
           <!-- View All Products Button -->
-          <div *ngIf="!loading && trendingProducts.length > 0" class="text-center mt-12">
+          <div *ngIf="!loading && !error && hasProductData()" class="text-center mt-12">
             <button 
               class="view-all-btn group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#e92932] to-[#ff4757] text-white font-bold rounded-full hover:shadow-xl transition-all duration-300 hover:scale-105"
               [routerLink]="['/products']"
@@ -333,18 +411,38 @@
             </button>
           </div>
 
-          <!-- Empty State -->
-          <div *ngIf="!loading && trendingProducts.length === 0" class="empty-state-modern flex flex-col items-center justify-center py-20 text-center">
-            <div class="empty-icon mb-6">
-              <svg class="w-24 h-24 text-[#886364]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M9 9h.01M15 9h.01M9 15h.01M15 15h.01"></path>
-              </svg>
+          <!-- Enhanced Empty State -->
+          <div *ngIf="!loading && !error && !hasProductData()" class="empty-state-modern flex flex-col items-center justify-center py-20 text-center bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl">
+            <div class="empty-icon mb-6 relative">
+              <div class="w-32 h-32 bg-[#e92932]/10 rounded-full flex items-center justify-center">
+                <svg class="w-16 h-16 text-[#e92932]/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M9 9h.01M15 9h.01M9 15h.01M15 15h.01"></path>
+                </svg>
+              </div>
+              <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-[#e92932] rounded-full flex items-center justify-center">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+              </div>
             </div>
             <h3 class="text-2xl font-bold text-[#181111] mb-4">No trending products available</h3>
-            <p class="text-lg text-[#886364] mb-8 max-w-md">Check back later for the latest trends and popular items</p>
-            <button class="px-8 py-3 bg-[#e92932] text-white font-bold rounded-full hover:bg-[#d11e28] transition-colors duration-300">
-              Refresh Page
-            </button>
+            <p class="text-lg text-[#886364] mb-8 max-w-md leading-relaxed">
+              We're currently updating our collection with the latest trends. Check back soon for amazing new arrivals!
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4">
+              <button 
+                class="px-8 py-3 bg-[#e92932] text-white font-bold rounded-full hover:bg-[#d11e28] transition-all duration-300 hover:scale-105 shadow-lg"
+                (click)="loadTrendingProducts()"
+              >
+                Refresh Products
+              </button>
+              <button 
+                class="px-8 py-3 border-2 border-[#e92932] text-[#e92932] font-bold rounded-full hover:bg-[#e92932] hover:text-white transition-all duration-300"
+                [routerLink]="['/products']"
+              >
+                Browse All Products
+              </button>
+            </div>
           </div>
         </section>
 

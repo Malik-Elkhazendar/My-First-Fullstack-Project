@@ -1,4 +1,5 @@
 # Fashion Forward - Full-Stack E-Commerce Platform
+# Fashion Forward - Full-Stack E-Commerce Platform
 
 A modern, responsive e-commerce application built with Angular and NestJS, featuring a complete shopping experience with product management, cart functionality, order processing, and user authentication.
 

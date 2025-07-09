@@ -316,16 +316,21 @@ $desktop: 1200px;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+  z-index: 9999;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
+  backdrop-filter: blur(2px);
   
   &.open {
     opacity: 1;
     visibility: visible;
+  }
+  
+  @media (min-width: $mobile) {
+    display: none !important;
   }
 }
 
@@ -334,18 +339,22 @@ $desktop: 1200px;
   position: fixed;
   top: 0;
   right: 0;
-  width: 280px;
-  height: 100%;
-  background: #fcf8f8;
-  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  width: 320px;
+  max-width: 90vw;
+  height: 100vh;
+  background: #ffffff;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
   transform: translateX(100%);
-  transition: transform 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow-y: auto;
-  
-  .mobile-nav-overlay.open & {
-    transform: translateX(0);
-  }
+  z-index: 10000;
+}
 
+.mobile-nav-overlay.open .mobile-nav {
+  transform: translateX(0);
+}
+
+.mobile-nav {
   // Mobile nav header
   .mobile-nav-header {
     padding: 20px;

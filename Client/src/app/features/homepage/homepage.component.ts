@@ -44,6 +44,9 @@ interface PromotionalBanner {
 export class HomepageComponent implements OnInit, OnDestroy {
   trendingProducts: Product[] = [];
   loading = true;
+  error: string | null = null;
+  retryCount = 0;
+  maxRetries = 3;
   email = '';
   
   private subscriptions: Subscription[] = [];
@@ -114,18 +117,26 @@ export class HomepageComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
-  private loadTrendingProducts(): void {
+  public loadTrendingProducts(): void {
     this.loading = true;
+    this.error = null;
     
     const productsSub = this.productService.getProducts().subscribe({
       next: (products) => {
-        // Get first 4 products as trending
-        this.trendingProducts = products.slice(0, 4);
-        this.loading = false;
+        try {
+          // Get first 4 products as trending
+          this.trendingProducts = products.slice(0, 4);
+          this.loading = false;
+          this.retryCount = 0;
+          this.error = null;
+        } catch (err) {
+          console.error('Error processing trending products:', err);
+          this.handleError('Failed to process products data');
+        }
       },
       error: (error: any) => {
         console.error('Error loading trending products:', error);
-        this.loading = false;
+        this.handleError('Failed to load trending products. Please try again.');
       }
     });
 
@@ -178,6 +189,25 @@ export class HomepageComponent implements OnInit, OnDestroy {
     return banner.id;
   }
 
+  private handleError(message: string): void {
+    this.loading = false;
+    this.error = message;
+    this.retryCount++;
+  }
+
+  public retryLoadProducts(): void {
+    if (this.retryCount < this.maxRetries) {
+      this.loadTrendingProducts();
+    } else {
+      this.error = 'Maximum retry attempts reached. Please refresh the page.';
+    }
+  }
+
+  public clearError(): void {
+    this.error = null;
+    this.retryCount = 0;
+  }
+
   // New Methods for Enhanced Homepage
   scrollToSection(sectionId: string): void {
     const element = document.getElementById(sectionId);
@@ -207,8 +237,27 @@ export class HomepageComponent implements OnInit, OnDestroy {
   }
 
   onQuickAddToCart(product: Product): void {
-    this.cartService.addToCart(product, 1);
-    // Could show a toast notification here
-    console.log(`${product.name} added to cart`);
+    try {
+      this.cartService.addToCart(product, 1);
+      // Could show a toast notification here
+      console.log(`${product.name} added to cart`);
+    } catch (error) {
+      console.error('Error adding product to cart:', error);
+      // Could show error toast here
+    }
+  }
+
+  hasProductData(): boolean {
+    return this.trendingProducts && this.trendingProducts.length > 0;
+  }
+
+  getLoadingMessage(): string {
+    const messages = [
+      'Loading amazing products...',
+      'Discovering the latest trends...',
+      'Curating your perfect style...',
+      'Finding fashion inspiration...'
+    ];
+    return messages[Math.floor(Math.random() * messages.length)];
   }
 } 

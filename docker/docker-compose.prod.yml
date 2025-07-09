@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: ecommerce-mongodb-prod
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: \${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: \${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: \${MONGO_DATABASE}
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - ecommerce-network
+    ports:
+      - "27017:27017"
+
+  # NestJS Backend
+  backend:
+    build:
+      context: ../Server
+      dockerfile: Dockerfile.prod
+    container_name: ecommerce-backend-prod
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URI: \${DATABASE_URI}
+      JWT_SECRET: \${JWT_SECRET}
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb
+    networks:
+      - ecommerce-network
+
+  # Angular Frontend (with Nginx)
+  frontend:
+    build:
+      context: ../Client
+      dockerfile: Dockerfile.prod
+    container_name: ecommerce-frontend-prod
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+    networks:
+      - ecommerce-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  ecommerce-network:
+    driver: bridge

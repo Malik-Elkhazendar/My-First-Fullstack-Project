@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # NestJS Backend - Connected to MongoDB Atlas
+  backend:
+    build:
+      context: ../Server
+      dockerfile: Dockerfile.dev
+    container_name: ecommerce-backend
+    restart: unless-stopped
+    env_file:
+      - ../Server/.env.development
+    environment:
+      # Override only non-sensitive configuration for Docker
+      NODE_ENV: development
+      PORT: 3000
+      FRONTEND_URL: http://localhost:4200
+      CORS_ORIGIN: "http://localhost:4200,http://127.0.0.1:4200"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../Server:/app
+      - /app/node_modules
+    networks:
+      - ecommerce-network
+    command: npm run start:dev
+
+  # Angular Frontend
+  frontend:
+    build:
+      context: ../Client
+      dockerfile: Dockerfile.dev
+    container_name: ecommerce-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+    ports:
+      - "4200:4200"
+    volumes:
+      - ../Client:/app
+      - /app/node_modules
+    networks:
+      - ecommerce-network
+    command: npm start -- --host 0.0.0.0 --port 4200 --disable-host-check --poll
+
+# No volumes needed - using MongoDB Atlas
+
+networks:
+  ecommerce-network:
+    driver: bridge

@@ -4,6 +4,14 @@ import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
+// Angular Material imports
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatBadgeModule } from '@angular/material/badge';
+
 import { AuthService } from './core/services/auth.service';
 import { CartService } from './core/services/cart.service';
 import { WishlistService } from './core/services/wishlist.service';
@@ -17,6 +25,12 @@ import { UserMenuComponent } from './shared/components/user-menu/user-menu.compo
     CommonModule,
     RouterModule,
     FormsModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatBadgeModule,
     UserMenuComponent
   ],
   templateUrl: './app.component.html',

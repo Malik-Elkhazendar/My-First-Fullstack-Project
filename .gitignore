@@ -23,6 +23,10 @@ Server/coverage/
 .env.development.local
 .env.test.local
 .env.production.local
+Server/.env.development
+Server/.env.production
+Client/.env.development
+Client/.env.production
 
 # IDE files
 .vscode/

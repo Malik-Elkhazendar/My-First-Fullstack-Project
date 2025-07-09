@@ -18,6 +18,7 @@ export interface AdminProduct extends Product {
   stock: number;
   isActive: boolean;
   reviewCount: number;
+  createdAt: Date;
 }
 
 @Injectable({
@@ -185,7 +186,8 @@ export class AdminService {
         rating: 4.8,
         stock: 45,
         isActive: true,
-        reviewCount: 234
+        reviewCount: 234,
+        createdAt: new Date('2024-01-15')
       },
       {
         id: 2,
@@ -199,7 +201,8 @@ export class AdminService {
         rating: 4.6,
         stock: 28,
         isActive: true,
-        reviewCount: 187
+        reviewCount: 187,
+        createdAt: new Date('2024-01-20')
       },
       {
         id: 3,
@@ -212,7 +215,8 @@ export class AdminService {
         rating: 4.7,
         stock: 62,
         isActive: true,
-        reviewCount: 298
+        reviewCount: 298,
+        createdAt: new Date('2024-02-05')
       },
       {
         id: 4,
@@ -226,7 +230,8 @@ export class AdminService {
         rating: 4.9,
         stock: 15,
         isActive: true,
-        reviewCount: 412
+        reviewCount: 412,
+        createdAt: new Date('2024-02-10')
       },
       {
         id: 5,
@@ -239,7 +244,8 @@ export class AdminService {
         rating: 4.5,
         stock: 34,
         isActive: true,
-        reviewCount: 156
+        reviewCount: 156,
+        createdAt: new Date('2024-02-15')
       },
       {
         id: 6,
@@ -253,7 +259,8 @@ export class AdminService {
         rating: 4.8,
         stock: 0,
         isActive: false,
-        reviewCount: 89
+        reviewCount: 89,
+        createdAt: new Date('2024-01-08')
       },
       {
         id: 7,
@@ -267,7 +274,8 @@ export class AdminService {
         rating: 4.8,
         stock: 12,
         isActive: true,
-        reviewCount: 167
+        reviewCount: 167,
+        createdAt: new Date('2024-02-20')
       },
       {
         id: 8,
@@ -280,7 +288,8 @@ export class AdminService {
         rating: 4.6,
         stock: 27,
         isActive: true,
-        reviewCount: 203
+        reviewCount: 203,
+        createdAt: new Date('2024-02-25')
       }
     ];
 
