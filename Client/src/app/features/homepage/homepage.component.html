@@ -12,7 +12,7 @@
           <!-- Left Content -->
           <div class="hero-text space-y-8">
             <div class="hero-badge inline-flex items-center px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm font-medium">
-              <span class="w-2 h-2 bg-[#e92932] rounded-full mr-2 animate-pulse"></span>
+              <span class="w-2 h-2 bg-[#d97706] rounded-full mr-2 animate-pulse"></span>
               New Collection Available
             </div>
             
@@ -45,15 +45,15 @@
             
             <div class="hero-buttons flex flex-col sm:flex-row gap-4">
               <button
-                class="btn-primary-modern group relative overflow-hidden px-8 py-4 rounded-full bg-[#e92932] text-white font-bold text-lg hover:bg-[#d11e28] transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                class="btn-primary-modern group relative overflow-hidden px-8 py-4 rounded-full bg-[#d97706] text-white font-bold text-lg hover:bg-[#b45309] transition-all duration-300 hover:scale-105 hover:shadow-xl"
                 [routerLink]="['/products']"
               >
                 <span class="relative z-10">Shop Collection</span>
-                <div class="absolute inset-0 bg-gradient-to-r from-[#e92932] to-[#ff4757] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-[#d97706] to-[#f59e0b] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </button>
               
               <button
-                class="btn-secondary-modern group px-8 py-4 rounded-full border-2 border-white/30 text-white font-bold text-lg hover:bg-white hover:text-[#181111] transition-all duration-300 backdrop-blur-sm"
+                class="btn-secondary-modern group px-8 py-4 rounded-full border-2 border-white/30 text-white font-bold text-lg hover:bg-white hover:text-gray-900 transition-all duration-300 backdrop-blur-sm"
                 (click)="scrollToSection('featured-categories')"
               >
                 Explore Categories
@@ -92,13 +92,13 @@
             
             <!-- Floating Elements -->
             <div class="floating-elements">
-              <div class="floating-badge absolute -top-4 -right-4 bg-white rounded-full p-4 shadow-lg animate-bounce">
-                <svg class="w-6 h-6 text-[#e92932]" fill="currentColor" viewBox="0 0 20 20">
+              <div class="floating-badge absolute -top-4 -right-4 bg-white/95 backdrop-blur-sm rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300">
+                <svg class="w-6 h-6 text-[#d97706]" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
                 </svg>
               </div>
               
-              <div class="floating-discount absolute -bottom-4 -left-4 bg-[#e92932] text-white px-4 py-2 rounded-full font-bold text-sm shadow-lg">
+              <div class="floating-discount absolute -bottom-4 -left-4 bg-[#d97706] text-white px-4 py-2 rounded-full font-bold text-sm shadow-lg hover:shadow-xl transition-all duration-300">
                 50% OFF
               </div>
             </div>
@@ -122,19 +122,19 @@
           <div class="hero-container relative">
             <div
               class="hero-content flex min-h-[500px] lg:min-h-[600px] flex-col gap-8 bg-cover bg-center bg-no-repeat items-center justify-center p-8 lg:p-16"
-              style='background-image: linear-gradient(135deg, rgba(24, 17, 17, 0.7) 0%, rgba(233, 41, 50, 0.8) 50%, rgba(24, 17, 17, 0.7) 100%), url("https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80");'
+              style='background-image: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(217, 119, 6, 0.8) 50%, rgba(30, 41, 59, 0.7) 100%), url("https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80");'
             >
               <!-- Hero Badge -->
               <div class="hero-badge inline-flex items-center px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm font-medium mb-4">
-                <span class="w-2 h-2 bg-[#e92932] rounded-full mr-3 animate-pulse"></span>
+                <span class="w-2 h-2 bg-[#d97706] rounded-full mr-3 animate-pulse"></span>
                 New Collection Available
               </div>
               
               <h1 class="hero-title text-white text-4xl lg:text-6xl xl:text-7xl font-black leading-tight text-center max-w-4xl">
                 Discover Your 
                 <span class="relative inline-block">
-                  <span class="text-[#e92932]">Style</span>
-                  <div class="absolute -bottom-2 left-0 right-0 h-1 bg-[#e92932] rounded-full transform scale-x-0 animate-[scaleIn_1s_ease-out_0.5s_forwards]"></div>
+                  <span class="text-[#d97706]">Style</span>
+                  <div class="absolute -bottom-2 left-0 right-0 h-1 bg-[#d97706] rounded-full transform scale-x-0 animate-[scaleIn_1s_ease-out_0.5s_forwards]"></div>
                 </span>
               </h1>
               
@@ -144,14 +144,14 @@
               
               <div class="hero-buttons flex flex-col sm:flex-row gap-4 mt-8">
                 <button
-                  class="btn-primary group relative overflow-hidden px-8 py-4 bg-[#e92932] text-white font-bold text-lg rounded-full hover:bg-[#d11e28] transition-all duration-300 hover:scale-105 hover:shadow-xl transform"
+                  class="btn-primary group relative overflow-hidden px-8 py-4 bg-[#d97706] text-white font-bold text-lg rounded-full hover:bg-[#b45309] transition-all duration-300 hover:scale-105 hover:shadow-xl transform"
                   [routerLink]="['/products']"
                 >
                   <span class="relative z-10">Shop Collection</span>
-                  <div class="absolute inset-0 bg-gradient-to-r from-[#e92932] to-[#ff4757] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div class="absolute inset-0 bg-gradient-to-r from-[#d97706] to-[#f59e0b] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </button>
                 <button
-                  class="btn-secondary group px-8 py-4 border-2 border-white/30 text-white font-bold text-lg rounded-full hover:bg-white hover:text-[#181111] transition-all duration-300 backdrop-blur-sm"
+                  class="btn-secondary group px-8 py-4 border-2 border-white/30 text-white font-bold text-lg rounded-full hover:bg-white hover:text-gray-900 transition-all duration-300 backdrop-blur-sm"
                   (click)="scrollToSection('featured-categories')"
                 >
                   Explore Categories
@@ -190,13 +190,13 @@
         <!-- Featured Categories -->
         <section id="featured-categories" class="featured-categories-modern">
           <div class="section-header text-center mb-16">
-            <span class="section-badge inline-block px-4 py-2 bg-[#e92932]/10 text-[#e92932] rounded-full text-sm font-medium mb-4">
+            <span class="section-badge inline-block px-4 py-2 bg-[#d97706]/10 text-[#d97706] rounded-full text-sm font-medium mb-4">
               Shop by Category
             </span>
-            <h2 class="section-title text-3xl lg:text-4xl font-black text-[#181111] mb-4">
+            <h2 class="section-title text-3xl lg:text-4xl font-black text-gray-900 mb-4">
               Explore Our Collections
             </h2>
-            <p class="section-subtitle text-lg text-[#886364] max-w-2xl mx-auto">
+            <p class="section-subtitle text-lg text-gray-600 max-w-2xl mx-auto">
               Discover curated collections designed to match your unique style and personality
             </p>
           </div>
@@ -234,10 +234,10 @@
               </div>
               
               <div class="category-content mt-4 text-center">
-                <h3 class="category-name text-lg font-bold text-[#181111] group-hover:text-[#e92932] transition-colors duration-300">
+                <h3 class="category-name text-lg font-bold text-gray-900 group-hover:text-[#d97706] transition-colors duration-300">
                   {{ category.name }}
                 </h3>
-                <p class="category-description text-sm text-[#886364] mt-1">
+                <p class="category-description text-sm text-gray-600 mt-1">
                   {{ getCategoryDescription(category.name) }}
                 </p>
               </div>
@@ -248,13 +248,13 @@
         <!-- Trending Products -->
         <section class="trending-products-modern">
           <div class="section-header text-center mb-16">
-            <span class="section-badge inline-block px-4 py-2 bg-[#e92932]/10 text-[#e92932] rounded-full text-sm font-medium mb-4">
+            <span class="section-badge inline-block px-4 py-2 bg-[#d97706]/10 text-[#d97706] rounded-full text-sm font-medium mb-4">
               Popular Items
             </span>
-            <h2 class="section-title text-3xl lg:text-4xl font-black text-[#181111] mb-4">
+            <h2 class="section-title text-3xl lg:text-4xl font-black text-gray-900 mb-4">
               Trending Now
             </h2>
-            <p class="section-subtitle text-lg text-[#886364] max-w-2xl mx-auto">
+            <p class="section-subtitle text-lg text-gray-600 max-w-2xl mx-auto">
               Don't miss out on these popular items that everyone's talking about
             </p>
           </div>
@@ -262,36 +262,36 @@
           <!-- Enhanced Loading State -->
           <div *ngIf="loading" class="loading-container-modern flex flex-col justify-center items-center py-20">
             <div class="loading-spinner-wrapper relative mb-6">
-              <div class="animate-spin rounded-full h-16 w-16 border-4 border-[#e92932]/20 border-t-[#e92932]"></div>
+              <div class="animate-spin rounded-full h-16 w-16 border-4 border-[#d97706]/20 border-t-[#d97706]"></div>
               <div class="absolute inset-0 flex items-center justify-center">
-                <div class="w-8 h-8 bg-[#e92932] rounded-full animate-pulse"></div>
+                <div class="w-8 h-8 bg-[#d97706] rounded-full animate-pulse"></div>
               </div>
             </div>
             <div class="loading-content text-center">
-              <h3 class="text-lg font-semibold text-[#181111] mb-2">{{ getLoadingMessage() }}</h3>
-              <p class="text-[#886364] text-sm">Please wait while we curate the perfect selection for you...</p>
-              <div *ngIf="retryCount > 0" class="mt-4 text-sm text-[#e92932]">
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ getLoadingMessage() }}</h3>
+              <p class="text-gray-600 text-sm">Please wait while we curate the perfect selection for you...</p>
+              <div *ngIf="retryCount > 0" class="mt-4 text-sm text-[#d97706]">
                 Attempt {{ retryCount }} of {{ maxRetries }}...
               </div>
             </div>
           </div>
 
           <!-- Error State -->
-          <div *ngIf="error && !loading" class="error-container-modern flex flex-col justify-center items-center py-20 bg-red-50 rounded-2xl border border-red-100">
+          <div *ngIf="error && !loading" class="error-container-modern flex flex-col justify-center items-center py-20 bg-amber-50 rounded-2xl border border-amber-100">
             <div class="error-icon mb-6">
-              <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-                <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center">
+                <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
               </div>
             </div>
             <div class="error-content text-center max-w-md">
-              <h3 class="text-lg font-semibold text-red-800 mb-2">Oops! Something went wrong</h3>
-              <p class="text-red-600 text-sm mb-6">{{ error }}</p>
+              <h3 class="text-lg font-semibold text-amber-800 mb-2">Oops! Something went wrong</h3>
+              <p class="text-amber-700 text-sm mb-6">{{ error }}</p>
               <div class="flex flex-col sm:flex-row gap-3 justify-center">
                 <button 
                   *ngIf="retryCount < maxRetries"
-                  class="px-6 py-2 bg-[#e92932] text-white font-semibold rounded-lg hover:bg-[#d11e28] transition-colors duration-200"
+                  class="px-6 py-2 bg-[#d97706] text-white font-semibold rounded-lg hover:bg-[#b45309] transition-colors duration-200"
                   (click)="retryLoadProducts()"
                 >
                   Try Again ({{ maxRetries - retryCount }} attempts left)
@@ -307,7 +307,7 @@
           </div>
 
           <!-- Products Grid -->
-          <div *ngIf="!loading && !error && hasProductData()" class="products-grid-modern grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div *ngIf="!loading && !error && hasProductData()" class="products-grid-modern grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             <div 
               *ngFor="let product of trendingProducts; trackBy: trackByProductId; let i = index"
               class="product-card-modern group cursor-pointer"
@@ -323,7 +323,7 @@
                 <!-- Product Badges -->
                 <div class="product-badges absolute top-4 left-4 space-y-2">
                   <span *ngIf="product.originalPrice && product.originalPrice > product.price" 
-                        class="badge-sale px-3 py-1 bg-[#e92932] text-white text-xs font-bold rounded-full">
+                        class="badge-sale px-3 py-1 bg-[#d97706] text-white text-xs font-bold rounded-full">
                     SALE
                   </span>
                   <span *ngIf="isNewProduct(product)" 
@@ -344,7 +344,7 @@
                 <div class="quick-actions absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
                   <div class="actions-grid grid grid-cols-2 gap-2">
                     <button 
-                      class="action-btn bg-white/90 backdrop-blur-sm text-[#181111] font-semibold py-2 px-4 rounded-lg hover:bg-white transition-colors duration-200 flex items-center justify-center gap-2"
+                      class="action-btn bg-white/90 backdrop-blur-sm text-gray-900 font-semibold py-2 px-4 rounded-lg hover:bg-white transition-colors duration-200 flex items-center justify-center gap-2"
                       (click)="onQuickAddToCart(product); $event.stopPropagation()"
                     >
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -353,7 +353,7 @@
                       Add to Cart
                     </button>
                     <button 
-                      class="action-btn bg-[#e92932]/90 backdrop-blur-sm text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#e92932] transition-colors duration-200"
+                      class="action-btn bg-[#d97706]/90 backdrop-blur-sm text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#d97706] transition-colors duration-200"
                       [routerLink]="['/products', product.id]"
                       (click)="$event.stopPropagation()"
                     >
@@ -374,23 +374,23 @@
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                     </svg>
                   </div>
-                  <span class="rating-text text-sm text-[#886364]">({{ product.rating }})</span>
+                  <span class="rating-text text-sm text-gray-600">({{ product.rating }})</span>
                 </div>
                 
-                <h3 class="product-name text-lg font-bold text-[#181111] group-hover:text-[#e92932] transition-colors duration-300 line-clamp-2">
+                <h3 class="product-name text-lg font-bold text-gray-900 group-hover:text-[#d97706] transition-colors duration-300 line-clamp-2">
                   {{ product.name }}
                 </h3>
                 
                 <div class="product-price-container flex items-center gap-3">
-                  <span class="current-price text-xl font-bold text-[#181111]">
+                  <span class="current-price text-xl font-bold text-gray-900">
                     ${{ product.price | number:'1.2-2' }}
                   </span>
                   <span *ngIf="product.originalPrice && product.originalPrice > product.price" 
-                        class="original-price text-sm text-[#886364] line-through">
+                        class="original-price text-sm text-gray-600 line-through">
                     ${{ product.originalPrice | number:'1.2-2' }}
                   </span>
                   <span *ngIf="product.originalPrice && product.originalPrice > product.price" 
-                        class="discount-percent text-sm font-bold text-[#e92932]">
+                        class="discount-percent text-sm font-bold text-[#d97706]">
                     -{{ getDiscountPercentage(product) }}%
                   </span>
                 </div>
@@ -401,7 +401,7 @@
           <!-- View All Products Button -->
           <div *ngIf="!loading && !error && hasProductData()" class="text-center mt-12">
             <button 
-              class="view-all-btn group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#e92932] to-[#ff4757] text-white font-bold rounded-full hover:shadow-xl transition-all duration-300 hover:scale-105"
+              class="view-all-btn group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#d97706] to-[#f59e0b] text-white font-bold rounded-full hover:shadow-xl transition-all duration-300 hover:scale-105"
               [routerLink]="['/products']"
             >
               View All Products
@@ -414,30 +414,30 @@
           <!-- Enhanced Empty State -->
           <div *ngIf="!loading && !error && !hasProductData()" class="empty-state-modern flex flex-col items-center justify-center py-20 text-center bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl">
             <div class="empty-icon mb-6 relative">
-              <div class="w-32 h-32 bg-[#e92932]/10 rounded-full flex items-center justify-center">
-                <svg class="w-16 h-16 text-[#e92932]/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="w-32 h-32 bg-[#d97706]/10 rounded-full flex items-center justify-center">
+                <svg class="w-16 h-16 text-[#d97706]/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M9 9h.01M15 9h.01M9 15h.01M15 15h.01"></path>
                 </svg>
               </div>
-              <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-[#e92932] rounded-full flex items-center justify-center">
+              <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-[#d97706] rounded-full flex items-center justify-center">
                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>
               </div>
             </div>
-            <h3 class="text-2xl font-bold text-[#181111] mb-4">No trending products available</h3>
-            <p class="text-lg text-[#886364] mb-8 max-w-md leading-relaxed">
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">No trending products available</h3>
+            <p class="text-lg text-gray-600 mb-8 max-w-md leading-relaxed">
               We're currently updating our collection with the latest trends. Check back soon for amazing new arrivals!
             </p>
             <div class="flex flex-col sm:flex-row gap-4">
               <button 
-                class="px-8 py-3 bg-[#e92932] text-white font-bold rounded-full hover:bg-[#d11e28] transition-all duration-300 hover:scale-105 shadow-lg"
+                class="px-8 py-3 bg-[#d97706] text-white font-bold rounded-full hover:bg-[#b45309] transition-all duration-300 hover:scale-105 shadow-lg"
                 (click)="loadTrendingProducts()"
               >
                 Refresh Products
               </button>
               <button 
-                class="px-8 py-3 border-2 border-[#e92932] text-[#e92932] font-bold rounded-full hover:bg-[#e92932] hover:text-white transition-all duration-300"
+                class="px-8 py-3 border-2 border-[#d97706] text-[#d97706] font-bold rounded-full hover:bg-[#d97706] hover:text-white transition-all duration-300"
                 [routerLink]="['/products']"
               >
                 Browse All Products
@@ -450,33 +450,33 @@
         <section class="features-section">
           <div class="features-grid grid grid-cols-1 md:grid-cols-3 gap-8">
             <div class="feature-card group text-center p-8 rounded-2xl bg-gradient-to-br from-white to-gray-50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-              <div class="feature-icon w-16 h-16 mx-auto mb-6 bg-[#e92932]/10 rounded-full flex items-center justify-center group-hover:bg-[#e92932]/20 transition-colors duration-300">
-                <svg class="w-8 h-8 text-[#e92932]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="feature-icon w-16 h-16 mx-auto mb-6 bg-[#d97706]/10 rounded-full flex items-center justify-center group-hover:bg-[#d97706]/20 transition-colors duration-300">
+                <svg class="w-8 h-8 text-[#d97706]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"></path>
                 </svg>
               </div>
-              <h3 class="feature-title text-xl font-bold text-[#181111] mb-4">Free Shipping</h3>
-              <p class="feature-description text-[#886364] leading-relaxed">Free shipping on all orders over $50. Fast and reliable delivery to your doorstep.</p>
+              <h3 class="feature-title text-xl font-bold text-gray-900 mb-4">Free Shipping</h3>
+              <p class="feature-description text-gray-600 leading-relaxed">Free shipping on all orders over $50. Fast and reliable delivery to your doorstep.</p>
             </div>
             
             <div class="feature-card group text-center p-8 rounded-2xl bg-gradient-to-br from-white to-gray-50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-              <div class="feature-icon w-16 h-16 mx-auto mb-6 bg-[#e92932]/10 rounded-full flex items-center justify-center group-hover:bg-[#e92932]/20 transition-colors duration-300">
-                <svg class="w-8 h-8 text-[#e92932]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="feature-icon w-16 h-16 mx-auto mb-6 bg-[#d97706]/10 rounded-full flex items-center justify-center group-hover:bg-[#d97706]/20 transition-colors duration-300">
+                <svg class="w-8 h-8 text-[#d97706]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
               </div>
-              <h3 class="feature-title text-xl font-bold text-[#181111] mb-4">Quality Guarantee</h3>
-              <p class="feature-description text-[#886364] leading-relaxed">100% satisfaction guarantee. Return or exchange items within 30 days hassle-free.</p>
+              <h3 class="feature-title text-xl font-bold text-gray-900 mb-4">Quality Guarantee</h3>
+              <p class="feature-description text-gray-600 leading-relaxed">100% satisfaction guarantee. Return or exchange items within 30 days hassle-free.</p>
             </div>
             
             <div class="feature-card group text-center p-8 rounded-2xl bg-gradient-to-br from-white to-gray-50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-              <div class="feature-icon w-16 h-16 mx-auto mb-6 bg-[#e92932]/10 rounded-full flex items-center justify-center group-hover:bg-[#e92932]/20 transition-colors duration-300">
-                <svg class="w-8 h-8 text-[#e92932]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="feature-icon w-16 h-16 mx-auto mb-6 bg-[#d97706]/10 rounded-full flex items-center justify-center group-hover:bg-[#d97706]/20 transition-colors duration-300">
+                <svg class="w-8 h-8 text-[#d97706]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
                 </svg>
               </div>
-              <h3 class="feature-title text-xl font-bold text-[#181111] mb-4">24/7 Support</h3>
-              <p class="feature-description text-[#886364] leading-relaxed">Round-the-clock customer support. We're here to help with any questions or concerns.</p>
+              <h3 class="feature-title text-xl font-bold text-gray-900 mb-4">24/7 Support</h3>
+              <p class="feature-description text-gray-600 leading-relaxed">Round-the-clock customer support. We're here to help with any questions or concerns.</p>
             </div>
           </div>
         </section>
@@ -498,15 +498,17 @@
           <div class="newsletter-content relative z-10 text-center py-20 lg:py-32 px-4">
             <div class="max-w-4xl mx-auto space-y-8">
               <div class="newsletter-badge inline-block px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white text-sm font-medium mb-6">
-                <span class="w-2 h-2 bg-[#e92932] rounded-full inline-block mr-2 animate-pulse"></span>
+                <span class="w-2 h-2 bg-[#d97706] rounded-full inline-block mr-2 animate-pulse"></span>
                 Stay Updated
               </div>
               
-              <h2 class="newsletter-title text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight">
-                Join Our Fashion
-                <span class="text-[#e92932] relative">
+              <h2 class="newsletter-title text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight" 
+                  style="color: white !important; -webkit-text-fill-color: white !important; background: none !important;">
+                <span style="color: white !important; -webkit-text-fill-color: white !important; background: none !important;">Join Our Fashion</span>
+                <span class="text-white relative" 
+                      style="color: white !important; -webkit-text-fill-color: white !important; background: none !important;">
                   Community
-                  <div class="absolute -bottom-2 left-0 right-0 h-1 bg-[#e92932] rounded-full"></div>
+                  <div class="absolute -bottom-2 left-0 right-0 h-1 bg-white rounded-full"></div>
                 </span>
               </h2>
               
@@ -522,12 +524,12 @@
                     [(ngModel)]="email"
                     name="email"
                     required
-                    class="email-input-modern w-full px-6 py-4 pr-32 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-[#e92932] focus:border-transparent transition-all duration-300"
+                    class="email-input-modern w-full px-6 py-4 pr-32 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-[#d97706] focus:border-transparent transition-all duration-300"
                   />
                   <button
                     type="submit"
                     [disabled]="!email || !isValidEmail(email)"
-                    class="subscribe-btn-modern absolute right-2 top-2 bottom-2 px-6 bg-[#e92932] text-white font-bold rounded-full hover:bg-[#d11e28] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-105"
+                    class="subscribe-btn-modern absolute right-2 top-2 bottom-2 px-6 bg-[#d97706] text-white font-bold rounded-full hover:bg-[#b45309] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-105"
                   >
                     Subscribe
                   </button>
@@ -536,19 +538,19 @@
               
               <div class="newsletter-benefits grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 text-white/80">
                 <div class="benefit-item flex items-center justify-center gap-3">
-                  <svg class="w-5 h-5 text-[#e92932]" fill="currentColor" viewBox="0 0 20 20">
+                  <svg class="w-5 h-5 text-[#d97706]" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                   </svg>
                   <span class="text-sm font-medium">Exclusive Offers</span>
                 </div>
                 <div class="benefit-item flex items-center justify-center gap-3">
-                  <svg class="w-5 h-5 text-[#e92932]" fill="currentColor" viewBox="0 0 20 20">
+                  <svg class="w-5 h-5 text-[#d97706]" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                   </svg>
                   <span class="text-sm font-medium">Early Access</span>
                 </div>
                 <div class="benefit-item flex items-center justify-center gap-3">
-                  <svg class="w-5 h-5 text-[#e92932]" fill="currentColor" viewBox="0 0 20 20">
+                  <svg class="w-5 h-5 text-[#d97706]" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                   </svg>
                   <span class="text-sm font-medium">Style Tips</span>

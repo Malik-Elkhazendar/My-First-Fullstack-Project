@@ -1,6 +1,6 @@
 <!-- Breadcrumb Navigation -->
 <div class="flex flex-wrap gap-2 p-4">
-  <a class="text-[#837b67] text-base font-medium leading-normal" routerLink="/">Home</a>
+  <a class="text-[#837b67] text-base font-medium leading-normal cursor-pointer hover:text-[#171512] transition-colors" routerLink="/">Home</a>
   <span class="text-[#837b67] text-base font-medium leading-normal">/</span>
   <span class="text-[#171512] text-base font-medium leading-normal">Shopping Cart</span>
 </div>
@@ -81,7 +81,7 @@
             </h3>
                     <div class="text-[#837b67] text-xs mt-1">{{ item.product.category }}</div>
                     <div class="flex items-center gap-1 mt-1" 
-                         [class]="item.product.inStock ? 'text-green-600' : 'text-red-600'">
+                         [class]="item.product.inStock ? 'text-green-600' : 'text-amber-600'">
                       <mat-icon class="text-[12px] w-[12px] h-[12px]">
                         {{ item.product.inStock ? 'check_circle' : 'cancel' }}
                       </mat-icon>
@@ -131,11 +131,11 @@
               <!-- Remove Button -->
               <td class="px-4 py-4">
                 <button 
-                  class="w-8 h-8 rounded-full bg-red-50 hover:bg-red-100 flex items-center justify-center transition-colors"
+                  class="w-8 h-8 rounded-full bg-amber-50 hover:bg-amber-100 flex items-center justify-center transition-colors"
                       (click)="removeItem(item.product.id)" 
                       [attr.aria-label]="'Remove ' + item.product.name + ' from cart'"
                       matTooltip="Remove from cart">
-                  <mat-icon class="text-[16px] w-[16px] h-[16px] text-red-600">delete</mat-icon>
+                  <mat-icon class="text-[16px] w-[16px] h-[16px] text-amber-600">delete</mat-icon>
               </button>
               </td>
             </tr>

@@ -1,6 +1,16 @@
 // Homepage Component Styles
 .homepage-container {
-  font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;
+  font-family: var(--font-family-base);
+  position: relative;
+  z-index: 0;
+  
+  // Ensure all pseudo-elements are properly layered
+  * {
+    &::before,
+    &::after {
+      z-index: inherit;
+    }
+  }
 }
 
 // Modern Hero Section
@@ -10,7 +20,7 @@
 
   .hero-background {
     .hero-gradient {
-      background: linear-gradient(135deg, #e92932 0%, #ff4757 50%, #2c2c54 100%);
+      background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-accent-500) 50%, var(--color-primary-800) 100%);
       position: absolute;
       inset: 0;
     }
@@ -33,8 +43,8 @@
       left: 0;
       right: 0;
       height: 4px;
-      background: linear-gradient(90deg, #e92932, #ff4757);
-      border-radius: 2px;
+      background: linear-gradient(90deg, var(--color-primary-600), var(--color-accent-500));
+      border-radius: var(--radius-sm);
       animation: expandWidth 1s ease-out 0.5s both;
     }
   }
@@ -54,9 +64,16 @@
           content: '';
           position: absolute;
           inset: 0;
-          background: linear-gradient(45deg, rgba(233, 41, 50, 0.1), transparent);
+          background: linear-gradient(45deg, rgba(71, 85, 105, 0.05), transparent);
           border-radius: 1rem;
           pointer-events: none;
+          z-index: 1;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+        
+        &:hover::after {
+          opacity: 1;
         }
       }
     }
@@ -66,10 +83,17 @@
     .floating-badge,
     .floating-discount {
       animation: floatUpDown 3s ease-in-out infinite;
+      z-index: 10;
+      backdrop-filter: blur(4px);
     }
 
     .floating-discount {
       animation-delay: 1.5s;
+    }
+    
+    .floating-badge {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     }
   }
 }
@@ -87,9 +111,10 @@
         content: '';
         position: absolute;
         inset: 0;
-        background: linear-gradient(45deg, rgba(233, 41, 50, 0.1), transparent);
+        background: linear-gradient(45deg, rgba(71, 85, 105, 0.05), rgba(255, 255, 255, 0.02));
         opacity: 0;
         transition: opacity 0.3s ease;
+        z-index: 1;
       }
 
       &:hover::after {
@@ -119,9 +144,10 @@
           content: '';
           position: absolute;
           inset: 0;
-          background: linear-gradient(135deg, rgba(233, 41, 50, 0.1), transparent);
+          background: linear-gradient(135deg, rgba(71, 85, 105, 0.05), rgba(255, 255, 255, 0.02));
           opacity: 0;
           transition: opacity 0.3s ease;
+          z-index: 1;
         }
 
         &:hover::after {
@@ -154,11 +180,11 @@
   }
 
   .view-all-btn {
-    background: linear-gradient(135deg, #e92932, #ff4757);
-    box-shadow: 0 8px 32px rgba(233, 41, 50, 0.3);
+    background: linear-gradient(135deg, var(--color-primary-600), var(--color-accent-500));
+    box-shadow: 0 8px 32px rgba(71, 85, 105, 0.3);
     
     &:hover {
-      box-shadow: 0 12px 40px rgba(233, 41, 50, 0.4);
+      box-shadow: 0 12px 40px rgba(71, 85, 105, 0.4);
     }
   }
 }
@@ -173,9 +199,10 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(233, 41, 50, 0.02), transparent);
+      background: linear-gradient(135deg, rgba(71, 85, 105, 0.01), rgba(255, 255, 255, 0.02));
       opacity: 0;
       transition: opacity 0.3s ease;
+      z-index: 0;
     }
 
     &:hover::before {
@@ -206,16 +233,16 @@
 
         &:focus {
           background: rgba(255, 255, 255, 0.15);
-          box-shadow: 0 8px 32px rgba(233, 41, 50, 0.2);
+          box-shadow: 0 8px 32px rgba(71, 85, 105, 0.2);
         }
       }
 
       .subscribe-btn-modern {
         backdrop-filter: blur(8px);
-        box-shadow: 0 4px 16px rgba(233, 41, 50, 0.3);
+        box-shadow: 0 4px 16px rgba(71, 85, 105, 0.3);
         
         &:hover:not(:disabled) {
-          box-shadow: 0 6px 20px rgba(233, 41, 50, 0.4);
+          box-shadow: 0 6px 20px rgba(71, 85, 105, 0.4);
         }
       }
     }
@@ -365,6 +392,7 @@
 
   .hero-content {
     position: relative;
+    z-index: 2;
     
     &::before {
       content: '';
@@ -373,8 +401,10 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%);
+      background: linear-gradient(rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.15) 100%);
       border-radius: inherit;
+      z-index: -1;
+      opacity: 0.7;
     }
 
     > * {
@@ -467,14 +497,14 @@
           }
 
           .product-price {
-            font-weight: 600;
-            color: #e92932;
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-primary-600);
           }
         }
 
         &:hover {
           .product-name {
-            color: #e92932;
+            color: var(--color-primary-600);
           }
         }
       }
@@ -495,8 +525,8 @@
   .promo-banner {
     .banner-container {
       overflow: hidden;
-      background: #ffffff;
-      border: 1px solid #f4f0f0;
+      background: var(--color-surface-primary);
+      border: 1px solid var(--color-border-light);
       
       .banner-image {
         flex-shrink: 0;
@@ -510,12 +540,12 @@
 
       .banner-content {
         .banner-title {
-          color: #181111;
+          color: var(--color-text-primary);
           margin-bottom: 0.5rem;
         }
 
         .banner-description {
-          color: #886364;
+          color: var(--color-text-secondary);
           flex: 1;
         }
 
@@ -546,19 +576,31 @@
   }
 
   .newsletter-section {
-    background: linear-gradient(135deg, #f8f8f8 0%, #f0f0f0 100%);
+    background: linear-gradient(135deg, var(--color-surface-secondary) 0%, var(--color-surface-tertiary) 100%);
     border-radius: 1rem;
     margin: 2rem 1rem;
 
     .newsletter-container {
-      .newsletter-header {
-        .newsletter-title {
-          background: linear-gradient(135deg, #181111 0%, #333333 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
+      .newsletter-title {
+        color: white !important;
       }
+      
+      // Force white color for newsletter title with highest specificity
+      h2.newsletter-title {
+        color: white !important;
+        background: none !important;
+        -webkit-background-clip: unset !important;
+        -webkit-text-fill-color: unset !important;
+        background-clip: unset !important;
+        
+        span {
+          color: white !important;
+          background: none !important;
+          -webkit-background-clip: unset !important;
+          -webkit-text-fill-color: unset !important;
+          background-clip: unset !important;
+        }
+  }
 
       .newsletter-form {
         .email-form {
@@ -568,7 +610,7 @@
             transition: border-color 0.3s ease;
 
             &:focus-within {
-              border-color: #e92932;
+              border-color: var(--color-primary-600);
             }
 
             .email-input {
@@ -581,7 +623,7 @@
             .subscribe-button {
               &:hover:not(:disabled) {
                 transform: translateY(-1px);
-                box-shadow: 0 4px 12px rgba(233, 41, 50, 0.3);
+                box-shadow: 0 4px 12px rgba(71, 85, 105, 0.3);
               }
 
               &:disabled {
@@ -749,5 +791,33 @@
   
   &:hover {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// CRITICAL FIX: Force white color for newsletter title with maximum specificity
+.newsletter-section-modern .newsletter-content h2.newsletter-title,
+.newsletter-section-modern h2.newsletter-title,
+h2.newsletter-title.text-white,
+.newsletter-title {
+  color: white !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: white !important;
+  background-clip: unset !important;
+  
+  * {
+    color: white !important;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: white !important;
+    background-clip: unset !important;
+  }
+  
+  span {
+    color: white !important;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: white !important;
+    background-clip: unset !important;
   }
 } 
